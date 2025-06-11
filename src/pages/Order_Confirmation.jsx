@@ -5,7 +5,9 @@ import { MdOutlineStarPurple500 } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa6";
+import { useState } from "react";
 const Order_Confirmation = () => {
+  const [ischeck,setIsCheck] = useState(false)
   return (
     <section className="lg:max-w-7xl mx-auto lg:w-full h-full mt-20 w-[380px] ">
       <div>
@@ -31,11 +33,11 @@ const Order_Confirmation = () => {
                 <span className="font-semibold">#2561001</span>
               </div>
               <div className="space-x-3">
-                <button className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group">
+                <button className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group" onClick={()=>setIsCheck(!ischeck)}>
                   <span className="relative z-10 group-hover:text-white text-black transition duration-600 ">
                     View Invoice
                   </span>
-                  <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-blue-600 to-blue-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
+                  <span className={`absolute left-0 top-0 w-full h-full bg-gradient-to-r from-blue-600 to-blue-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out`}></span>
                 </button>
                 <button className="w-30 h-10 rounded-lg bg-blue-700 text-white cursor-pointer relative overflow-hidden group">
                   <span className="relative z-10 ">View Invoice</span>

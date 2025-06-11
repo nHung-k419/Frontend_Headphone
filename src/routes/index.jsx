@@ -4,7 +4,7 @@ import Detail from "../pages/Detail.jsx";
 import Brand from "../pages/Brand.jsx";
 import FAQS from "../pages/FAQS.jsx";
 import Product from "../pages/Product.jsx";
-import Stories from "../pages/Stories.jsx";
+import About from "../pages/About.jsx";
 import Cart from "../pages/Cart.jsx";
 import Order_Confirmation from "../pages/Order_Confirmation.jsx";
 import Login from "../pages/Login.jsx";
@@ -16,7 +16,7 @@ const PublicRoutes = [
     {path : '/Brand', component: Brand, layout : NavbarOnly},
     {path : '/FAQS', component: FAQS, layout : NavbarOnly},
     {path : '/Product', component: Product, layout : NavbarOnly},
-    {path : '/Stories', component: Stories, layout : NavbarOnly},
+    {path : '/About', component: About, layout : NavbarOnly},
     {path : '/Cart', component: Cart, layout : NavbarOnly},
     {path : '/OrderConfirmation', component: Order_Confirmation, layout : NavbarOnly},
     {path : '/Auth/Login', component: Login, layout : NavbarOnly},

@@ -83,7 +83,7 @@ const Detail = () => {
             }
             alt=""
           />
-          <div className="flex justify-center items-center absolute z-10 bottom-3 space-x-3 lg:ml-3.5 ml-3 cursor-pointer">
+          <div className="flex justify-center items-center absolute z-5 bottom-3 space-x-3 lg:ml-3.5 ml-3 cursor-pointer">
             {list_Images.map((item) => (
               <div
                 className={`rounded-3xl overflow-hidden ${
@@ -187,7 +187,7 @@ const Detail = () => {
           </div>
           <div className="w-full rounded-2xl border-1 border-gray-200 space-y-3 ">
             <h1 className="p-3 text-xl font-semibold">Shipping</h1>
-            <div className="grid grid-cols-2 ml-7 gap-y-5 pb-6">
+            <div className="grid grid-cols-2 lg:ml-7 ml-1 lg:mr-0 mr-1 gap-y-5 pb-6">
               <div className="flex items-center space-x-2">
                 <div className="h-15 w-15 rounded-full flex items-center justify-center bg-gray-100">
                   <span className="text-2xl">

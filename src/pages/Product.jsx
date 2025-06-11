@@ -4,7 +4,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
-
+import { BsArrowLeftRight } from "react-icons/bs";
 const Product = () => {
   const [checkVisible, setCheckVisible] = useState({
     Size: true,
@@ -12,16 +12,15 @@ const Product = () => {
     Color: true,
   });
   const [checkActive, setCheckActive] = useState([]);
+  const [isOpenFilter, setIsOpenFilter] = useState(false);
   const toggleSection = (key) => {
     setCheckVisible((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-  const handleActive = (keyItem,title) => {
-    console.log(title);
-    
+  const handleActive = (keyItem, title) => {
     const isLive = checkActive.map((item) => item);
     if (isLive.includes(keyItem)) {
       setCheckActive(checkActive.filter((item) => item !== keyItem));
-    }else{
+    } else {
       setCheckActive((prev) => [...prev, keyItem]);
     }
   };
@@ -90,134 +89,218 @@ const Product = () => {
     },
   ];
   return (
-    <section className="grid grid-cols-[1fr_3fr] max w-7xl mx-auto mt-30">
-      <div className=" w-[300px] h-fit mt-4 rounded-sm ">
-        <div>
-          <h1 className="font-bold ml-4 mt-5">
-            FILTER
-            <hr className="border-t-3 mt-1 border-gray-700 w-7" />
-          </h1>
-          {ContentFilter.map((itemValue) => (
-            <div>
-              <div className="flex items-center justify-between p-4">
-                <h1 className="font-bold select-none">{itemValue.title}</h1>
-                <span
-                  className="cursor-pointer select-none"
-                  onClick={() => toggleSection(itemValue.title)}
-                >
-                  {checkVisible[itemValue.title] ? (
-                    <IoIosArrowUp />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
-                </span>
-              </div>
-              <div
-                className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                  checkVisible[itemValue.title] ? "visible h-40" : ""
-                }`}
-              >
-                {itemValue.content.map((item, index) => (
-                  <div>
-                    <span
-                      onClick={() => handleActive(item,itemValue.title)}
-                      className={`text-sm cursor-pointer  ${
-                        checkActive.includes(item)
-                          ? "text-black"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-          <div className="p-4">
-            <h1 className="font-bold">Price</h1>
-            <input
-              type="range"
-              onChange={(e) => console.log(e.target.value)}
-              min={0}
-              max={10000}
-            />
-            <p className="font-semibold">
-              Range{" "}
-              <span className="text-red-500 font-semibold">$30 - $1000.00</span>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div>
-          <img
-            className="w-full h-90 object-cover"
-            src="https://wallpapercave.com/wp/wp5122307.jpg"
-            alt=""
-          />
-        </div>
-        <div className="mt-10 flex justify-between items-center">
-          <select className="w-40 h-10 bg-gray-100 focus:outline-none text-center text-gray-700 rounded-sm">
-            <option value="Default Sorting">Default Sorting</option>
-            <option value="1">Tăng dần</option>
-            <option value="1">Giảm dần</option>
-          </select>
-          <div className="">
-            <h1 className="text-gray-700 text-sm select-none">
-              SHOWING 1-12 OF 30 RELULTS
-              <hr className="border-t-1 border-gray-500 w-full mt-1" />
+    <div>
+      {/* Sidebar */}
+      <div
+        className={`fixed left-0 top-0 h-full w-70 bg-white transform duration-300 ease-in-out z-20 ${
+          isOpenFilter ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* <div className=" w-[300px] h-fit mt-4 rounded-sm lg:block md:block hidden"> */}
+          <div className="h-screen overflow-auto">
+            <h1 className="font-bold ml-4 mt-5">
+              FILTER
+              <hr className="border-t-3 mt-1 border-gray-700 w-7" />
             </h1>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:max-w-7xl lg:mx-auto">
-          {productList.map((product) => (
-            <div className="bg-white rounded-2xl my-4 shadow-lg w-[300px] h-full cursor-pointer overflow-hidden">
-              <Link to={`/Products/Detail/123`}>
-                <img
-                  className="w-full h-[200px] object-contain hover:scale-105 transition-all duration-300 ease-in-out"
-                  src={product.image}
-                  alt=""
-                />
-              </Link>
+            {ContentFilter.map((itemValue) => (
               <div>
-                <div className="pl-3 flex justify-between items-center">
-                  <h1 className="text-xl font-semibold w-1/2">
-                    Jay - Force Headphones
-                  </h1>
-                  <span className="mr-3 font-bold text-red-600 text-sm">
-                    SALE
+                <div className="flex items-center justify-between p-4">
+                  <h1 className="font-bold select-none">{itemValue.title}</h1>
+                  <span
+                    className="cursor-pointer select-none"
+                    onClick={() => toggleSection(itemValue.title)}
+                  >
+                    {checkVisible[itemValue.title] ? (
+                      <IoIosArrowUp />
+                    ) : (
+                      <IoIosArrowDown />
+                    )}
                   </span>
                 </div>
-                <div className="ml-3">
-                  <span className="text-yellow-400 text-sm">★★★★★</span>
-                </div>
-                <div>
-                  <p className="ml-3 mr-3 text-sm text-gray-400">
-                    Jay delivers a distinctive diffrence in sound.
-                  </p>
-
-                  <div className="flex justify-between items-center ml-3 mr-3 mt-5">
-                    <div className="space-x-2">
-                      <span className="font-bold text-lg">$280</span>
-                      <del className="text-red-600 text-[13px]">$380</del>
-                    </div>
+                <div
+                  className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
+                    checkVisible[itemValue.title] ? "visible h-40" : ""
+                  }`}
+                >
+                  {itemValue.content.map((item, index) => (
                     <div>
-                      <button className="relative overflow-hidden border border-gray-200 rounded-xl w-25 h-9 font-medium group cursor-pointer hover:shadow-lg transform transition duration-300 ease-in-out bg-gradient-to-r from-black to-gray-600">
-                        <span className="relative z-10 text-white font-normal transition duration-300">
-                          Add to cart
-                        </span>
-                        {/* <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-gray-500 to-gray-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" /> */}
-                      </button>
+                      <span
+                        onClick={() => handleActive(item, itemValue.title)}
+                        className={`text-sm cursor-pointer  ${
+                          checkActive.includes(item)
+                            ? "text-black"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                
+              </div>
+            ))}
+            <div className="p-4">
+              <h1 className="font-bold">Price</h1>
+              <input
+                type="range"
+                onChange={(e) => console.log(e.target.value)}
+                min={0}
+                max={10000}
+              />
+              <p className="font-semibold">
+                Range{" "}
+                <span className="text-red-500 font-semibold">
+                  $30 - $1000.00
+                </span>
+              </p>
+            </div>
+          </div>
+        {/* </div> */}
+      </div>
+      {/* Sidebar */}
+      <section className="grid lg:grid-cols-[1fr_3fr] grid-cols-1 max-w-7xl mx-auto mt-30">
+        <div className=" w-[300px] h-fit mt-4 rounded-sm lg:block md:block hidden">
+          <div>
+            <h1 className="font-bold ml-4 mt-5">
+              FILTER
+              <hr className="border-t-3 mt-1 border-gray-700 w-7" />
+            </h1>
+            {ContentFilter.map((itemValue) => (
+              <div>
+                <div className="flex items-center justify-between p-4">
+                  <h1 className="font-bold select-none">{itemValue.title}</h1>
+                  <span
+                    className="cursor-pointer select-none"
+                    onClick={() => toggleSection(itemValue.title)}
+                  >
+                    {checkVisible[itemValue.title] ? (
+                      <IoIosArrowUp />
+                    ) : (
+                      <IoIosArrowDown />
+                    )}
+                  </span>
+                </div>
+                <div
+                  className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
+                    checkVisible[itemValue.title] ? "visible h-40" : ""
+                  }`}
+                >
+                  {itemValue.content.map((item, index) => (
+                    <div>
+                      <span
+                        onClick={() => handleActive(item, itemValue.title)}
+                        className={`text-sm cursor-pointer  ${
+                          checkActive.includes(item)
+                            ? "text-black"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="p-4">
+              <h1 className="font-bold">Price</h1>
+              <input
+                type="range"
+                onChange={(e) => console.log(e.target.value)}
+                min={0}
+                max={10000}
+              />
+              <p className="font-semibold">
+                Range{" "}
+                <span className="text-red-500 font-semibold">
+                  $30 - $1000.00
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div>
+            <img
+              className="lg:w-full md:w-full w-full h-90 object-cover"
+              src="https://wallpapercave.com/wp/wp5122307.jpg"
+              alt=""
+            />
+          </div>
+          <div className="mt-10 flex justify-between items-center">
+            <div className="flex items-center ml-7 font-medium text-lg lg:hidden block">
+              <span onClick={() => setIsOpenFilter(!isOpenFilter)}>
+                <BsArrowLeftRight />
+              </span>
+            </div>
+            <select className="lg:w-40 md:w-30 w-30 h-10 bg-gray-100 focus:outline-none text-center text-gray-700 rounded-sm lg:text-md md:text-md text-sm ld:ml-0 md:ml-0 ml-3 lg:mr-0 mr-7">
+              <option value="Default Sorting">Default Sorting</option>
+              <option value="1">Tăng dần</option>
+              <option value="1">Giảm dần</option>
+            </select>
+            <div className="lg:block hidden">
+              <h1 className="text-gray-700 text-sm select-none lg:block hidden">
+                SHOWING 1-12 OF 30 RELULTS
+                <hr className="border-t-1 border-gray-500 w-full mt-1" />
+              </h1>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-8 lg:max-w-7xl lg:mx-auto lg:mt-5 mt-5">
+            {productList.map((product) => (
+              <div className="bg-white rounded-2xl my-4 shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden">
+                <Link to={`/Products/Detail/123`}>
+                  <img
+                    className="w-full h-[200px] object-contain hover:scale-105 transition-all duration-300 ease-in-out"
+                    src={product.image}
+                    alt=""
+                  />
+                </Link>
+                <div>
+                  <div className="pl-3 flex justify-between items-center">
+                    <h1 className="text-xl font-semibold w-1/2">
+                      Jay - Force Headphones
+                    </h1>
+                    <span className="mr-3 font-bold text-red-600 text-sm">
+                      SALE
+                    </span>
+                  </div>
+                  <div className="ml-3">
+                    <span className="text-yellow-400 text-sm">★★★★★</span>
+                  </div>
+                  <div>
+                    <p className="ml-3 mr-3 text-sm text-gray-400">
+                      Jay delivers a distinctive diffrence in sound.
+                    </p>
+
+                    <div className="flex justify-between items-center ml-3 mr-3 mt-5">
+                      <div className="space-x-2">
+                        <span className="font-bold text-lg">$280</span>
+                        <del className="text-red-600 text-[13px]">$380</del>
+                      </div>
+                      <div>
+                        <button className="relative overflow-hidden border border-gray-200 shadow-md rounded-full w-30 h-10 font-medium group cursor-pointer hover:shadow-lg transform transition duration-300 ease-in-out bg-white ">
+                          <span className="relative z-10 text-black font-normal transition duration-300">
+                            Add to cart
+                          </span>
+                          {/* <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-gray-500 to-gray-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-0" /> */}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+        {isOpenFilter && (
+          <div
+            onClick={() => setIsOpenFilter(false)}
+            className="fixed inset-0 bg-black/60 z-10"
+          ></div>
+        )}
+      </section>
+    </div>
   );
 };
 
