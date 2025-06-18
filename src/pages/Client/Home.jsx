@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Shopnow from "../components/Shopnow";
 import { MdArrowOutward } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";

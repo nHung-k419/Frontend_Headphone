@@ -1,6 +1,6 @@
 import React from "react";
-import Home from "../../pages/Home";
-import Header from "../header";
+import Home from "../../pages/Client/Home";
+import Header from "../Header";
 import Navbar from "../Navbar";
 import Footer from "../footer";
 function DefaultLayout({ children }) {

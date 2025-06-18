@@ -14,6 +14,7 @@ const Navbar = () => {
   const notificationRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [checkColor, setCheckColor] = useState(null);
   const [openModal, setOpenModal] = useState({
     Search: false,
     Notification: false,
@@ -50,6 +51,38 @@ const Navbar = () => {
       Price: "$100",
     },
   ];
+  const Notifitcation = [
+    {
+      id: 1,
+      Name: "Alex",
+      Image: "https://i.pravatar.cc/100",
+      text: "Đã xác nhận thông báo cho bạn",
+    },
+    {
+      id: 2,
+      Name: "Peter",
+      Image: "https://i.pravatar.cc/100",
+      text: "Bạn đã thêm headphone vào giỏ hàng",
+    },
+    {
+      id: 3,
+      Name: "Cursor",
+      Image: "https://i.pravatar.cc/100",
+      text: "Đã xác nhận thông báo cho baise",
+    },
+    {
+      id: 4,
+      Name: "Dany",
+      Image: "https://i.pravatar.cc/100",
+      text: "Bạn đã thêm headphone vào giỏ hàng",
+    },
+    {
+      id: 5,
+      Name: "Rock",
+      Image: "https://i.pravatar.cc/100",
+      text: "Admin đã xác nhận đơn hàng của bạn!",
+    },
+  ];
   useEffect(() => {
     if (isSidebarOpen) {
       document.body.classList.add("overflow-hidden");
@@ -60,20 +93,14 @@ const Navbar = () => {
     }
   }, [isSidebarOpen]);
   const handleOpenModal = (KeyModal) => {
-  setOpenModal((prev) => ({
-    ...prev,
-    [KeyModal]: !prev[KeyModal],
-  }));
-};
-console.log(openModal);
+    setOpenModal((prev) => ({
+      [KeyModal]: !prev[KeyModal],
+    }));
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        (searchRef.current && !searchRef.current.contains(event.target)) ||
-        (notificationRef.current &&
-          !notificationRef.current.contains(event.target))
-      ) {
+      if (searchRef.current && notificationRef.current) {      
         setOpenModal({ Search: false, Notification: false });
       }
     };
@@ -116,18 +143,16 @@ console.log(openModal);
         <p className="text-2xl font-bold lg:block hidden">CLUE</p>
         <div className="lg:block hidden">
           <ul className=" flex items-center gap-8 font-medium flex-wrap ">
-            {["Home", "About", "Product", "Brand", "FAQS"].map(
-              (item, idx) => (
-                <Link
-                  to={`${item === "Home" ? "/" : "/" + item}`}
-                  key={idx}
-                  className="relative overflow-hidden group cursor-pointer"
-                >
-                  {item}
-                  <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
-                </Link>
-              )
-            )}
+            {["Home", "About", "Product", "Brand", "FAQS"].map((item, idx) => (
+              <Link
+                to={`${item === "Home" ? "/" : "/" + item}`}
+                key={idx}
+                className="relative overflow-hidden group cursor-pointer"
+              >
+                {item}
+                <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
+              </Link>
+            ))}
           </ul>
         </div>
         <div className="flex items-center lg:space-x-7 space-x-5 mr-10 none list-none">
@@ -147,32 +172,34 @@ console.log(openModal);
             </span>
           </div>
           {/* boxModal */}
-            <div
-              className={`absolute lg:w-110 top-full h-85 w-screen pb-5  overflow-auto hide-scrollbar rounded-md bg-gray-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
-                openModal.Search ? "opacity-100 scale-100 pointer-events-auto" :"opacity-0 scale-95 pointer-events-none"
-              }`}
-              ref={searchRef}
-            >
-              {ProductsSearch.map((Product) => (
-                <div className="flex items-center space-x-7">
-                  <div>
-                    <img
-                      className="w-15 h-15 ml-5 mt-5 rounded-md "
-                      src={`${Product.Image}`}
-                      alt=""
-                    />
-                  </div>
-                  <div className="flex justify-between items-center w-full">
-                    <div>
-                      <h2 className="font-semibold ">{Product.Name}</h2>
-                      <span className="text-yellow-400 text-md">★★★★★</span>
-                      {/* <del>$200</del> */}
-                    </div>
-                    <span className="font-semibold mr-5">${Product.Price}</span>
-                  </div>
+          <div
+            className={`absolute lg:w-110 top-full h-85 w-screen pb-5  overflow-auto hide-scrollbar rounded-md bg-gray-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
+              openModal.Search
+                ? "opacity-100 scale-100 pointer-events-auto"
+                : "opacity-0 scale-95 pointer-events-none"
+            }`}
+            ref={searchRef}
+          >
+            {ProductsSearch.map((Product) => (
+              <div className="flex items-center space-x-7">
+                <div>
+                  <img
+                    className="w-15 h-15 ml-5 mt-5 rounded-md "
+                    src={`${Product.Image}`}
+                    alt=""
+                  />
                 </div>
-              ))}
-            </div>
+                <div className="flex justify-between items-center w-full">
+                  <div>
+                    <h2 className="font-semibold ">{Product.Name}</h2>
+                    <span className="text-yellow-400 text-md">★★★★★</span>
+                    {/* <del>$200</del> */}
+                  </div>
+                  <span className="font-semibold mr-5">${Product.Price}</span>
+                </div>
+              </div>
+            ))}
+          </div>
           {/* boxModal */}
           <li className="text-xl cursor-pointer">
             <LuUserRound />
@@ -183,73 +210,45 @@ console.log(openModal);
           >
             <AiOutlineBell />
           </li>
-            <div ref={notificationRef} className={`absolute top-full  lg:w-110 w-90 h-86 overflow-auto hide-scrollbar lg:ml-0 ml-4 rounded-md bg-gray-50 shadow-lg z-20 transition-all duration-300 ease-in-out ${openModal.Notification ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"}`}>
-              <div className="absolute -top-2 right-15 w-4 h-4 bg-gray-50 rotate-45 z-70"></div>
-              <div className="flex justify-between items-center p-3">
-                <h1 className="font-semibold text-lg">Notification</h1>
-                <div className="h-5 w-5 flex justify-center items-center rounded-full bg-white cursor-pointer">
-                  <span onClick={() => setOpenModal({ ...openModal, Notification: false })}>
-                    <IoCloseSharp />
-                  </span>
-                </div>
-              </div>
-              <hr className="border-t-2 border-gray-300" />
-              <div className="flex items-center space-x-3 p-3">
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src="https://i.pravatar.cc/100"
-                  alt=""
-                />
-                <span className="font-semibold">Alex</span>
-                <p className="font-light text-sm w-full">
-                  Đã thêm headphone RBK vào giỏ hàng
-                </p>
-              </div>
-              <div className="flex items-center space-x-3 p-3">
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src="https://i.pravatar.cc/100"
-                  alt=""
-                />
-                <span className="font-semibold">Alex</span>
-                <p className="font-light text-sm w-full">
-                  Đã thêm headphone RBK vào giỏ hàng
-                </p>
-              </div>
-               <div className="flex items-center space-x-3 p-3">
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src="https://i.pravatar.cc/100"
-                  alt=""
-                />
-                <span className="font-semibold">Alex</span>
-                <p className="font-light text-sm w-full">
-                   Đã gửi cho bạn một tin nhắn
-                </p>
-              </div>
-               <div className="flex items-center space-x-3 p-3">
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src="https://i.pravatar.cc/100"
-                  alt=""
-                />
-                <span className="font-semibold">Alex</span>
-                <p className="font-light text-sm w-full">
-                  Đã thêm headphone RBK vào giỏ hàng
-                </p>
-              </div>
-              <div className="flex items-center space-x-3 p-3">
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src="https://i.pravatar.cc/100"
-                  alt=""
-                />
-                <span className="font-semibold">Alex</span>
-                <p className="font-light text-sm w-full">
-                  Đã gửi cho bạn một tin nhắn
-                </p>
+          <div
+            ref={notificationRef}
+            className={`absolute top-full  lg:w-110 w-90 h-86 overflow-auto hide-scrollbar lg:ml-0 ml-4 rounded-md bg-gray-50 shadow-lg z-20 transition-all duration-300 ease-in-out ${
+              openModal.Notification
+                ? "opacity-100 scale-100 pointer-events-auto"
+                : "opacity-0 scale-95 pointer-events-none"
+            }`}
+          >
+            <div className="absolute -top-2 right-15 w-4 h-4 bg-gray-50 rotate-45 z-70"></div>
+            <div className="flex justify-between items-center p-3">
+              <h1 className="font-semibold text-lg">Notification</h1>
+              <div className="h-5 w-5 flex justify-center items-center rounded-full bg-white cursor-pointer">
+                <span
+                  onClick={() =>
+                    setOpenModal({ ...openModal, Notification: false })
+                  }
+                >
+                  <IoCloseSharp />
+                </span>
               </div>
             </div>
+            <hr className="border-t-2 border-gray-300" />
+            {Notifitcation.map((item) => (
+              <div
+                onClick={() => setCheckColor(item.id)}
+                className={`flex items-center space-x-3 p-3 hover:bg-gray-100 cursor-pointer ${
+                  checkColor === item.id ? "bg-gray-100" : ""
+                }`}
+              >
+                <img
+                  className="w-12 h-12 rounded-full"
+                  src="https://i.pravatar.cc/100"
+                  alt=""
+                />
+                <span className="font-semibold w-20">{item.Name}</span>
+                <p className="font-light text-sm w-full">{item.text}</p>
+              </div>
+            ))}
+          </div>
           <li
             onClick={() => setIsSidebarOpen(true)}
             className="text-xl cursor-pointer"

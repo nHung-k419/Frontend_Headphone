@@ -2,7 +2,7 @@ import React from 'react';
 import CommentSidebar from './CommentSidebar';
 import CartSidebar from './CartSidebar';
 const SidebarReview = ({keyOpen, isOpen, onClose }) => {
-  console.log(keyOpen);
+  // console.log(keyOpen);
   
   return (
     // Wrapper with overlay
