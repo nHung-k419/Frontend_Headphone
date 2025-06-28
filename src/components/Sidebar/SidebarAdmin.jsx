@@ -39,6 +39,11 @@ const SidebarAdmin = () => {
       link: "/Admin/ProductVariants",
       icon: <FaHouseMedical />,
     },
+    {
+      name: "BrandAdmin",
+      link: "/Admin/Brand",
+      icon: <FaHouseMedical />,
+    },
   ];
   return (
     <div className="w-[250px] bg-gray-100 h-screen">

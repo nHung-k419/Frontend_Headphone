@@ -11,7 +11,7 @@ import Order_Confirmation from "../pages/Client/Order_Confirmation.jsx";
 import Login from "../pages/Client/Login.jsx";
 import Register from "../pages/Client/Register.jsx";
 import DefaultLayout from "../layouts/DefaultLayout/index.jsx";
-
+import Order_Items from "../pages/Client/Order_Items.jsx";
 // Page Admin
 import Admin from "../pages/Admin/Admin.jsx";
 import layoutAdmin from "../layouts/LayoutAdmin/index.jsx";
@@ -22,6 +22,7 @@ import Order from "../pages/Admin/Order.jsx";
 import Reviews from "../pages/Admin/Reviews.jsx";
 import Users from "../pages/Admin/Users.jsx";
 import ProductVariants from "../pages/Admin/ProductVariants.jsx";
+import BrandAdmin from "../pages/Admin/Brand.jsx";
 const PublicRoutes = [
     {path : '/', component: Home},
     {path : '/Products/Detail/:id', component: Detail, layout : NavbarOnly},
@@ -31,6 +32,7 @@ const PublicRoutes = [
     {path : '/About', component: About, layout : NavbarOnly},
     {path : '/Cart', component: Cart, layout : NavbarOnly},
     {path : '/OrderConfirmation', component: Order_Confirmation, layout : NavbarOnly},
+    {path : '/OrderItems', component: Order_Items, layout : NavbarOnly},
     {path : '/Auth/Login', component: Login, layout : NavbarOnly},
     {path : '/Auth/Register', component: Register, layout : NavbarOnly},
     // Amin
@@ -42,6 +44,7 @@ const PublicRoutes = [
     {path : '/Admin/Reviews', component: Reviews,layout : layoutAdmin},
     {path : '/Admin/ProductVariants', component: ProductVariants,layout : layoutAdmin},
     {path : '/Admin/Users', component: Users,layout : layoutAdmin},
+    {path : '/Admin/Brand', component: BrandAdmin,layout : layoutAdmin},
 
 ]
 const PrivateRoutes = []

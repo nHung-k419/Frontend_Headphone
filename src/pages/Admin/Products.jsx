@@ -5,6 +5,7 @@ import Modal from "../../components/ModalAdmin/Modal";
 import { PostProduct, GetProducts, DeleteProduct, UpdateProduct } from "../../services/Admin/Product.jsx";
 import { GetCategory } from "../../services/Admin/Categories.jsx";
 import { Mutation, QueryClient, useMutation, useQueries, useQuery } from "@tanstack/react-query";
+import { GetBrand } from "../../services/Admin/Brand.jsx";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loading from "../../components/Loading";
@@ -22,8 +23,15 @@ const Products = () => {
     ImageUrl: "",
     Description: "",
     Brand: "",
+    Id_Category : "",
   });
 
+  const {data} = useQuery({
+    queryKey: ["brand"],
+    queryFn: GetBrand
+  })
+  console.log(form);
+  
   // Get value from input
   const handleGetvalue = (e) => {
     const { name, value, files, type } = e.target;
@@ -83,9 +91,10 @@ const Products = () => {
     }
   };
 
-  const handleGetValueOption = (e) => {
-    setForm((prev) => ({ ...prev, Id_Category: e.target.value }));
-  };
+  // const handleGetValueOption = (e) => {
+  //   const { name } = e.target;
+  //   setForm((prev) => ({ ...prev, [name]: e.target.value }));
+  // };
   console.log(form);
 
   const result = useQueries({
@@ -241,24 +250,21 @@ const Products = () => {
                 Description
               </label>
             </div>
-            <div class="relative z-0 w-full mb-5 group">
-              <input
-                onChange={(e) => handleGetvalue(e)}
-                type="text"
-                name="Brand"
-                id="floating_email"
-                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-                required
-                value={form.Brand}
-              />
-              <label
-                for="floating_email"
-                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >
-                Brand
-              </label>
-            </div>
+            <label for="countries" class="block mb-2 text-sm font-medium text-gray-800 dark:text-white">
+              Select Brand
+            </label>
+            <select
+              onChange={(e) => handleGetvalue(e)}
+              name="Brand"
+              id="countries"
+              class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              {data?.data?.map((item,index) => (
+                <option tabIndex={"Chọn danh sách"} value={item._id}>
+                  {item.Brand}
+                </option>
+              ))}
+            </select>
             {/* <div class="relative z-0 w-full mb-5 group">
               <input
                 onChange={(e) => handleGetvalue(e)}
@@ -297,12 +303,15 @@ const Products = () => {
               Select your Categories
             </label>
             <select
-              onChange={(e) => handleGetValueOption(e)}
+              onChange={(e) => handleGetvalue(e)}
+              name="Id_Category"
               id="countries"
               class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               {result[1]?.data?.getAllCategory?.map((category) => (
-                <option tabIndex={"Chọn danh sách"} value={category._id}>{category.Name}</option>
+                <option tabIndex={"Chọn danh sách"} value={category._id}>
+                  {category.Name}
+                </option>
               ))}
             </select>
             <div className="flex justify-end mt-5 ">
@@ -351,7 +360,7 @@ const Products = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {result[0]?.data?.getAllProduct.map((item, index) => (
+                  {result[0]?.data?.getAllProduct?.map((item, index) => (
                     <tr
                       key={item._id}
                       class="odd:bg-white even:bg-gray-100 hover:bg-gray-100 dark:odd:bg-neutral-800 dark:even:bg-neutral-700 dark:hover:bg-neutral-700 cursor-pointer"

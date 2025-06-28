@@ -1,7 +1,42 @@
+import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginAuth } from "../../services/Client/Auth";
+import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+import { motion } from "framer-motion";
 const Login = () => {
+  const navigate = useNavigate();
+  const [value, setValue] = useState({
+    Email: "",
+    Password: "",
+  });
+  const handleGetvalue = (e) => {
+    const { name, value } = e.target;
+    setValue((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const mutationLogin = useMutation({
+    mutationFn: loginAuth,
+    onSuccess: (data) => {
+      toast.success("Đăng nhập thành công");
+      const userData = {
+        Email: data?.Email,
+        Name: data?.Name,
+        id : data?.id
+      };
+      Cookies.set("User", JSON.stringify(userData));
+      navigate("/");
+    },
+    onError: () => {
+      toast.error("Đăng nhập thất bại");
+    },
+  });
+  const handleSubmit = () => {
+    mutationLogin.mutate(value);
+  };
   return (
     <section className="flex items-center justify-center">
       <div className="flex justify-center space-x-10 mt-30 shadow-2xl rounded-3xl">
@@ -16,13 +51,13 @@ const Login = () => {
           <div className="max-w-120">
             <h1 className="text-2xl font-semibold mt-5">Login to your account</h1>
             <div className="flex mt-7 gap-3 pr-10">
-              <button className="font-medium bg-[#593689] shadow-lg w-45 rounded-2xl h-9 text-white flex items-center justify-center cursor-pointer gap-1.5 text-sm">
+              <button className="font-medium bg-[#593689] shadow-lg w-45 rounded-md h-11 text-white flex items-center justify-center cursor-pointer gap-1.5 text-sm">
                 <span>
                   <FaGoogle />
                 </span>
                 Sign up with Google
               </button>
-              <button className="font-medium bg-gray-100 shadow-lg w-50 rounded-2xl h-9 flex items-center justify-center cursor-pointer gap-1.5 text-sm">
+              <button className="font-medium bg-gray-100 shadow-lg w-50 rounded-md h-11 flex items-center justify-center cursor-pointer gap-1.5 text-sm">
                 <span>
                   <FaFacebook />
                 </span>
@@ -34,27 +69,38 @@ const Login = () => {
               <h1 className="text-sm text-black ">Or sign up using your email address</h1>
             </div>
             <div>
-              <form className="flex flex-col mt-5 space-y-2">
-                <label className="ml-2 font-semibold">Username</label>
+              <div className="flex flex-col mt-5 space-y-2">
+                <label className="ml-2 font-semibold">Email</label>
                 <input
+                  onChange={(e) => handleGetvalue(e)}
+                  required
                   type="text"
-                  className=" rounded-2xl h-9 w-98 pl-3 focus:outline-none bg-gray-100 mt-1"
-                  placeholder="Enter your Username"
+                  className=" rounded-md h-11 w-98 pl-3 focus:outline-none bg-gray-100 mt-1"
+                  placeholder="Enter your Email"
+                  name="Email"
                 />
                 <label className="ml-2 font-semibold">Password</label>
                 <input
+                  onChange={(e) => handleGetvalue(e)}
+                  required
                   type="password"
-                  className=" rounded-2xl h-9 w-98 pl-3 focus:outline-none bg-gray-100 mt-1"
+                  className=" rounded-md h-11 w-98 pl-3 focus:outline-none bg-gray-100 mt-1"
                   placeholder="Enter your Password"
+                  name="Password"
                 />
-                <button className="font-medium bg-[#593689] shadow-lg w-98 rounded-2xl h-9 text-white flex items-center justify-center cursor-pointer gap-1.5 text-sm mt-5">
+                <button
+                  onClick={() => handleSubmit()}
+                  className="font-medium bg-[#593689] shadow-lg w-98 rounded-2xl h-10 text-white flex items-center justify-center cursor-pointer gap-1.5 text-sm mt-5"
+                >
                   Sign Up
                 </button>
                 <p className="text-sm mt-5">
                   You dont have account?{" "}
-                  <Link to={"/Auth/Register"} className="text-[#593689]">Sign Up</Link>
+                  <Link to={"/Auth/Register"} className="text-[#593689]">
+                    Sign Up
+                  </Link>
                 </p>
-              </form>
+              </div>
             </div>
           </div>
         </div>

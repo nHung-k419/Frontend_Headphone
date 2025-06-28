@@ -2,8 +2,6 @@ import React from 'react';
 import CommentSidebar from './CommentSidebar';
 import CartSidebar from './CartSidebar';
 const SidebarReview = ({keyOpen, isOpen, onClose }) => {
-  // console.log(keyOpen);
-  
   return (
     // Wrapper with overlay
     <div className={`fixed inset-0 z-50 transition-all duration-300 ${isOpen ? 'visible ' : 'invisible'}`}>
