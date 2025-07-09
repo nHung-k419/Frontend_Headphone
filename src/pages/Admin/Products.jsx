@@ -23,15 +23,15 @@ const Products = () => {
     ImageUrl: "",
     Description: "",
     Brand: "",
-    Id_Category : "",
+    Id_Category: "",
   });
 
-  const {data} = useQuery({
+  const { data } = useQuery({
     queryKey: ["brand"],
-    queryFn: GetBrand
-  })
+    queryFn: GetBrand,
+  });
   console.log(form);
-  
+
   // Get value from input
   const handleGetvalue = (e) => {
     const { name, value, files, type } = e.target;
@@ -259,7 +259,7 @@ const Products = () => {
               id="countries"
               class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              {data?.data?.map((item,index) => (
+              {data?.data?.map((item, index) => (
                 <option tabIndex={"Chọn danh sách"} value={item._id}>
                   {item.Brand}
                 </option>
@@ -316,7 +316,9 @@ const Products = () => {
             </select>
             <div className="flex justify-end mt-5 ">
               {mutation.isPending || mutationUpdate.isPending ? (
-                <Loading />
+                <div className="w-35 h-10 bg-blue-600 rounded-md text-white cursor-pointer">
+                  <Loading />
+                </div>
               ) : (
                 <button onClick={(e) => handleSendData(e)} className="w-35 h-10 bg-blue-600 rounded-md text-white cursor-pointer">
                   {typeModal.type === "AddProduct" ? "Add Product" : "Update Product"}

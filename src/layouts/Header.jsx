@@ -44,7 +44,7 @@ const Header = () => {
             }}
             className="md:text-3xl lg:text-5xl text-2xl mt-5 font-bold text-black shimmer "
           >
-            Meet the sounds <br /> from the future
+            Trải nghiệm âm thanh <br /> của tương lai
           </motion.h1>
           <motion.p
             initial={{ x: -100, opacity: 0 }}
@@ -63,8 +63,8 @@ const Header = () => {
             }}
             className="font-light"
           >
-            Enjoy the sound of music every day with a new stylish <br /> and
-            comfortable model of headphones. Stylize, inspire,reproduce
+            🎧 "Thưởng thức âm nhạc mỗi ngày với mẫu tai nghe mới đầy phong cách và thoải mái." <br /> Thể hiện cá tính, truyền cảm hứng,
+            tái hiện âm thanh sống động.
           </motion.p>
           <motion.div
             initial={{ x: -100, opacity: 0 }}
@@ -85,11 +85,11 @@ const Header = () => {
           >
             <div className="flex items-center space-x-2">
               <HiMiniSpeakerWave className="text-emerald-500 text-xl" />
-              <span>Clear Sound</span>
+              <span>Âm thanh rõ nét</span>
             </div>
             <div className="flex items-center space-x-2">
               <GiSettingsKnobs className="text-emerald-500 text-xl" />
-              <span>Latest Setting</span>
+              <span>Thiết lập hiện đại nhất</span>
             </div>
           </motion.div>
           <motion.div
@@ -109,16 +109,14 @@ const Header = () => {
             }}
             className="flex space-x-4 lg:block sm:block hidden"
           >
-            <button className="w-full lg:max-w-32 bg-gradient-to-r from-black to-gray-600 rounded-md h-10 text-white relative pr-4 cursor-pointe ">
-              Buy Now
+            <button className="w-full lg:max-w-32 bg-gradient-to-r from-gray-600 to-[#1f1f1f] cursor-pointer rounded-md h-10 text-white relative pr-4 cursor-pointe ">
+              Mua ngay
               <span className="absolute right-3 inline-flex pt-1 ">
                 <MdArrowOutward />
               </span>
             </button>
             <button className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer">
-              <span className="relative z-5 text-black group-hover:text-white transition duration-300">
-                See More
-              </span>
+              <span className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</span>
               <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
                 <MdOutlineNotes />
               </span>
@@ -143,11 +141,7 @@ const Header = () => {
           >
             <img
               className={`lg:w-70 lg:h-80 w-30 h-30 object-contain swing-y`}
-              src={
-                actionImage.url
-                  ? actionImage.url
-                  : "https://i.pinimg.com/736x/a7/6a/0e/a76a0e6a08608900c3570f0c659865a0.jpg"
-              }
+              src={actionImage.url ? actionImage.url : "https://i.pinimg.com/736x/a7/6a/0e/a76a0e6a08608900c3570f0c659865a0.jpg"}
               alt=""
             />
           </motion.div>
@@ -220,9 +214,7 @@ const Header = () => {
           }}
           className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer"
         >
-          <span className="relative z-5 text-black group-hover:text-white transition duration-300">
-            See More
-          </span>
+          <span className="relative z-5 text-black group-hover:text-white transition duration-300">See More</span>
           <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
             <MdOutlineNotes />
           </span>

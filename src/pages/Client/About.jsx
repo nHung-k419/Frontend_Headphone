@@ -4,40 +4,40 @@ import { motion } from "framer-motion";
 const About = () => {
   const services = [
     {
-      title: "Technology Solutions (2008)",
+      title: "Ra đời thương hiệu (2008)",
       description:
-        "Founded with a vision to transform businesses, we started our journey. Our first client project set the stage for future successes.",
+        "Khởi đầu với sứ mệnh mang đến trải nghiệm âm thanh chân thực, chúng tôi cho ra đời dòng tai nghe đầu tiên – mở ra một hành trình đột phá trong công nghệ âm thanh.",
       icon: "📍",
       active: true,
     },
     {
-      title: "Financial Consulting",
-      description: "Expert guidance to optimize your financial performance.",
-      icon: "💼",
+      title: "Tai nghe không dây đầu tiên (2012)",
+      description: "Đánh dấu bước chuyển mình sang công nghệ không dây, mang đến sự tự do và tiện lợi cho người dùng toàn cầu.",
+      icon: "🎧",
       active: false,
     },
     {
-      title: "Financial Consulting",
-      description: "Expert guidance to optimize your financial performance.",
-      icon: "💼",
+      title: "Ra mắt công nghệ chống ồn chủ động (2016)",
+      description: "Chúng tôi giới thiệu công nghệ chống ồn chủ động (ANC), giúp người dùng đắm chìm hoàn toàn vào thế giới âm nhạc – không bị xao nhãng.",
+      icon: "🔊",
       active: false,
     },
     {
-      title: "Financial Consulting",
-      description: "Expert guidance to optimize your financial performance.",
-      icon: "💼",
+      title: "Mở rộng toàn cầu (2019)",
+      description: "Thương hiệu tai nghe của chúng tôi đã có mặt tại hơn 50 quốc gia, nhận được sự tin tưởng từ hàng triệu khách hàng yêu âm nhạc.",
+      icon: "🌍",
       active: false,
     },
     {
-      title: "Financial Consulting",
-      description: "Expert guidance to optimize your financial performance.",
-      icon: "💼",
+      title: "Ứng dụng AI cá nhân hóa âm thanh (2023)",
+      description: "Chúng tôi tích hợp AI để tự động điều chỉnh âm thanh theo gu nghe nhạc của từng người dùng – nâng tầm trải nghiệm cá nhân.",
+      icon: "🧠",
       active: false,
     },
     {
-      title: "Financial Consulting",
-      description: "Expert guidance to optimize your financial performance.",
-      icon: "💼",
+      title: "Tai nghe thể thao chống nước cao cấp (2025)",
+      description: "Ra mắt dòng sản phẩm thể thao chống nước, thiết kế siêu bền – đồng hành cùng bạn trên mọi hành trình vận động.",
+      icon: "🚀",
       active: false,
     },
   ];
@@ -61,9 +61,9 @@ const About = () => {
                   duration: 1,
                 },
               }}
-              className="w-30 h-10 border-2 border-gray-400 rounded-full mt-10"
+              className="w-40 h-10 border-2 border-gray-400 rounded-full mt-10"
             >
-              ABOUT US
+              🏢 VỀ CHÚNG TÔI
             </motion.button>
             <motion.h1
               initial={{ x: -100, opacity: 0 }}
@@ -82,7 +82,7 @@ const About = () => {
               }}
               className="text-5xl mt-5 "
             >
-              About our firm
+              Giới thiệu về công ty
             </motion.h1>
             <motion.p
               initial={{ x: -100, opacity: 0 }}
@@ -101,10 +101,9 @@ const About = () => {
               }}
               className="mt-3 text-gray-500"
             >
-              At our firm, we pride ourselves on delivering tailored solutions
-              that empower businesses to thrive. With years of experience in the
-              industry, we understand the unique needs of our clients and are
-              committed to providing exceptional service that sets us apart.
+              Tại công ty của chúng tôi, chúng tôi tự hào mang đến các giải pháp được cá nhân hóa, giúp doanh nghiệp phát triển mạnh mẽ. Với
+              nhiều năm kinh nghiệm trong ngành, chúng tôi thấu hiểu những nhu cầu riêng biệt của từng khách hàng và luôn cam kết mang lại
+              dịch vụ xuất sắc – yếu tố tạo nên sự khác biệt cho chúng tôi.
             </motion.p>
             <div className="flex space-x-3">
               <motion.button
@@ -124,7 +123,7 @@ const About = () => {
                 }}
                 className="bg-blue-600 text-white w-40 h-12 rounded-full mt-7"
               >
-                Get Started {"->"}
+                🚀 Bắt đầu ngay →
               </motion.button>
               <motion.button
                 initial={{ x: 100, opacity: 0 }}
@@ -165,9 +164,7 @@ const About = () => {
                 }}
               >
                 <h1 className="text-5xl">95%</h1>
-                <span className="w-1 text-gray-400">
-                  Complete Customer satisfaction
-                </span>
+                <span className="w-1 text-gray-400">Mức độ hài lòng tuyệt đối từ khách hàng</span>
               </motion.div>
               <motion.div
                 initial={{ y: 100, opacity: 0 }}
@@ -186,9 +183,7 @@ const About = () => {
                 }}
               >
                 <h1 className="text-5xl">10+</h1>
-                <span className="w-1 text-gray-400">
-                  Innovation and valueable insight
-                </span>
+                <span className="w-1 text-gray-400">Giải pháp đổi mới & tầm nhìn chiến lược</span>
               </motion.div>
               <motion.div
                 initial={{ y: 100, opacity: 0 }}
@@ -207,9 +202,7 @@ const About = () => {
                 }}
               >
                 <h1 className="text-5xl">$10m</h1>
-                <span className="w-1 text-gray-400">
-                  Higly efficient financial strategies
-                </span>
+                <span className="w-1 text-gray-400">Chiến lược tài chính hiệu quả cao</span>
               </motion.div>
             </div>
           </div>
@@ -263,7 +256,7 @@ const About = () => {
               alt=""
             />
           </motion.div>
-          <div className="ml-10">
+          <div className="lg:ml-10">
             <motion.button
               initial={{ x: 100, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
@@ -279,9 +272,9 @@ const About = () => {
                   duration: 1,
                 },
               }}
-              className="w-30 h-10 border-2 border-gray-400 rounded-full mt-10"
+              className="w-40 h-10 border-2 border-gray-400 rounded-full mt-10"
             >
-              ABOUT US
+              🏢 VỀ CHÚNG TÔI
             </motion.button>
             <motion.h1
               initial={{ x: 100, opacity: 0 }}
@@ -300,7 +293,7 @@ const About = () => {
               }}
               className="text-4xl mt-5 "
             >
-              Unlock our expertiseto drive success across industries
+              Khai phóng chuyên môn – Thúc đẩy thành công trên mọi lĩnh vực
             </motion.h1>
             <motion.p
               initial={{ x: 100, opacity: 0 }}
@@ -319,10 +312,9 @@ const About = () => {
               }}
               className="mt-5 text-gray-500"
             >
-              At our firm, we pride ourselves on delivering tailored solutions
-              that empower businesses to thrive. With years of experience in the
-              industry, we understand the unique needs of our clients and are
-              committed to providing exceptional service that sets us apart.
+              Tại công ty của chúng tôi, chúng tôi tự hào cung cấp các giải pháp được thiết kế riêng, giúp doanh nghiệp phát triển bền vững.
+              Với nhiều năm kinh nghiệm trong ngành, chúng tôi thấu hiểu những nhu cầu đặc thù của từng khách hàng và luôn cam kết mang đến
+              dịch vụ xuất sắc – điều làm nên sự khác biệt của chúng tôi.
             </motion.p>
             {/* <div className="flex space-x-3 mt-10 lg:block hidden">
               <div className="flex flex-col">
@@ -398,11 +390,11 @@ const About = () => {
                 duration: 1,
               },
             }}
-            className="w-30 h-10 border-2 border-gray-400 rounded-full mt-10"
+            className="w-40 h-10 border-2 border-gray-400 rounded-full mt-10"
           >
-            MILESTONES
+            🏁 CÁC CỘT MỐC
           </motion.button>
-          <div className="flex justify-between mt-5 items-center">
+          <div className="lg:flex lg:justify-between mt-5 items-center">
             <motion.h1
               initial={{ x: -100, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
@@ -420,7 +412,7 @@ const About = () => {
               }}
               className="text-4xl"
             >
-              Our journey: key milestones and achievements
+              Hành trình của chúng tôi: Những dấu ấn quan trọng và thành tựu nổi bật
             </motion.h1>
             <motion.p
               initial={{ x: 100, opacity: 0 }}
@@ -437,14 +429,14 @@ const About = () => {
                   duration: 1,
                 },
               }}
-              className="text-gray-400 w-1/2"
+              className="text-gray-400 lg:w-1/2 lg:mt-0 mt-3"
             >
-              Discover the signficantn milestones that have shaped our firm.
-              Each achivement reflects our comrnitment to excellent and growth.
+              Khám phá các cột mốc đã định hình nên thương hiệu tai nghe của chúng tôi. Mỗi bước tiến là minh chứng cho cam kết về chất
+              lượng, đổi mới và trải nghiệm âm thanh đỉnh cao.
             </motion.p>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-10 pb-5">
           {services.map((service, index) => (
             <motion.div
               initial={{ y: 100, opacity: 0 }}
@@ -462,11 +454,7 @@ const About = () => {
                 },
               }}
               key={index}
-              className={`rounded-2xl p-6 shadow-md  h-60 ${
-                service.active
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-900"
-              }`}
+              className={`rounded-2xl p-6 shadow-md  h-60 ${service.active ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"}`}
             >
               <div
                 className={`text-3xl w-12 h-12 flex items-center justify-center rounded-full mb-4 ${

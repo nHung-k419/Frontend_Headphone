@@ -66,8 +66,8 @@ const Footer = () => {
             </div>
           </div>
         </div>
-         <h1 className="lg:text-[104px] font-bold pt-15 text-center text-2xl">
-              Clue <br className="lg:hidden" /> Headphones
+         <h1 className="lg:text-[70px] font-bold pt-15 text-center text-2xl">
+               <p className="font-serif">Soun<span className="text-gray-400">dora</span></p>
             </h1>
       </footer>
     </div>

@@ -11,13 +11,13 @@ import { motion } from "framer-motion";
 const Home = () => {
   const [selected, setSelected] = useState("15-Hour Battery Life");
   const features = [
-    "Premium Sound With COustom EQ",
-    "15-Hour Battery Life",
-    "Music & Calls",
-    "Fabrit Sport Cird",
-    "Swith Fit",
-    "Magetic Anap Lock",
-    "Sweatproof",
+    "Tự do tinh chỉnh âm thanh theo phong cách riêng của bạn",
+    "Thời lượng pin lên đến 15 giờ",
+    "Nghe nhạc & gọi điện dễ dàng",
+    "Chất liệu vải thể thao bền bỉ",
+    "Tùy chỉnh vừa vặn với mọi cỡ tai",
+    "Gọn gàng và tiện lợi khi không sử dụng",
+    "Lý tưởng cho luyện tập và di chuyển hằng ngày",
   ];
   return (
     <div>
@@ -43,12 +43,10 @@ const Home = () => {
             }}
             className="lg:w-2/3 w-6/7 space-y-4"
           >
-            <h1 className="text-2xl font-medium">Overview</h1>
+            <h1 className="text-2xl font-medium">Tổng quan</h1>
             <p className="font-light">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit , sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip.
+              Trải nghiệm âm thanh vượt trội với thiết kế hiện đại và công nghệ tiên tiến, mang đến sự thoải mái và chất lượng trong từng
+              khoảnh khắc nghe nhạc.
             </p>
           </motion.div>
           <motion.div
@@ -68,12 +66,9 @@ const Home = () => {
             }}
             className="lg:w-2/3 w-6/7 space-y-4"
           >
-            <h1 className="text-2xl font-medium">Comfortable</h1>
+            <h1 className="text-2xl font-medium">Thoải mái</h1>
             <p className="font-light">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip.
+              Tai nghe được thiết kế nhẹ, đệm tai êm ái và ôm khít, giúp bạn sử dụng suốt cả ngày mà không gây khó chịu hay đau tai.
             </p>
           </motion.div>
           <motion.div
@@ -93,12 +88,9 @@ const Home = () => {
             }}
             className="lg:w-2/3 w-6/7 space-y-4"
           >
-            <h1 className="text-2xl font-medium">Battery</h1>
+            <h1 className="text-2xl font-medium">Thời lượng pin</h1>
             <p className="font-light">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip.
+              Sử dụng lâu dài với pin dung lượng cao, cho phép nghe nhạc hoặc đàm thoại liên tục trong nhiều giờ chỉ với một lần sạc.
             </p>
           </motion.div>
           <motion.div
@@ -118,12 +110,9 @@ const Home = () => {
             }}
             className="lg:w-2/3 w-6/7 space-y-4"
           >
-            <h1 className="text-2xl font-medium">Highlights</h1>
+            <h1 className="text-2xl font-medium">Điểm nổi bật</h1>
             <p className="font-light">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-              minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip.
+              Âm thanh rõ nét, kết nối ổn định, thiết kế sang trọng – mọi yếu tố đều được tối ưu để mang lại trải nghiệm hoàn hảo cho bạn.
             </p>
           </motion.div>
         </div>
@@ -170,7 +159,7 @@ const Home = () => {
             }}
             className="font-medium text-3xl lg:w-full w-60"
           >
-            Immerse Yourself in <br className="hidden lg:block" /> Your Music
+            Đắm chìm trong <br className="hidden lg:block" /> thế giới âm nhạc của riêng bạn
           </motion.h1>
           <motion.div
             initial={{ x: 100, opacity: 0 }}
@@ -191,7 +180,7 @@ const Home = () => {
           >
             <span className="font-medium">$360</span>
             <span className="text-xs lg:block hidden">|</span>
-            <span className="font-medium">Color</span>
+            <span className="font-medium">Màu sắc</span>
             <div className="flex space-x-2 ">
               <button className="h-5 w-5 rounded-full bg-red-400 border-1 border-gray-700 "></button>
               <button className="h-5 w-5 rounded-full bg-blue-800"></button>
@@ -216,10 +205,8 @@ const Home = () => {
             }}
             className="font-light lg:w-100 w-40"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad
-            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip.
+            Trải nghiệm âm thanh sống động với thiết kế hiện đại, mang đến cảm giác thoải mái và chất lượng vượt trội. Sản phẩm được tối ưu
+            cho cả âm nhạc và đàm thoại, giúp bạn tận hưởng từng khoảnh khắc theo cách riêng của mình.
           </motion.p>
           <motion.div
             initial={{ x: 100, opacity: 0 }}
@@ -237,11 +224,9 @@ const Home = () => {
               },
             }}
           >
-            <button className="w-32 h-10 text-red-500 border-1 border-red-500 rounded-3xl relative group overflow-hidden cursor-pointer">
-              <span className="relative z-5 left-0 top-0 group-hover:text-white transition duration-600">
-                Buy Now
-              </span>
-              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-red-500 to-red-400 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
+            <button className="w-32 h-10  border-1 border-gray-600 rounded-3xl relative group overflow-hidden cursor-pointer">
+              <span className="relative z-5 left-0 top-0 group-hover:text-white transition duration-600">Mua ngay</span>
+              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
             </button>
           </motion.div>
         </div>
@@ -264,12 +249,9 @@ const Home = () => {
           }}
           className="w-full h-50 bg-white rounded-3xl shadow-sm space-y-3 p-10 cursor-pointer hover:shadow-xl"
         >
-          <h1 className="font-medium text-xl">Perfect Sound</h1>
-          <p className="mb-10 font-light">Make it loud. Embrace bold</p>
-          <a
-            href="#"
-            className="text-sm font-semibold underline mt-2 inline-block"
-          >
+          <h1 className="font-medium text-xl"> Âm thanh hoàn hảo</h1>
+          <p className="mb-10 font-light">Hãy tăng âm lượng và tận hưởng sự bùng nổ mạnh mẽ.</p>
+          <a href="#" className="text-sm font-semibold underline mt-2 inline-block">
             Read More
           </a>
         </motion.div>
@@ -290,12 +272,9 @@ const Home = () => {
           }}
           className="w-full h-50 bg-white rounded-3xl shadow-xl space-y-3 p-10 cursor-pointer hover:shadow-xl "
         >
-          <h1 className="font-medium text-xl">Noise Cancelling</h1>
-          <p className="mb-10 font-light">Make it loud. Embrace bold</p>
-          <a
-            href="#"
-            className="text-sm font-semibold underline mt-2 inline-block text-red-600"
-          >
+          <h1 className="font-medium text-xl">Chống ồn chủ động</h1>
+          <p className="mb-10 font-light">Loại bỏ tiếng ồn, chỉ giữ lại điều bạn muốn nghe.</p>
+          <a href="#" className="text-sm font-semibold underline mt-2 inline-block text-red-600">
             Read More
           </a>
         </motion.div>
@@ -316,12 +295,9 @@ const Home = () => {
           }}
           className="w-full h-50 bg-white rounded-3xl shadow-sm space-y-3 p-10 cursor-pointer hover:shadow-xl "
         >
-          <h1 className="font-medium text-xl">Discord</h1>
-          <p className="mb-10 font-light">Make it loud. Embrace bold</p>
-          <a
-            href="#"
-            className="text-sm font-semibold underline mt-2 inline-block"
-          >
+          <h1 className="font-medium text-xl">Hỗ trợ Discord</h1>
+          <p className="mb-10 font-light">Truyền tải âm thanh rõ ràng khi giao tiếp và chơi game.</p>
+          <a href="#" className="text-sm font-semibold underline mt-2 inline-block">
             Read More
           </a>
         </motion.div>
@@ -346,14 +322,11 @@ const Home = () => {
             className="space-y-6"
           >
             <h1 className="font-medium text-3xl ml-4">
-              Control Your Sound With <br /> Listening Modes
+              Kiểm soát âm thanh <br /> Với nhiều chế độ nghe linh hoạt
             </h1>
             <div className="flex flex-col gap-4 p-4 space-y-3">
               {features.map((feature) => (
-                <label
-                  key={feature}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
+                <label key={feature} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     name="feature"
@@ -394,9 +367,7 @@ const Home = () => {
       <div className="max-w-7xl mx-auto mt-15 bg-white shadow-md rounded-2xl h-full lg:w-full w-[380px]">
         <div className="flex items-center justify-center">
           <div className="w-full lg:pt-12 pt-5">
-            <h1 className="lg:text-5xl text-4xl font-bold lg:pl-0 pl-2 text-center">
-              Review By
-            </h1>
+            <h1 className="lg:text-5xl text-4xl font-bold lg:pl-0 pl-2 text-center">Đánh giá</h1>
           </div>
           {/* <div className="lg:w-1/3 w-1/2 lg:pl-10 lg:pt-12 pt-7">
             <span className="text-sm">
@@ -425,11 +396,7 @@ const Home = () => {
             class="max-w-sm p-6 lg:ml-0 ml-1 bg-white rounded-3xl shadow-md space-y-4 mt-10"
           >
             <div class="flex items-center space-x-4">
-              <img
-                src="https://i.pravatar.cc/100"
-                alt="Avatar"
-                class="w-12 h-12 rounded-full"
-              />
+              <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
                 <p class="text-sm font-semibold text-black">Alexander Drox</p>
                 <p class="text-xs text-gray-400">Headphone lovers</p>
@@ -437,11 +404,9 @@ const Home = () => {
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              these headphones keep your vibe going strong. With rich, immersive
-              sound and a sleek design that fits your style, they’re built to go
-              wherever life takes you—no strings attached. keep your vibe going
-              strong. With rich, immersive sound and a sleek design that fits
-              your style
+              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
+              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
+              dây nối.”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
@@ -470,11 +435,7 @@ const Home = () => {
             class="max-w-sm p-6 lg:ml-0 ml-1 bg-white rounded-3xl shadow-md space-y-4 mt-10"
           >
             <div class="flex items-center space-x-4">
-              <img
-                src="https://i.pravatar.cc/100"
-                alt="Avatar"
-                class="w-12 h-12 rounded-full"
-              />
+              <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
                 <p class="text-sm font-semibold text-black">Alexander Drox</p>
                 <p class="text-xs text-gray-400">Headphone lovers</p>
@@ -482,11 +443,9 @@ const Home = () => {
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              these headphones keep your vibe going strong. With rich, immersive
-              sound and a sleek design that fits your style, they’re built to go
-              wherever life takes you—no strings attached. keep your vibe going
-              strong. With rich, immersive sound and a sleek design that fits
-              your style
+              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
+              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
+              dây nối.”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
@@ -515,11 +474,7 @@ const Home = () => {
             class="max-w-sm p-6 lg:ml-0 ml-1 bg-white rounded-3xl shadow-md space-y-4 mt-10"
           >
             <div class="flex items-center space-x-4">
-              <img
-                src="https://i.pravatar.cc/100"
-                alt="Avatar"
-                class="w-12 h-12 rounded-full"
-              />
+              <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
                 <p class="text-sm font-semibold text-black">Alexander Drox</p>
                 <p class="text-xs text-gray-400">Headphone lovers</p>
@@ -527,11 +482,9 @@ const Home = () => {
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              these headphones keep your vibe going strong. With rich, immersive
-              sound and a sleek design that fits your style, they’re built to go
-              wherever life takes you—no strings attached. keep your vibe going
-              strong. With rich, immersive sound and a sleek design that fits
-              your style
+              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
+              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
+              dây nối.”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">

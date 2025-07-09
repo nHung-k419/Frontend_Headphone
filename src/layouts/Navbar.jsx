@@ -19,6 +19,7 @@ import { IoSettings } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { TbLogin } from "react-icons/tb";
 import { LogoutAuth } from "../services/Client/Auth";
+import { FaBorderAll } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 const Navbar = () => {
@@ -68,6 +69,7 @@ const Navbar = () => {
   });
   const handleLogout = () => {
     mutationLogout.mutate();
+    setOpenModal({ ...openModal, User: false })
   };
 
   const Notifitcation = [
@@ -144,7 +146,13 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  const navItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Về chúng tôi", path: "/about" },
+    { label: "Sản phẩm", path: "/Product" },
+    { label: "Thương hiệu", path: "/brands" },
+    { label: "FAQS", path: "/faqs" },
+  ];
   return (
     <div className="fixed z-10 top-0 w-full ">
       {/* sidebar */}
@@ -154,28 +162,28 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between ml-3 mr-3">
-          <p className="text-2xl font-bold ">CLUE</p>
+           <p className="text-2xl lg:block hidden font-serif">Soun<span className="text-gray-400">dora</span></p>
           <div onClick={() => setIsOpen(false)} className="h-5 w-5 rounded-full flex items-center justify-center bg-gray-800">
             <IoCloseSharp className="text-md text-white" />
           </div>
         </div>
         <ul className="flex flex-col ml-3 gap-8 font-medium flex-wrap mt-10">
-          {["Home", "About", "Product", "Brand", "FAQS"].map((item, idx) => (
-            <Link to={`${item === "Home" ? "/" : "/" + item}`} key={idx} className="relative overflow-hidden group cursor-pointer">
-              {item}
+          {navItems.map((item, idx) => (
+            <Link onClick={() => setIsOpen(false)} to={item.path} key={idx} className="relative overflow-hidden group cursor-pointer">
+              {item.label}
               <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
             </Link>
           ))}
         </ul>
         {/* sidebar */}
       </div>
-      <div className="flex flex-wrap justify-around w-screen items-center gap-4 h-15 bg-white  ">
-        <p className="text-2xl font-bold lg:block hidden">CLUE</p>
+      <div className="flex justify-around w-screen items-center gap-4 h-15 bg-white  ">
+        <p className="text-2xl lg:block hidden font-serif">Soun<span className="text-gray-400">dora</span></p>
         <div className="lg:block hidden">
-          <ul className=" flex items-center gap-8 font-medium flex-wrap ">
-            {["Home", "About", "Product", "Brand", "FAQS"].map((item, idx) => (
-              <Link to={`${item === "Home" ? "/" : "/" + item}`} key={idx} className="relative overflow-hidden group cursor-pointer">
-                {item}
+          <ul className=" flex items-center gap-8 font-medium  ">
+            {navItems.map((item, idx) => (
+              <Link to={item.path} key={idx} className="relative overflow-hidden group cursor-pointer">
+                {item.label}
                 <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
               </Link>
             ))}
@@ -187,7 +195,7 @@ const Navbar = () => {
             <input
               type="text"
               className="rounded-3xl border-2  h-10 pl-3 border-teal-400 focus:outline-none "
-              placeholder="Searching..."
+              placeholder="Tìm kiếm..."
               // onFocus={() => handleOpenModal("Search")}
               onClick={() => handleOpenModal("Search")}
               onChange={(e) => setValueSearch(e.target.value)}
@@ -220,7 +228,7 @@ const Navbar = () => {
             {/* data?.resultSearch */}
             {valueSearch &&
               data?.resultSearch.map((Product) => (
-                <Link to={`/Products/Detail/${Product._id}`} key={Product._id}>
+                <Link onClick={() => setOpenModal({ ...openModal, Search: false })} to={`/Products/Detail/${Product._id}`} key={Product._id}>
                   {highlightText(Product.Name, valueSearch)}
                 </Link>
               ))}
@@ -232,7 +240,7 @@ const Navbar = () => {
             {/* {console.log(data?.resultSearch?.length === 0 ? "Khong tim thay" : "Tim thay")} */}
             {!valueSearch &&
               dataProduct?.data?.map((Product) => (
-                <div className="flex items-center space-x-5 hover:bg-gray-200 cursor-pointer">
+                <Link onClick={() => setOpenModal({ ...openModal, Search: false })}  to={`/Products/Detail/${Product._id}`} className="flex items-center space-x-5 hover:bg-gray-200 cursor-pointer">
                   <div>
                     {/* <span>
                     <IoSearch />
@@ -247,7 +255,7 @@ const Navbar = () => {
                     </div>
                     <span className="font-semibold mr-5">{Product.Price?.toLocaleString("vi-VN")}$</span>
                   </div>
-                </div>
+                </Link>
               ))}
           </div>
           {/* boxModal */}
@@ -269,16 +277,28 @@ const Navbar = () => {
           >
             {/* <hr className="border-t-2 border-gray-300" /> */}
             <div className="p-2 flex flex-col ">
-              {Name && <div className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
+              {Name && (
+                <div className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
+                  <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span>
+                      <FaUser />
+                    </span>
+                  </div>
+                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                    <span className="text-md">{Name}</span>
+                  </div>
+                </div>
+              )}
+               <Link onClick={() => setOpenModal({ ...openModal, User: false })} to="/OrderItems" className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
                 <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
                   <span>
-                    <FaUser />
+                    <FaBorderAll />
                   </span>
                 </div>
                 <div className=" w-full text-black p-2 rounded-lg font-semibold ">
-                  <span className="text-md">{Name}</span>
+                  <span className="text-md"> Đơn hàng</span>
                 </div>
-              </div>}
+              </Link>
               <div className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
                 <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
                   <span>
@@ -301,26 +321,26 @@ const Navbar = () => {
               </Link> */}
               {id ? (
                 <div onClick={() => handleLogout()} className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
-                <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span>
-                    <IoLogOut />
-                  </span>
+                  <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span>
+                      <IoLogOut />
+                    </span>
+                  </div>
+                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                    <span className="text-md">Đăng Xuất</span>
+                  </div>
                 </div>
-                <div className=" w-full text-black p-2 rounded-lg font-semibold ">
-                  <span className="text-md">Đăng Xuất</span>
-                </div>
-              </div>
               ) : (
-                <Link to={"/Auth/Login"}  className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
-                <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span>
-                    <IoLogOut />
-                  </span>
-                </div>
-                <div className=" w-full text-black p-2 rounded-lg font-semibold ">
-                  <span className="text-md">Đăng Nhập</span>
-                </div>
-              </Link>
+                <Link to={"/Auth/Login"} className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
+                  <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span>
+                      <IoLogOut />
+                    </span>
+                  </div>
+                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                    <span className="text-md">Đăng Nhập</span>
+                  </div>
+                </Link>
               )}
             </div>
           </div>

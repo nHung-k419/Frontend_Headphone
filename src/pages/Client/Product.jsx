@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
@@ -13,6 +13,9 @@ import { GetBrand } from "../../services/Client/Brand";
 import { motion, AnimatePresence } from "framer-motion";
 import { AddCart } from "../../redux/features/CartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import useEmblaCarousel from "embla-carousel-react";
+import { useRef } from "react";
+// import "./embla.css";
 const Product = () => {
   const dispatch = useDispatch();
   const { keyWord } = useLocation().state || {};
@@ -95,6 +98,8 @@ const Product = () => {
     queryFn: () => GetProductFilter({ data: checkActive, page: currentPage, limit: 6, keyWord: KeySearch }),
     keepPreviousData: true,
   });
+  // console.log(dataFilterProduct?.products);
+
   // console.log(keyWord);
 
   // handle page navigation
@@ -118,6 +123,26 @@ const Product = () => {
   // console.log(currentPage);
 
   // end page navigation **//
+
+  const banners = [
+    { id: 1, src: "https://images.pexels.com/photos/1082328/pexels-photo-1082328.jpeg", alt: "Tai nghe 1" },
+    { id: 2, src: "https://images.pexels.com/photos/16303235/pexels-photo-16303235.jpeg", alt: "Tai nghe 2" },
+    { id: 3, src: "https://images.pexels.com/photos/16303235/pexels-photo-16303235.jpeg", alt: "Tai nghe 3" },
+  ];
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const autoplayRef = useRef();
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    autoplayRef.current = setInterval(() => {
+      scrollNext();
+    }, 3000); // 3s
+
+    return () => clearInterval(autoplayRef.current); // dọn sạch interval khi unmount
+  }, [emblaApi, scrollNext]);
   return (
     <div>
       {/* Sidebar */}
@@ -129,12 +154,12 @@ const Product = () => {
         {/* <div className=" w-[300px] h-fit mt-4 rounded-sm lg:block md:block hidden"> */}
         <div className="h-screen overflow-auto">
           <h1 className="font-bold ml-4 mt-5">
-            FILTER
+            Lọc
             <hr className="border-t-3 mt-1 border-gray-700 w-7" />
           </h1>
           <div>
             <div className="flex items-center justify-between p-4">
-              <h1 className="font-bold select-none">Categories</h1>
+              <h1 className="font-bold select-none">Danh mục</h1>
               <span className="cursor-pointer select-none" onClick={() => toggleSection("Categories")}>
                 {checkVisible.Categories ? <IoIosArrowUp /> : <IoIosArrowDown />}
               </span>
@@ -160,7 +185,7 @@ const Product = () => {
           </div>
           <div>
             <div className="flex items-center justify-between p-4">
-              <h1 className="font-bold select-none">Brand</h1>
+              <h1 className="font-bold select-none">Thương hiệu</h1>
               <span className="cursor-pointer select-none" onClick={() => toggleSection("Brand")}>
                 {checkVisible.Brand ? <IoIosArrowUp /> : <IoIosArrowDown />}
               </span>
@@ -185,7 +210,7 @@ const Product = () => {
             </div>
           </div>
           <div className="p-4">
-            <h1 className="font-bold">Price</h1>
+            <h1 className="font-bold">Giá</h1>
             <input type="range" onTouchEnd={(e) => handleGetPrice(e)} min={0} max={100000} />
             <p className="font-semibold">
               Range <span className="text-red-500 font-semibold">$30 - $1000.00</span>
@@ -199,12 +224,12 @@ const Product = () => {
         <div className="sticky top-0 w-[300px] h-fit rounded-sm lg:block md:block hidden">
           <div>
             <h1 className="font-bold ml-4">
-              FILTER
+              Lọc
               <hr className="border-t-3 mt-1 border-gray-700 w-7" />
             </h1>
             <div>
               <div className="flex items-center justify-between p-4">
-                <h1 className="font-bold select-none">Categories</h1>
+                <h1 className="font-bold select-none">Danh mục</h1>
                 <span className="cursor-pointer select-none" onClick={() => toggleSection("Categories")}>
                   {checkVisible.Categories ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </span>
@@ -230,7 +255,7 @@ const Product = () => {
             </div>
             <div>
               <div className="flex items-center justify-between p-4">
-                <h1 className="font-bold select-none">Brand</h1>
+                <h1 className="font-bold select-none">Thương hiệu</h1>
                 <span className="cursor-pointer select-none" onClick={() => toggleSection("Brand")}>
                   {checkVisible.Brand ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 </span>
@@ -255,7 +280,7 @@ const Product = () => {
               </div>
             </div>
             <div className="p-4">
-              <h1 className="font-bold">Price</h1>
+              <h1 className="font-bold">Giá</h1>
               <input type="range" onMouseUp={(e) => handleGetPrice(e)} min={0} max={1000000} />
               <p className="font-semibold">
                 Range <span className="text-red-500 font-semibold">$30 - $1000.00</span>
@@ -264,8 +289,14 @@ const Product = () => {
           </div>
         </div>
         <div>
-          <div>
-            <img className="lg:w-full md:w-full w-full h-90 object-cover" src="https://wallpapercave.com/wp/wp5122307.jpg" alt="" />
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex">
+              {banners.map((banner) => (
+                <div className="min-w-full" key={banner.id}>
+                  <img src={banner.src} alt={banner.alt} className="w-full h-[350px] object-cover" />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="mt-10 flex justify-between items-center">
             <div className="flex items-center ml-7 font-medium text-lg lg:hidden block">
@@ -283,7 +314,7 @@ const Product = () => {
             </select> */}
             <div className="mr-7">
               <h1 className="text-gray-700 text-sm select-none">
-                SHOWING 1-12 OF 30 RELULTS
+                HIỂN THỊ {dataFilterProduct?.products?.length} TRÊN {dataFilterProduct?.total} SẢN PHẨM
                 <hr className="border-t-1 border-gray-500 w-full mt-1 " />
               </h1>
             </div>
@@ -327,7 +358,9 @@ const Product = () => {
                         to={`/Products/Detail/${product._id}`}
                         className=" relative group flex items-center justify-center overflow-hidden border border-gray-200 shadow-md rounded-lg w-30 h-10 font-medium group cursor-pointer transform transition duration-400 ease-in-out bg-white"
                       >
-                        <span className=" z-5 relative text-black group-hover:text-white font-normal transition duration-400">Xem thêm</span>
+                        <span className=" z-5 relative text-black group-hover:text-white font-normal transition duration-400">
+                          Xem thêm
+                        </span>
                         <span className="absolute w-full h-full left-0 top-0 bg-gradient-to-r from-gray-500 to-gray-800 transform -translate-x-full group-hover:translate-x-0 transition duration-400 ease-in-out"></span>
                       </Link>
                     </div>
