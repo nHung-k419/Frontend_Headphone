@@ -7,10 +7,11 @@ const GetAllProducts = async (page) => {
     console.log(error);
   }
 };
-const GetProductFilter = async ({ data, page, limit,keyWord }) => {
+const GetProductFilter = async ({ data, page, limit,keyWord,type }) => {
+  
   try {
     const response = await axios.get(
-      `http://localhost:3000/api/GetProductFilter?keyWord=${keyWord}&idCategory=${data.idCategory}&idBrand=${data.idBrand}&valuePrice=${data.valuePrice}&page=${page}&limit=6`,
+      `http://localhost:3000/api/GetProductFilter?keyWord=${keyWord}&idCategory=${data.idCategory}&idBrand=${data.idBrand}&type=${type}&valuePrice=${data.valuePrice}&page=${page}&limit=6`,
       { withCredentials: true }
     );
     return response.data;
@@ -27,5 +28,13 @@ const SearchProducts = async (keyWord) => {
     console.log(error);
   }
 };
+const productBestSeller = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/productBestSeller`, { withCredentials: true });
+    return response.data
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export { GetAllProducts, GetProductFilter,SearchProducts };
+export { GetAllProducts, GetProductFilter,SearchProducts,productBestSeller };

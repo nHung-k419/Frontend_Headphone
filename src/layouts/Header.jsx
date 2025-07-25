@@ -109,7 +109,7 @@ const Header = () => {
             }}
             className="flex space-x-4 lg:block sm:block hidden"
           >
-            <button className="w-full lg:max-w-32 bg-gradient-to-r from-gray-600 to-[#1f1f1f] cursor-pointer rounded-md h-10 text-white relative pr-4 cursor-pointe ">
+            <button className="w-full lg:max-w-32 bg-teal-500 cursor-pointer rounded-md h-10 text-white relative pr-4 cursor-pointe ">
               Mua ngay
               <span className="absolute right-3 inline-flex pt-1 ">
                 <MdArrowOutward />
@@ -120,7 +120,7 @@ const Header = () => {
               <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
                 <MdOutlineNotes />
               </span>
-              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-black to-gray-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-out z-0"></span>
+              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-out z-0"></span>
             </button>
           </motion.div>
         </div>

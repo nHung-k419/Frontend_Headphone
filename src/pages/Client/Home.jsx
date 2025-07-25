@@ -8,6 +8,8 @@ import { TbBatteryCharging2 } from "react-icons/tb";
 import { FiHeadphones } from "react-icons/fi";
 import { RiColorFilterFill } from "react-icons/ri";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import ProductSeller from "../../components/ProductSeller";
 const Home = () => {
   const [selected, setSelected] = useState("15-Hour Battery Life");
   const features = [
@@ -22,7 +24,6 @@ const Home = () => {
   return (
     <div>
       {/* <hr className="my-8 border-t-2 border-gray-300 max-w-7xl mx-auto w-full" /> */}
-
       {/* Info Section */}
       <section className="bg-gray-50 lg:w-full w-[380px] lg:ml-0 ml-1.5 max-h-full h-fit lg:mt-20 mt-10 ">
         <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 place-items-center max-w-7xl mx-auto space-y-10 lg:pt-15 pt-10 pb-10">
@@ -117,6 +118,7 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+      <ProductSeller />
       <article className="h-120 flex justify-center items-center lg:space-x-40 lg:w-full w-[380px]">
         <motion.div
           initial={{ x: -100, opacity: 0 }}
@@ -226,7 +228,7 @@ const Home = () => {
           >
             <button className="w-32 h-10  border-1 border-gray-600 rounded-3xl relative group overflow-hidden cursor-pointer">
               <span className="relative z-5 left-0 top-0 group-hover:text-white transition duration-600">Mua ngay</span>
-              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
+              <span className="absolute left-0 top-0 w-full h-full bg-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
             </button>
           </motion.div>
         </div>
@@ -303,7 +305,7 @@ const Home = () => {
         </motion.div>
       </div>
       <article className="h-full mt-20 lg:w-full w-[380px]">
-        <div className="flex items-center justify-center lg:space-x-40">
+        <div className="flex justify-center lg:space-x-40">
           <motion.div
             initial={{ x: -100, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}

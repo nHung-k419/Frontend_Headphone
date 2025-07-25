@@ -35,4 +35,14 @@ const UpdateProduct = async ({id,data}) => {
   }
 };
 
-export { PostProduct, GetProducts,DeleteProduct,UpdateProduct };
+const updateStockProduct = async ({id, data}) => {
+  console.log(data);
+  
+  try {
+    const response = await axios.put(`http://localhost:3000/api/updateStockProduct/${id}`, data, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export { PostProduct, GetProducts,DeleteProduct,UpdateProduct,updateStockProduct };

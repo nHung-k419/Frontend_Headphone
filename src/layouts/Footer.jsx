@@ -13,16 +13,24 @@ const Footer = () => {
             {/* Social Icons */}
             <div className="flex space-x-4">
               <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center">
-                <i className="fa-brands fa-dribbble"><FaFacebook/></i>
+                <i className="fa-brands fa-dribbble">
+                  <FaFacebook />
+                </i>
               </div>
               <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center">
-                <i className="fa-brands fa-facebook-f"><FaSquareXTwitter/></i>
+                <i className="fa-brands fa-facebook-f">
+                  <FaSquareXTwitter />
+                </i>
               </div>
               <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center">
-                <i className="fa-brands fa-x-twitter"><FaSquareInstagram/></i>
+                <i className="fa-brands fa-x-twitter">
+                  <FaSquareInstagram />
+                </i>
               </div>
               <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center">
-                <i className="fa-brands fa-instagram"><FaTiktok/></i>
+                <i className="fa-brands fa-instagram">
+                  <FaTiktok />
+                </i>
               </div>
             </div>
           </div>
@@ -31,44 +39,41 @@ const Footer = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 text-sm text-gray-400">
             {/* Column 1 */}
             <div>
-              <h2 className="text-black font-semibold mb-4">About Us</h2>
+              <h2 className="text-black font-semibold mb-4">Về chúng tôi</h2>
               <ul className="space-y-2">
-                <li>Help Center</li>
-                <li>Address store</li>
-                <li>Privacy policy</li>
-                <li>Receivers & ampiers</li>
-                <li>Craftsendore</li>
+               <li>Soundora Company</li>
+                <li>152 - Nguyễn Bính - Tp Đà Nẵng</li>
+                <li>098715243</li>
+                <li>Soundora@gmail.com</li>
               </ul>
             </div>
             {/* Column 2 */}
             <div>
-              <h2 className="text-black font-semibold mb-4">
-                Help & information
-              </h2>
+              <h2 className="text-black font-semibold mb-4">Trợ giúp & Thông tin</h2>
               <ul className="space-y-2">
-                <li>Help Center</li>
-                <li>Address store</li>
-                <li>Privacy policy</li>
-                <li>Receivers & ampiers</li>
-                <li>Craftsendore</li>
+                <li>Trung tâm trợ giúp</li>
+                <li>Địa chỉ cửa hàng</li>
+                <li>Chính sách bảo mật</li>
+                <li>Bộ thu và bộ khuếch đại</li>
               </ul>
             </div>
             {/* Column 3 */}
             <div>
-              <h2 className="text-black font-semibold mb-4">Company</h2>
+              <h2 className="text-black font-semibold mb-4">Công ty</h2>
               <ul className="space-y-2">
-                <li>Help Center</li>
-                <li>Address store</li>
-                <li>Privacy policy</li>
-                <li>Receivers & ampiers</li>
-                <li>Craftsendore</li>
+                <li>Soundora Company</li>
+                <li>152 - Nguyễn Bính - Tp Đà Nẵng</li>
+                <li>098715243</li>
+                <li>Soundora@gmail.com</li>
               </ul>
             </div>
           </div>
         </div>
-         <h1 className="lg:text-[70px] font-bold pt-15 text-center text-2xl">
-               <p className="font-serif">Soun<span className="text-gray-400">dora</span></p>
-            </h1>
+        <h1 className="lg:text-[70px] font-bold pt-15 text-center text-2xl">
+          <p className="font-serif">
+            Soun<span className="text-teal-500">dora</span>
+          </p>
+        </h1>
       </footer>
     </div>
   );

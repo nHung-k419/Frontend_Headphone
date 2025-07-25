@@ -12,6 +12,7 @@ import Login from "../pages/Client/Login.jsx";
 import Register from "../pages/Client/Register.jsx";
 import DefaultLayout from "../layouts/DefaultLayout/index.jsx";
 import Order_Items from "../pages/Client/Order_Items.jsx";
+import Notfound from "../pages/Client/Notfound.jsx";
 // Page Admin
 import Admin from "../pages/Admin/Admin.jsx";
 import layoutAdmin from "../layouts/LayoutAdmin/index.jsx";
@@ -23,11 +24,12 @@ import Reviews from "../pages/Admin/Reviews.jsx";
 import Users from "../pages/Admin/Users.jsx";
 import ProductVariants from "../pages/Admin/ProductVariants.jsx";
 import BrandAdmin from "../pages/Admin/Brand.jsx";
+import Stock from "../pages/Admin/Stock.jsx";
 const PublicRoutes = [
     {path : '/', component: Home},
     {path : '/Products/Detail/:id', component: Detail, layout : NavbarOnly},
-    {path : '/Brand', component: Brand, layout : NavbarOnly},
-    {path : '/FAQS', component: FAQS, layout : NavbarOnly},
+    // {path : '/Brand', component: Brand, layout : NavbarOnly},
+    // {path : '/FAQS', component: FAQS, layout : NavbarOnly},
     {path : '/Product', component: Product, layout : NavbarOnly},
     {path : '/About', component: About, layout : NavbarOnly},
     {path : '/Cart', component: Cart, layout : NavbarOnly},
@@ -45,7 +47,11 @@ const PublicRoutes = [
     {path : '/Admin/ProductVariants', component: ProductVariants,layout : layoutAdmin},
     {path : '/Admin/Users', component: Users,layout : layoutAdmin},
     {path : '/Admin/Brand', component: BrandAdmin,layout : layoutAdmin},
+    {path : '/Admin/Stock', component: Stock,layout : layoutAdmin},
 
+
+    // 404 
+    {path : '*', component: Notfound, layout : null},
 ]
 const PrivateRoutes = []
 export {PublicRoutes,PrivateRoutes}

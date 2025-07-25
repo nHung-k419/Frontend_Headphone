@@ -15,6 +15,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { PiCursorClickFill } from "react-icons/pi";
+import ReactStars from "react-rating-stars-component";
+import ReviewItemSkeleton from "../Skeleton/ReviewsSkeleton";
 const CommentSidebar = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -124,9 +126,9 @@ const CommentSidebar = ({ isOpen, onClose }) => {
     };
   }, []);
 
-  const [openReply, setOpenReply] = useState({ id_Review : "", isOpen: false });
+  const [openReply, setOpenReply] = useState({ id_Review: "", isOpen: false });
   const handleReply = (id_Review) => {
-    setOpenReply(prev => ({ ...prev, id_Review, isOpen: !prev.isOpen }));
+    setOpenReply((prev) => ({ ...prev, id_Review, isOpen: !prev.isOpen }));
   };
 
   useEffect(() => {
@@ -156,7 +158,7 @@ const CommentSidebar = ({ isOpen, onClose }) => {
 
           {/* Rating */}
           <div className="mb-4">
-            <p className="font-semibold text-gray-800 mb-1">Đánh giá tour</p>
+            <p className="font-semibold text-gray-800 mb-1">Đánh giá</p>
             <div className="flex text-yellow-500 text-xl space-x-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <span
@@ -221,17 +223,19 @@ const CommentSidebar = ({ isOpen, onClose }) => {
       </div>
       <div className="mt-4 flex items-center space-x-3">
         <div className="bg-blue-600 text-white px-3 py-1 rounded-md font-bold">5</div>
-        <div className="flex text-yellow-500 space-x-1">
+        {/* <div className="flex text-yellow-500 space-x-1">
           {Array(5)
             .fill(0)
             .map((_, i) => (
               <span key={i}>★</span>
             ))}
-        </div>
+        </div> */}
+        {dataReviews?.Product?.Rating !== undefined && (
+          <ReactStars count={5} size={17} value={Number(dataReviews.Product.Rating)} isHalf={true} edit={false} />
+        )}
         <p className="text-gray-600 text-sm">{dataReviews?.result?.length} đánh giá</p>
       </div>
       <p className="text-sm text-gray-500 mt-2">Chúng tôi hướng tới những đánh giá thực tế 100%</p>
-
       <button
         disabled={!user}
         onClick={(e) => handleOpenModal()}
@@ -245,60 +249,93 @@ const CommentSidebar = ({ isOpen, onClose }) => {
         {dataReviews?.result?.length <= 0 && "Hiện không có đánh giá nào"}
       </div>
       <div className="mt-6 space-y-6">
-        {dataReviews?.result?.map((review, index) => (
-          <div key={index} className="border-b pb-4 w-150">
-            <div className="flex items-center space-x-3">
-              <img src={review?.Id_User?.Avatar} alt="avatar" className="w-10 h-10 rounded-full" />
-              <div>
-                <h4 className="font-semibold">{review?.Id_User?.Name}</h4>
-                <p className="text-sm text-gray-500">Đã đánh giá: {new Date(review?.CreateAt).toLocaleDateString("vi-VN")}</p>
-              </div>
-            </div>
-            <div className="mt-2 text-yellow-500">
+        {isLoadingReview ? (
+          Array(3)
+            .fill()
+            .map((_, index) => <ReviewItemSkeleton />)
+        ) : (
+          <>
+            {dataReviews?.result?.map((review, index) => (
+              <div key={index} className="border-b pb-4 w-150 ">
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={
+                      review?.Id_User?.Avatar ||
+                      "https://tse3.mm.bing.net/th/id/OIP.D-GbAYTGDq2O0bGwwgmw2QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
+                    }
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div>
+                    <h4 className="font-semibold">{review?.Id_User?.Name}</h4>
+                    <p className="text-sm text-gray-500">Đã đánh giá: {new Date(review?.CreateAt).toLocaleDateString("vi-VN")}</p>
+                  </div>
+                </div>
+                {/* <div className="mt-2 text-yellow-500">
               {Array(review?.Rating)
                 .fill(0)
                 .map((_, i) => (
                   <span key={i}>★</span>
                 ))}
-            </div>
-            <p className="mt-2 text-gray-700">{review?.Content}</p>
-            {review?.Images?.length > 0 && (
-              <div className="flex space-x-2 mt-2 cursor-pointer">
-                {review?.Images.map((img, i) => (
-                  <img key={i} src={img?.url} alt="review" className="w-22 h-25 object-cover" />
-                ))}
-              </div>
-            )}
-            <div className="mt-2 text-sm text-black flex space-x-4">
-              <p className="font-semibold text-gray-500">{dayjs(review?.createdAt).fromNow().replace("trước", "").trim()}</p>
-              {/* {dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? <button onClick={() => handleLike(review?._id)} className={`cursor-pointer text-md ${dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? "text-blue-500" : ""}`}>Thích</button> : <button onClick={() => handleLike(review?._id)} className="cursor-pointer text-md">Thích</button>} */}
-              {/* {const isLike = dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)} */}
+            </div> */}
+                <ReactStars count={5} size={17} value={review?.Rating} isHalf={true} edit={false} />
+                <p className="mt-2 text-gray-700">{review?.Content}</p>
+                {review?.Images?.length > 0 && (
+                  <div className="flex space-x-2 mt-2 cursor-pointer">
+                    {review?.Images.map((img, i) => (
+                      <img key={i} src={img?.url} alt="review" className="w-22 h-25 object-cover" />
+                    ))}
+                  </div>
+                )}
+                <div className="mt-2 text-sm text-black flex space-x-4">
+                  <p className="font-semibold text-gray-500">{dayjs(review?.createdAt).fromNow().replace("trước", "").trim()}</p>
+                  {/* {dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? <button onClick={() => handleLike(review?._id)} className={`cursor-pointer text-md ${dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? "text-blue-500" : ""}`}>Thích</button> : <button onClick={() => handleLike(review?._id)} className="cursor-pointer text-md">Thích</button>} */}
+                  {/* {const isLike = dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)} */}
 
-              <button
-                onClick={() => handleLike(review?._id)}
-                className={`cursor-pointer text-md font-semibold  ${
-                  localLikedCommentIds == review?._id || dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)
-                    ? "text-blue-500"
-                    : "text-gray-500"
-                }`}
-              >
-                Thích
-              </button>
-              <button onClick={() => handleReply(review?._id)} className="cursor-pointer text-md">
-                <span>Trả lời</span>
-              </button>
-              {/* <button className="hover:text-blue-600">KHÔNG HỮU ÍCH</button> */}
-            </div>
-            {openReply.id_Review === review?._id && openReply.isOpen && (
-              <div className="w-full ">
-                <input type="text" className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-3 relative" />
-                <span className="absolute mt-6 right-[70px] cursor-pointer">
-                  <PiCursorClickFill />
-                </span>
+                  <button
+                    onClick={() => handleLike(review?._id)}
+                    className={`cursor-pointer text-md font-semibold  ${
+                      localLikedCommentIds == review?._id || dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)
+                        ? "text-blue-500"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    Thích
+                  </button>
+                  <button onClick={() => handleReply(review?._id)} className="cursor-pointer text-md">
+                    <span>Trả lời</span>
+                  </button>
+                  {/* <button className="hover:text-blue-600">KHÔNG HỮU ÍCH</button> */}
+                </div>
+                {openReply.id_Review === review?._id && openReply.isOpen && (
+                  <div className="w-full ">
+                    <input type="text" className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-3 relative" />
+                    <span className="absolute mt-6 right-[70px] cursor-pointer">
+                      <PiCursorClickFill />
+                    </span>
+                  </div>
+                )}
+                {/* <div className="ml-10 mt-5 bg-gray-200 p-2 rounded-md">
+              <div className="flex items-center space-x-3">
+              <img src={review?.Id_User?.Avatar || "https://tse2.mm.bing.net/th/id/OIP.yxqRw9Nq9fMHEnf9kHQ9nAHaHu?rs=1&pid=ImgDetMain&o=7&rm=3"} alt="avatar" className="w-10 h-10 rounded-full" />
+              <div>
+                <h4 className="font-semibold">{review?.Id_User?.Name}</h4>
+                <p className="text-sm text-gray-500">Đã đánh giá: {new Date(review?.CreateAt).toLocaleDateString("vi-VN")}</p>
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+              <div className="flex space-x-3 mt-2">
+                <p className="font-bold">Nguyễn Ngọc Hùng</p>
+                <p className="whitespace-pre-wrap w-[370px]">Bạn có thể cho tôi xin trải nghiệm về sản phẩm bạn đã mua được không ?</p>
+              </div>
+              <div className="flex items-center space-x-3 text-gray-500">
+                <span className="text-sm font-semibold">4 ngày</span>
+                <button className="cursor-pointer text-sm font-semibold">Thích</button>
+              </div>
+            </div> */}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

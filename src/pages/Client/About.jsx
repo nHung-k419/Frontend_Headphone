@@ -121,7 +121,7 @@ const About = () => {
                     duration: 1,
                   },
                 }}
-                className="bg-blue-600 text-white w-40 h-12 rounded-full mt-7"
+                className="bg-teal-500 text-white w-40 h-12 rounded-full mt-7"
               >
                 🚀 Bắt đầu ngay →
               </motion.button>
@@ -140,7 +140,7 @@ const About = () => {
                     duration: 1,
                   },
                 }}
-                className="w-30 h-12 border-2 border-blue-600 text-blue-600 rounded-full mt-7"
+                className="w-30 h-12 border-2 border-teal-500 text-teal-500 rounded-full mt-7"
               >
                 Free trial
               </motion.button>
@@ -454,11 +454,11 @@ const About = () => {
                 },
               }}
               key={index}
-              className={`rounded-2xl p-6 shadow-md  h-60 ${service.active ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-900"}`}
+              className={`rounded-2xl p-6 shadow-md  h-60 ${service.active ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-900"}`}
             >
               <div
                 className={`text-3xl w-12 h-12 flex items-center justify-center rounded-full mb-4 ${
-                  service.active ? "bg-white/20" : "bg-blue-100 text-blue-600"
+                  service.active ? "bg-white/20" : "bg-blue-100 text-teal-500"
                 }`}
               >
                 {service.icon}

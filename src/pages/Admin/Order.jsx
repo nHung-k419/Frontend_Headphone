@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GetAllOrder, UpdateStatusOrder } from "../../services/Admin/Order";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BsFillEyeFill } from "react-icons/bs";
+import { BsBell } from "react-icons/bs";
+import Modal from "../../components/ModalAdmin/Modal";
+
 const Order = () => {
   const queryClient = useQueryClient();
+  const [typeModal, setTypeModal] = useState({
+    type: "",
+    modal: false,
+  });
   const { data } = useQuery({
     queryKey: ["order"],
     queryFn: GetAllOrder,
@@ -17,23 +24,80 @@ const Order = () => {
   });
   const handleUpdateStatus = (id, e) => {
     const data = { status: e.target.value };
-    if (e.target.value === "Xác nhận") mutationUpdateOrder.mutate({ id, data });
+    if (e.target.value === "Xác nhận" || e.target.value === "Đã giao") mutationUpdateOrder.mutate({ id, data });
   };
+
+  const wrapperRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        // console.log("wrapperRef.current", wrapperRef.current);
+
+        setTypeModal({ type: "", modal: false });
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <div>
       <h1 className="text-2xl font-bold text-center mt-5">Order</h1>
-      <div className="flex justify-end mt-5 space-x-5">
+      <div>
+        {typeModal.modal && (
+          <Modal typeModal={typeModal} setTypeModal={setTypeModal}>
+            <div className="max-w-6xl w-180 rounded-xl mx-auto p-10 bg-white">
+              <h2 className="text-2xl font-semibold mb-6">Yêu cầu hủy đơn hàng</h2>
+
+              <div className="space-y-4 overflow-y-scroll h-130">
+                {/* Mỗi yêu cầu là 1 item */}
+                {[1, 2, 3,4,5,6,7].map((item) => (
+                  <div
+                    key={item}
+                    className="bg-white shadow-md rounded-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-gray-100"
+                  >
+                    {/* Thông tin đơn hàng */}
+                    <div>
+                      <p className="font-medium text-gray-800">
+                        Mã đơn: <span className="text-blue-600">#ORD123456</span>
+                      </p>
+                      <p className="text-gray-500 text-sm">Khách hàng: Nguyễn Văn A</p>
+                      <p className="text-gray-500 text-sm">Lý do: Muốn thay đổi sản phẩm</p>
+                      <p className="text-gray-400 text-xs">Gửi lúc: 21/07/2025, 14:30</p>
+                    </div>
+                    {/* Nút xác nhận & từ chối */}
+                    <div className="flex gap-2">
+                      <button className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 transition text-sm">
+                        Xác nhận
+                      </button>
+                      <button className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition text-sm">Từ chối</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Modal>
+        )}
+      </div>
+      <div className="flex justify-end mt-5 mr-5">
         <button
-          // onClick={() => setTypeModal((pre) => ({ ...pre, type: "AddCategory", modal: true }))}
-          className="w-30 h-10 rounded-md bg-blue-500 cursor-pointer relative overflow-hidden group z-10"
+          onClick={() => setTypeModal({ type: "orderCancle", modal: true })}
+          className="w-30 h-10 rounded-md bg-yellow-500 cursor-pointer relative overflow-hidden group z-10"
         >
-          <span className="relative z-10 text-white hover:text-white transition duration-300">Add Category</span>
-          <span className="absolute left-0 top-0 w-full h-full bg-blue-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+          <span className="relative z-10 text-white hover:text-white transition duration-300 flex items-center justify-center ">
+            <span className="mr-1">
+              <BsBell />
+            </span>
+            Thông báo
+          </span>
+          <span className="absolute left-0 top-0 w-full h-full bg-yellow-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
         </button>
-        <button className="w-30 h-10 rounded-md bg-red-500 cursor-pointer relative overflow-hidden group z-10">
+        {/* <button className="w-30 h-10 rounded-md bg-red-500 cursor-pointer relative overflow-hidden group z-10">
           <span className="relative z-10 text-white hover:text-white transition duration-300">Thùng rác</span>
           <span className="absolute left-0 top-0 w-full h-full bg-red-600 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
-        </button>
+        </button> */}
       </div>
       <div class="flex flex-col">
         <div class="-m-1.5 overflow-x-auto">
@@ -81,14 +145,25 @@ const Order = () => {
                           <select
                             onChange={(e) => handleUpdateStatus(item._id, e)}
                             type="button"
-                            class="w-30 h-10 border-1 border-gray-300 rounded-md cursor-pointer text-black "
+                            class="w-30 h-10 border-1 border-gray-300 rounded-md cursor-pointer text-black text-center "
                           >
                             {/* <option className='text-center h-10' value="">Lựa chọn</option> */}
-                            <option className="text-center h-10" value="">
+                            <option hidden className="text-center h-10" value="">
                               Lựa chọn
                             </option>
-                            <option disabled={item.Status === "Xác nhận"} className="text-center h-10" value="Xác nhận">
+                            <option
+                              disabled={item.Status === "Chờ giao hàng" || item.Status === "Đã giao"}
+                              className="text-center h-10"
+                              value="Xác nhận"
+                            >
                               Xác nhận
+                            </option>
+                            <option
+                              disabled={item.Status === "Đã giao" || item.Status !== "Chờ giao hàng"}
+                              className="text-center h-10"
+                              value="Đã giao"
+                            >
+                              Đã giao
                             </option>
                           </select>
                           <button

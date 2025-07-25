@@ -55,9 +55,12 @@ const Navbar = () => {
           keyWord: valueSearch,
         },
       });
+      setValueSearch("");
+      setOpenModal({ ...openModal, Search: false });
     }
-    setValueSearch("");
   };
+  // console.log(valueSearch);
+  
   const mutationLogout = useMutation({
     mutationKey: ["logout"],
     mutationFn: () => LogoutAuth(),
@@ -69,7 +72,7 @@ const Navbar = () => {
   });
   const handleLogout = () => {
     mutationLogout.mutate();
-    setOpenModal({ ...openModal, User: false })
+    setOpenModal({ ...openModal, User: false });
   };
 
   const Notifitcation = [
@@ -148,9 +151,9 @@ const Navbar = () => {
   }, []);
   const navItems = [
     { label: "Trang chủ", path: "/" },
-    { label: "Về chúng tôi", path: "/about" },
-    { label: "Sản phẩm", path: "/Product" },
-    { label: "Thương hiệu", path: "/brands" },
+    { label: "Giới thiệu", path: "/about" },
+    { label: "Cửa hàng", path: "/Product" },
+    { label: "Thương hiệu", path: "/Brand" },
     { label: "FAQS", path: "/faqs" },
   ];
   return (
@@ -162,7 +165,9 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between ml-3 mr-3">
-           <p className="text-2xl lg:block hidden font-serif">Soun<span className="text-gray-400">dora</span></p>
+          <p className="text-2xl font-serif">
+            Soun<span className="text-teal-500">dora</span>
+          </p>
           <div onClick={() => setIsOpen(false)} className="h-5 w-5 rounded-full flex items-center justify-center bg-gray-800">
             <IoCloseSharp className="text-md text-white" />
           </div>
@@ -178,7 +183,9 @@ const Navbar = () => {
         {/* sidebar */}
       </div>
       <div className="flex justify-around w-screen items-center gap-4 h-15 bg-white  ">
-        <p className="text-2xl lg:block hidden font-serif">Soun<span className="text-gray-400">dora</span></p>
+        <p className="text-2xl lg:block hidden font-serif">
+          Soun<span className="text-teal-500">dora</span>
+        </p>
         <div className="lg:block hidden">
           <ul className=" flex items-center gap-8 font-medium  ">
             {navItems.map((item, idx) => (
@@ -228,7 +235,11 @@ const Navbar = () => {
             {/* data?.resultSearch */}
             {valueSearch &&
               data?.resultSearch.map((Product) => (
-                <Link onClick={() => setOpenModal({ ...openModal, Search: false })} to={`/Products/Detail/${Product._id}`} key={Product._id}>
+                <Link
+                  onClick={() => setOpenModal({ ...openModal, Search: false })}
+                  to={`/Products/Detail/${Product._id}`}
+                  key={Product._id}
+                >
                   {highlightText(Product.Name, valueSearch)}
                 </Link>
               ))}
@@ -240,7 +251,11 @@ const Navbar = () => {
             {/* {console.log(data?.resultSearch?.length === 0 ? "Khong tim thay" : "Tim thay")} */}
             {!valueSearch &&
               dataProduct?.data?.map((Product) => (
-                <Link onClick={() => setOpenModal({ ...openModal, Search: false })}  to={`/Products/Detail/${Product._id}`} className="flex items-center space-x-5 hover:bg-gray-200 cursor-pointer">
+                <Link
+                  onClick={() => setOpenModal({ ...openModal, Search: false })}
+                  to={`/Products/Detail/${Product._id}`}
+                  className="flex items-center space-x-5 hover:bg-gray-200 cursor-pointer"
+                >
                   <div>
                     {/* <span>
                     <IoSearch />
@@ -266,7 +281,7 @@ const Navbar = () => {
           ) : (
             <div onClick={() => handleOpenModal("User")} className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
               {" "}
-              <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="" />
+              <img src="https://tse3.mm.bing.net/th/id/OIP.D-GbAYTGDq2O0bGwwgmw2QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
             </div>
           )}
           <div
@@ -284,28 +299,34 @@ const Navbar = () => {
                       <FaUser />
                     </span>
                   </div>
-                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                  <div className=" w-full text-black p-2 rounded-lg ">
                     <span className="text-md">{Name}</span>
                   </div>
                 </div>
               )}
-               <Link onClick={() => setOpenModal({ ...openModal, User: false })} to="/OrderItems" className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
-                <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span>
-                    <FaBorderAll />
-                  </span>
-                </div>
-                <div className=" w-full text-black p-2 rounded-lg font-semibold ">
-                  <span className="text-md"> Đơn hàng</span>
-                </div>
-              </Link>
+              {id && (
+                <Link
+                  onClick={() => setOpenModal({ ...openModal, User: false })}
+                  to="/OrderItems"
+                  className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg"
+                >
+                  <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
+                    <span>
+                      <FaBorderAll />
+                    </span>
+                  </div>
+                  <div className=" w-full text-black p-2 rounded-lg ">
+                    <span className="text-md"> Đơn hàng</span>
+                  </div>
+                </Link>
+              )}
               <div className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
                 <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
                   <span>
                     <IoSettings />
                   </span>
                 </div>
-                <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                <div className=" w-full text-black p-2 rounded-lg ">
                   <span className="text-md"> Cài đặt</span>
                 </div>
               </div>
@@ -315,7 +336,7 @@ const Navbar = () => {
                     <TbLogin />
                   </span>
                 </div>
-                <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                <div className=" w-full text-black p-2 rounded-lg ">
                   <span className="text-md"> Đăng Nhập</span>
                 </div>
               </Link> */}
@@ -326,7 +347,7 @@ const Navbar = () => {
                       <IoLogOut />
                     </span>
                   </div>
-                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                  <div className=" w-full text-black p-2 rounded-lg ">
                     <span className="text-md">Đăng Xuất</span>
                   </div>
                 </div>
@@ -337,7 +358,7 @@ const Navbar = () => {
                       <IoLogOut />
                     </span>
                   </div>
-                  <div className=" w-full text-black p-2 rounded-lg font-semibold ">
+                  <div className=" w-full text-black p-2 rounded-lg ">
                     <span className="text-md">Đăng Nhập</span>
                   </div>
                 </Link>

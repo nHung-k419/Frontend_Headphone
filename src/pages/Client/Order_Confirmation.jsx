@@ -14,10 +14,11 @@ import Loading from "../../components/Loading";
 import WaveLoader from "../../components/AnimateDotLoading";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import ModalAdress from "../../components/ModalOrder.jsx/ModalAdress";
+import ModalOrder from "../../components/ModalOrder/ModalOrder";
 import { GrLocation } from "react-icons/gr";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { AnimatePresence } from "framer-motion";
 const Order_Confirmation = () => {
   const TabRef = useRef([]);
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
@@ -29,13 +30,15 @@ const Order_Confirmation = () => {
   });
   const navigate = useNavigate();
   const user = Cookies?.get("User");
-  const { id: idUser } = user ? JSON?.parse(user) : "";
+  const { id: idUser, Email } = user ? JSON?.parse(user) : "";
   const [value, setValue] = useState({
     Fullname: "",
     Phone: "",
     Address: "",
     PaymentMethod: "",
   });
+  // console.log(Email);
+
   const [isActive, setIsActive] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
@@ -43,11 +46,13 @@ const Order_Confirmation = () => {
   const [lineStyle, setLineStyle] = useState({ left: 0, width: 137 });
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
-
+  const [open, setOpen] = useState(false);
   const handleCheckIsActive = (Name) => {
     setIsActive((prev) => ({ ...prev, Name }));
     setValue((prev) => ({ ...prev, PaymentMethod: Name }));
+    setOpen(false);
   };
+  console.log(isActive);
 
   const handleGetvalue = (e) => {
     const { name, value } = e.target;
@@ -60,7 +65,7 @@ const Order_Confirmation = () => {
     queryKey: ["order", idUser],
     queryFn: () => getProductOrder(idUser),
   });
-  // console.log(isPending);
+  // console.log(data);
 
   const { data: dataProvinces } = useQuery({
     queryKey: ["address"],
@@ -133,7 +138,7 @@ const Order_Confirmation = () => {
   }, [currentTab, isFocus]);
 
   const total = data?.resultOrder?.reduce((sum, item) => {
-    const price = item.Id_Product?.Price || 0;
+    const price = item?.Price || 0;
     return sum + price * item.Quantity;
   }, 0);
 
@@ -158,7 +163,12 @@ const Order_Confirmation = () => {
     mutationFn: PaymentProductOrder,
     onSuccess: (data) => {
       // console.log(data?.Message?.order_url);
-      window.location.href = data?.Message?.order_url;
+      setTimeout(() => {
+        setIsLoading(false);
+        window.location.href = data?.Message?.order_url;
+        console.log(data?.Message?.order_url);
+      }, 3000);
+      // setIsLoading(false);
     },
   });
 
@@ -167,11 +177,12 @@ const Order_Confirmation = () => {
 
     if (value.Fullname && value.Phone && value.Address && value.PaymentMethod && !isLoading) {
       setIsLoading(true);
-      const dataOrder = { ...value, Id_Cart: data?.resultOrder[0]?.Id_Cart, idUser: idUser };
-      setTimeout(() => {
-        setIsLoading(false);
-        mutationOrder.mutate(dataOrder);
-      }, 3000);
+      const dataOrder = { ...value, Id_Cart: data?.resultOrder[0]?.Id_Cart, idUser: idUser, Email };
+      mutationOrder.mutate(dataOrder);
+      // setTimeout(() => {
+      //   setIsLoading(false);
+      //   mutationOrder.mutate(dataOrder);
+      // }, 3000);
     } else {
       toast.warning("Vui lòng nhập đầy đủ thông tin và phương thức thanh toán!");
     }
@@ -199,137 +210,141 @@ const Order_Confirmation = () => {
 
   return (
     <section className="mt-30 max-w-6xl mx-auto ">
-      {typeModal.type === "ModalAddress" && typeModal.modal && (
-        <ModalAdress typeModal={typeModal} setTypeModal={setTypeModal}>
-          <form className="w-[500px] h-fit bg-white rounded-2xl p-6 shadow-lg transform transition-all scale-110 space-y-5">
-            <h1>Thông tin nhận hàng</h1>
-            <div className="flex space-x-2.5 mt-5">
-              <div className="w-1/2">
-                <label className="text-sm">Họ và tên</label>
-                <div className="mt-1">
-                  <input
-                    onChange={(e) => handleGetvalue(e)}
-                    name="Fullname"
-                    required
-                    type="text"
-                    className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-                    placeholder="Tên..."
-                  />
+      <AnimatePresence>
+        {typeModal.type === "ModalAddress" && typeModal.modal && (
+          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
+            <div
+              ref={wrapperRef}
+              className="lg:w-[500px] w-full grid place-items-center h-fit bg-white rounded-2xl p-6 shadow-lg lg:space-y-5 md:space-y-5 space-y-3"
+            >
+              <h1>Thông tin nhận hàng</h1>
+              <div className="flex space-x-2.5 mt-5 w-full">
+                <div className="w-1/2">
+                  <label className="text-sm">Họ và tên</label>
+                  <div className="mt-1">
+                    <input
+                      onChange={(e) => handleGetvalue(e)}
+                      name="Fullname"
+                      required
+                      type="text"
+                      className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
+                      placeholder="Tên..."
+                    />
+                  </div>
+                </div>
+                <div className="w-1/2">
+                  <label className="text-sm">Số điện thoại</label>
+                  <div className="mt-1">
+                    <input
+                      required
+                      onChange={(e) => handleGetvalue(e)}
+                      name="Phone"
+                      type="text"
+                      className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
+                      placeholder="Điện thoại..."
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="w-1/2">
-                <label className="text-sm">Số điện thoại</label>
-                <div className="mt-1">
-                  <input
-                    required
-                    onChange={(e) => handleGetvalue(e)}
-                    name="Phone"
-                    type="text"
-                    className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-                    placeholder="Điện thoại..."
-                  />
-                </div>
-              </div>
-            </div>
-            <div ref={wrapperRef} className="w-full ">
-              <label className="text-sm">Phường - Xã - Thành phố</label>
-              <input
-                type="text"
-                name="Address"
-                placeholder="Phường - Xã - Thành phố"
-                onFocus={() => setIsFocus(true) || setCurrentTab(0)}
-                value={
-                  valueInputAddress?.Provinces || valueInputAddress?.Districts || (valueInputAddress?.Commune && !isFocus)
-                    ? `${valueInputAddress.Provinces} - ${valueInputAddress.Districts} - ${valueInputAddress.Commune}`
-                    : ""
-                }
-                // onChange={(e) => handleGetvalueAddress(e.target.value)}
-                className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-1"
-              ></input>
-              {isFocus && (
-                <div className="mt-1 w-full h-50 border-1 border-gray-300 focus:outline-none rounded-sm relative overflow-hidden">
-                  <div className="flex space-x-5 justify-around h-10 items-center">
-                    {["Tỉnh/Thành phố", "Quận/Huyện", "Phường/Xã"].map((item, index) => (
-                      <div
-                        onClick={() => handleClickTab(index)}
-                        ref={(el) => (TabRef.current[index] = el)}
-                        key={index}
-                        className={`text-sm w-full cursor-pointer flex justify-center ${currentTab === index ? "text-red-500" : ""} `}
-                      >
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="relative">
-                    <hr className="w-full h-0.5 text-gray-300 relative" />
-                    <span
-                      style={{
-                        left: `${lineStyle.left}px`,
-                        width: `${lineStyle.width}px`,
-                      }}
-                      className={`absolute top-0  h-0.5 bg-red-500 transform transition-all duration-500 ease-in-out`}
-                    ></span>
-                  </div>
-                  {currentTab === 0 ? (
-                    <div className="h-full w-full overflow-y-auto flex flex-col select-none">
-                      {dataProvinces?.map((item, index) => (
-                        <span
+              <div className="w-full ">
+                <label className="text-sm">Phường - Xã - Thành phố</label>
+                <input
+                  type="text"
+                  name="Address"
+                  placeholder="Phường - Xã - Thành phố"
+                  onFocus={() => setIsFocus(true) || setCurrentTab(0)}
+                  value={
+                    valueInputAddress?.Provinces || valueInputAddress?.Districts || (valueInputAddress?.Commune && !isFocus)
+                      ? `${valueInputAddress.Provinces} - ${valueInputAddress.Districts} - ${valueInputAddress.Commune}`
+                      : ""
+                  }
+                  // onChange={(e) => handleGetvalueAddress(e.target.value)}
+                  className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-1"
+                ></input>
+                {isFocus && (
+                  <div className="mt-1 w-full h-50 border-1 border-gray-300 focus:outline-none rounded-sm relative overflow-hidden">
+                    <div className="flex space-x-5 justify-around h-10 items-center">
+                      {["Tỉnh/Thành phố", "Quận/Huyện", "Phường/Xã"].map((item, index) => (
+                        <div
+                          onClick={() => handleClickTab(index)}
+                          ref={(el) => (TabRef.current[index] = el)}
                           key={index}
-                          onClick={(e) => handleGetValueAddress({ provinces: "Provinces", code: item.code, value: item.name })}
-                          className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
+                          className={`text-sm w-full cursor-pointer flex justify-center ${currentTab === index ? "text-red-500" : ""} `}
                         >
-                          {item.name}
-                        </span>
+                          {item}
+                        </div>
                       ))}
                     </div>
-                  ) : currentTab === 1 ? (
-                    <div className="h-full w-full overflow-y-auto flex flex-col select-none">
-                      {dataDistricts?.districts?.map((item, index) => (
-                        <span
-                          key={index}
-                          onClick={() => handleGetValueAddress({ provinces: "Districts", code: item.code, value: item.name })}
-                          className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
-                        >
-                          {item.name}
-                        </span>
-                      ))}
+                    <div className="relative">
+                      <hr className="w-full h-0.5 text-gray-300 relative" />
+                      <span
+                        style={{
+                          left: `${lineStyle.left}px`,
+                          width: `${lineStyle.width}px`,
+                        }}
+                        className={`absolute top-0  h-0.5 bg-red-500 transform transition-all duration-500 ease-in-out`}
+                      ></span>
                     </div>
-                  ) : (
-                    currentTab === 2 && (
-                      <div className="h-full w-full overflow-y-auto flex flex-col select-none ">
-                        {dataCommune?.wards?.map((item, index) => (
+                    {currentTab === 0 ? (
+                      <div className="h-full w-full overflow-y-auto flex flex-col select-none">
+                        {dataProvinces?.map((item, index) => (
                           <span
                             key={index}
-                            onClick={(e) => handleGetValueAddress({ provinces: "Communate", code: item.code, value: item.name })}
+                            onClick={(e) => handleGetValueAddress({ provinces: "Provinces", code: item.code, value: item.name })}
                             className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
                           >
                             {item.name}
                           </span>
                         ))}
                       </div>
-                    )
-                  )}
-                </div>
-              )}
+                    ) : currentTab === 1 ? (
+                      <div className="h-full w-full overflow-y-auto flex flex-col select-none">
+                        {dataDistricts?.districts?.map((item, index) => (
+                          <span
+                            key={index}
+                            onClick={() => handleGetValueAddress({ provinces: "Districts", code: item.code, value: item.name })}
+                            className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
+                          >
+                            {item.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      currentTab === 2 && (
+                        <div className="h-full w-full overflow-y-auto flex flex-col select-none ">
+                          {dataCommune?.wards?.map((item, index) => (
+                            <span
+                              key={index}
+                              onClick={(e) => handleGetValueAddress({ provinces: "Communate", code: item.code, value: item.name })}
+                              className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
+                            >
+                              {item.name}
+                            </span>
+                          ))}
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-end space-x-5">
+                <button
+                  onClick={() => handleOffModal()}
+                  className="w-30 h-9 rounded-md cursor-pointer hover:bg-gray-200 text-sm text-gray-600"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={() => setTypeModal({ type: "", modal: false })}
+                  className="w-30 h-9 rounded-md cursor-pointer bg-gray-800 hover:bg-gray-700 text-sm text-white"
+                >
+                  Hoàn thành
+                </button>
+              </div>
             </div>
-            <div className="flex items-center justify-end space-x-5">
-              <button
-                onClick={() => handleOffModal()}
-                className="w-30 h-9 rounded-md cursor-pointer hover:bg-gray-200 text-sm text-gray-600"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={() => setTypeModal({ type: "", modal: false })}
-                className="w-30 h-9 rounded-md cursor-pointer bg-gray-800 hover:bg-gray-700 text-sm text-white"
-              >
-                Hoàn thành
-              </button>
-            </div>
-          </form>
-        </ModalAdress>
-      )}
-
+          </ModalOrder>
+        )}
+      </AnimatePresence>
       <div className="w-full h-fit bg-gray-50 mb-7 pb-5">
         <div className="flex items-center p-5 text-lg space-x-2">
           <span className="text-red-500">
@@ -384,13 +399,13 @@ const Order_Confirmation = () => {
             data?.resultOrder?.map((item) => (
               <div className="flex items-center justify-between mt-10">
                 <div className="flex items-center space-x-3">
-                  <img className="h-15 w-15 object-contain" src={item?.Image ? item?.Image : item?.Id_Product?.ImageUrl?.path} alt="" />
-                  <span className="w-60 truncate">{item?.Id_Product?.Name} </span>
+                  <img className="h-15 w-15 object-contain" src={item?.Image} alt="" />
+                  <span className="w-60 truncate">{item?.Id_ProductVariants?.Id_Products?.Name} </span>
                 </div>
                 <div className="flex items-center lg:space-x-15 space-x-3">
-                  <span className="lg:w-20">{item?.Id_Product?.Price?.toLocaleString("vi-VN")}</span>
+                  <span className="lg:w-20">{item?.Price?.toLocaleString("vi-VN")}</span>
                   <span className="lg:w-20">{item?.Quantity}</span>
-                  <span className="lg:w-20">{(item?.Id_Product?.Price * item?.Quantity).toLocaleString("vi-VN")}</span>
+                  <span className="lg:w-20">{(item?.Price * item?.Quantity).toLocaleString("vi-VN")}</span>
                 </div>
                 {/* <span className="lg:w-20">{(item?.Id_Product?.Price * item?.Quantity).toLocaleString("vi-VN")}</span> */}
               </div>
@@ -403,30 +418,27 @@ const Order_Confirmation = () => {
         </div>
       </div>
       <div className="w-full h-fit bg-gray-50 mt-7">
-        <div className="flex justify-between items-center p-3">
+        <div className="flex justify-between items-center p-3 w-full">
           <h1>Phương thức thanh toán</h1>
-          <div className="flex space-x-5 mt-5">
+          <div className="relative">
             <button
-              onClick={() => handleCheckIsActive("COD")}
-              className={`w-1/2 border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm cursor-pointer flex items-center justify-center ${
-                isActive.Name === "COD" ? "bg-gray-700 text-white" : ""
+              onClick={() => setOpen(!open)}
+              className="w-70 text-left py-2 px-3 bg-white border rounded flex justify-center items-center"
+            >
+              {isActive?.Name ? isActive?.Name : "Lựa chọn phương thức thanh toán"}
+            </button>
+            <ul
+              className={`absolute left-0 w-full mt-2 bg-white border rounded shadow transform transition-all duration-300 ${
+                open ? "opacity-100 h-21" : "opacity-0 h-0"
               }`}
             >
-              <p className="font-medium lg:text-md md:text-md text-sm">Thanh toán khi nhận hàng</p>
-            </button>
-            <button
-              onClick={() => handleCheckIsActive("Zalopay")}
-              className={`w-1/2 border-1 border-gray-300 h-10 focus:outline-none p-2 rounded-sm cursor-pointer flex items-center  ${
-                isActive.Name === "Zalopay" ? "bg-gray-700 text-white" : ""
-              }`}
-            >
-              {/* <img
-                className="w-7 h-7"
-                src="https://images.seeklogo.com/logo-png/39/3/zalopay-logo-png_seeklogo-391409.png"
-                alt=""
-              /> */}
-              <span className="font-medium lg:text-md md:text-md text-sm  pl-2">Thanh toán với ZaloPay</span>
-            </button>
+              <li onClick={() => handleCheckIsActive("COD")} className="py-2 px-3 hover:bg-gray-100 cursor-pointer">
+                Thanh toán khi nhận hàng
+              </li>
+              <li onClick={() => handleCheckIsActive("Zalopay")} className="py-2 px-3 hover:bg-gray-100 cursor-pointer">
+                Thanh toán với Zalopay
+              </li>
+            </ul>
           </div>
         </div>
         <hr className="mt-5 w-full border-0.5 border-gray-300" />

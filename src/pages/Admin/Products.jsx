@@ -109,7 +109,8 @@ const Products = () => {
       },
     ],
   });
-  // console.log(result[0]?.data?.getAllProduct);
+
+  console.log(result[0]?.data?.getAllProduct);
 
   // Handle delete product
   const mutationDelete = useMutation({

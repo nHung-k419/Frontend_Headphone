@@ -5,43 +5,48 @@ const SidebarAdmin = () => {
   const [open, setOpen] = useState(false);
   const listNavbar = [
     {
-      name: "Dashboard",
+      name: "Thống kê",
       link: "/Admin/dashboard",
       icon: <FaHouseMedical />,
     },
     {
-      name: "Categories",
+      name: "Danh mục",
       link: "/Admin/Categories",
       icon: <FaHouseMedical />,
     },
     {
-      name: "Products",
+      name: "Sản phẩm",
       link: "/Admin/Products",
       icon: <FaHouseMedical />,
     },
     {
-      name: "Orders",
+      name: "Đơn hàng",
       link: "/Admin/Orders",
       icon: <FaHouseMedical />,
     },
     {
-      name: "Reviews",
+      name: "Đánh giá",
       link: "/Admin/Reviews",
       icon: <FaHouseMedical />,
     },
     {
-      name: "Users",
+      name: "Tài khoản",
       link: "/Admin/Users",
       icon: <FaHouseMedical />,
     },
     {
-      name: "ProductVariants",
+      name: "Sản phẩm biến thể",
       link: "/Admin/ProductVariants",
       icon: <FaHouseMedical />,
     },
     {
-      name: "BrandAdmin",
+      name: "Thương hiệu",
       link: "/Admin/Brand",
+      icon: <FaHouseMedical />,
+    },
+     {
+      name: "Quản lý kho",
+      link: "/Admin/Stock",
       icon: <FaHouseMedical />,
     },
   ];

@@ -25,6 +25,7 @@ const ProductVariants = () => {
   const [value, setValue] = useState({
     Color: "",
     Size: "",
+    Price: "",
     Image: "",
     Stock: "",
   });
@@ -72,6 +73,7 @@ const ProductVariants = () => {
       const formData = new FormData();
       formData.append("Color", value.Color);
       formData.append("Size", value.Size);
+      formData.append("Price", value.Price);
       formData.append("Image", value.Image);
       formData.append("Stock", value.Stock);
       formData.append("Id_Products", value.Id_Products);
@@ -80,6 +82,7 @@ const ProductVariants = () => {
       const formData = new FormData();
       formData.append("Color", value.Color);
       formData.append("Size", value.Size);
+      formData.append("Price", value.Price);
       formData.append("Image", value.Image);
       formData.append("Stock", value.Stock);
       formData.append("Id_Products", value.Id_Products);
@@ -124,18 +127,21 @@ const ProductVariants = () => {
     setTypeModal((pre) => ({ ...pre, type: "UpdateProductVariant", modal: true }));
 
     const product = result[0]?.data?.getAllProductVariants?.find((item) => item._id === id);
-    console.log(result);
+    // console.log(product);
 
     if (product) {
       setValue({
         Color: product.Color,
         Size: product.Size,
+        Price: product.Price,
         Image: product.Image,
         Stock: product.Stock,
-        Id_Products: product._id,
+        Id_Products: product.Id_Products._id,
       });
     }
   };
+  console.log(value);
+  
   const handleDeleteProduct = async (id) => {
     mutationDelete.mutate(id);
   };
@@ -195,6 +201,24 @@ const ProductVariants = () => {
                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Size
+              </label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+              <input
+                onChange={(e) => handleGetvalue(e)}
+                type="text"
+                name="Price"
+                id="floating_email"
+                class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                required
+                value={value?.Price}
+              />
+              <label
+                for="floating_email"
+                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >
+                Price
               </label>
             </div>
             <div class="relative z-0 w-full mb-5 group">
@@ -286,6 +310,9 @@ const ProductVariants = () => {
                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
                       Stock
                     </th>
+                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                      Price
+                    </th>
                     <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
                       Action
                     </th>
@@ -304,6 +331,7 @@ const ProductVariants = () => {
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Size}</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Stock}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Price}</td>
                       <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium space-x-4">
                         <button
                           onClick={() => handleOpenModal(item._id)}

@@ -36,5 +36,13 @@ const UpdateProductVariant = async ({ id, data }) => {
     console.log(error);
   }
 };
+const GetAllProductVariants = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/GetAllProductVariants", { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export { CreateProductVariants, GetProductVariants, DeleteProductVariants, UpdateProductVariant };
+export { CreateProductVariants, GetProductVariants, DeleteProductVariants, UpdateProductVariant,GetAllProductVariants };
