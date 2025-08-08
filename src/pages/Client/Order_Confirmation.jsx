@@ -9,6 +9,7 @@ import {
   getAddressCommune,
   getInfoAddressOrder,
 } from "../../services/Client/Order";
+import { checkVoucher } from "../../services/Client/Voucher";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 import WaveLoader from "../../components/AnimateDotLoading";
@@ -46,13 +47,15 @@ const Order_Confirmation = () => {
   const [lineStyle, setLineStyle] = useState({ left: 0, width: 137 });
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [codeVoucher, setCodeVoucher] = useState("");
+  const [newVoucherTotal, setNewTotalVoucher] = useState(null);
   const [open, setOpen] = useState(false);
+  const [errorVoucher, setErrorVoucher] = useState(null);
   const handleCheckIsActive = (Name) => {
     setIsActive((prev) => ({ ...prev, Name }));
     setValue((prev) => ({ ...prev, PaymentMethod: Name }));
     setOpen(false);
   };
-  console.log(isActive);
 
   const handleGetvalue = (e) => {
     const { name, value } = e.target;
@@ -71,6 +74,8 @@ const Order_Confirmation = () => {
     queryKey: ["address"],
     queryFn: () => getAddressProvices(),
   });
+  // console.log(dataProvinces);
+
   const { data: dataDistricts } = useQuery({
     queryKey: ["Districts", valueCode.codeDistricts],
     queryFn: () => getAddressDistricts({ code: valueCode?.codeDistricts }),
@@ -142,11 +147,27 @@ const Order_Confirmation = () => {
     return sum + price * item.Quantity;
   }, 0);
 
+  const mutationCheckVoucher = useMutation({
+    mutationKey: ["checkVoucher"],
+    mutationFn: (data) => checkVoucher(data),
+    onSuccess: (data) => {
+      setNewTotalVoucher(data);
+      toast.success("Áp dụng voucher thành công!");
+      setTypeModal({ ...typeModal, modal: false });
+    },
+    onError: (error) => {
+      setErrorVoucher(error?.response?.data?.message);
+    },
+  });
+  const handleApplyVoucher = () => {
+    mutationCheckVoucher.mutate({ code: codeVoucher, orderTotal: total, idUser: idUser });
+  };
+
   const mutationOrder = useMutation({
     mutationKey: ["order"],
     mutationFn: createProductOrder,
     onSuccess: (data) => {
-      console.log(data?.resultCreate);
+      // console.log(data?.resultCreate);
       if (data?.resultCreate?.PaymentMethod === "COD") {
         // console.log(data?.resultCreate?.PaymentMethod);
 
@@ -177,7 +198,14 @@ const Order_Confirmation = () => {
 
     if (value.Fullname && value.Phone && value.Address && value.PaymentMethod && !isLoading) {
       setIsLoading(true);
-      const dataOrder = { ...value, Id_Cart: data?.resultOrder[0]?.Id_Cart, idUser: idUser, Email };
+      const dataOrder = {
+        ...value,
+        Id_Cart: data?.resultOrder[0]?.Id_Cart,
+        voucherCode: newVoucherTotal?.code,
+        TotalAmount: newVoucherTotal ? newVoucherTotal?.discountedTotal : total,
+        idUser: idUser,
+        Email,
+      };
       mutationOrder.mutate(dataOrder);
       // setTimeout(() => {
       //   setIsLoading(false);
@@ -207,9 +235,21 @@ const Order_Confirmation = () => {
     setTypeModal({ type: "", modal: false });
   };
   // console.log(value);
+  useEffect(() => {
+    setErrorVoucher("");
+    if (typeModal.modal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
 
+    return () => {
+      document.body.style.overflow = "auto"; // reset khi unmount
+    };
+  }, [typeModal.modal]);
   return (
     <section className="mt-30 max-w-6xl mx-auto ">
+      {/* modal adddress  */}
       <AnimatePresence>
         {typeModal.type === "ModalAddress" && typeModal.modal && (
           <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
@@ -345,6 +385,7 @@ const Order_Confirmation = () => {
           </ModalOrder>
         )}
       </AnimatePresence>
+      {/* end modal address  */}
       <div className="w-full h-fit bg-gray-50 mb-7 pb-5">
         <div className="flex items-center p-5 text-lg space-x-2">
           <span className="text-red-500">
@@ -400,7 +441,7 @@ const Order_Confirmation = () => {
               <div className="flex items-center justify-between mt-10">
                 <div className="flex items-center space-x-3">
                   <img className="h-15 w-15 object-contain" src={item?.Image} alt="" />
-                  <span className="w-60 truncate">{item?.Id_ProductVariants?.Id_Products?.Name} </span>
+                  <span className="md:w-60 w-20 truncate">{item?.Id_ProductVariants?.Id_Products?.Name} </span>
                 </div>
                 <div className="flex items-center lg:space-x-15 space-x-3">
                   <span className="lg:w-20">{item?.Price?.toLocaleString("vi-VN")}</span>
@@ -419,7 +460,7 @@ const Order_Confirmation = () => {
       </div>
       <div className="w-full h-fit bg-gray-50 mt-7">
         <div className="flex justify-between items-center p-3 w-full">
-          <h1>Phương thức thanh toán</h1>
+          <h1 className="md:block hidden">Phương thức thanh toán</h1>
           <div className="relative">
             <button
               onClick={() => setOpen(!open)}
@@ -428,8 +469,8 @@ const Order_Confirmation = () => {
               {isActive?.Name ? isActive?.Name : "Lựa chọn phương thức thanh toán"}
             </button>
             <ul
-              className={`absolute left-0 w-full mt-2 bg-white border rounded shadow transform transition-all duration-300 ${
-                open ? "opacity-100 h-21" : "opacity-0 h-0"
+              className={`absolute left-0 w-full mt-2 bg-white border rounded shadow transform transition-all duration-200 ${
+                open ? "opacity-100 h-21 visible" : "opacity-0 h-0 invisible"
               }`}
             >
               <li onClick={() => handleCheckIsActive("COD")} className="py-2 px-3 hover:bg-gray-100 cursor-pointer">
@@ -442,20 +483,127 @@ const Order_Confirmation = () => {
           </div>
         </div>
         <hr className="mt-5 w-full border-0.5 border-gray-300" />
-        <div className="flex justify-end p-3">
+        <AnimatePresence>
+          {typeModal.type === "Voucher" && typeModal.modal && (
+            <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
+              <div className="bg-white rounded-lg w-full max-w-lg shadow-lg">
+                {/* Header */}
+                <div className="border-b-2 border-gray-200 px-6 py-4 text-xl font-semibold ">Chọn Soundora Voucher</div>
+
+                {/* Tabs */}
+                <div>
+                  <div className="flex items-center px-6 space-x-2 pt-3 bg-gray-100 pb-3">
+                    <label className="text-gray-400">Mã voucher</label>
+                    <input
+                      onChange={(e) => setCodeVoucher(e.target.value)}
+                      type="text"
+                      placeholder="Nhập mã voucher"
+                      className="flex-1 border px-3 py-2.5 rounded text-sm"
+                    />
+                    <button
+                      onClick={() => handleApplyVoucher()}
+                      className="bg-teal-500 text-white px-4 py-2.5 rounded text-sm cursor-pointer hover:bg-teal-600"
+                    >
+                      ÁP DỤNG
+                    </button>
+                  </div>
+                  {errorVoucher && <p className="text-red-500 text-sm mt-2 pl-6">{errorVoucher}</p>}
+                </div>
+
+                {/* Voucher Section */}
+                <div className="p-4 max-h-[400px] overflow-y-auto">
+                  <p className="font-medium mb-2">Mã Miễn Phí Vận Chuyển</p>
+
+                  {[...Array(2)].map((_, index) => (
+                    <div key={index} className="flex border-1 border-gray-200 rounded overflow-hidden mb-4 shadow-sm">
+                      {/* Left - Icon */}
+                      <div className="bg-teal-400 text-white text-center p-4 w-28 flex flex-col justify-center items-center text-sm font-bold">
+                        <span>FREE</span>
+                        <span>SHIP</span>
+                        <span className="text-xs font-normal">TOÀN NGÀNH HÀNG</span>
+                      </div>
+
+                      {/* Right - Info */}
+                      <div className="flex-1 px-4 py-2 relative">
+                        <p className="text-sm font-medium text-gray-700 mb-1">Giảm tối đa ₫{index === 0 ? "20k" : "30k"}</p>
+                        <p className="text-sm text-gray-500">Đơn tối thiểu ₫{index === 0 ? "30k" : "45k"}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          HSD: 15.08.2025 <span className="text-blue-500 underline cursor-pointer">Điều Kiện</span>
+                        </p>
+
+                        {/* Radio + Badge */}
+                        <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
+                          <span className="text-red-500 text-xs">x10</span>
+                          <input type="radio" name="voucher" disabled={true} className="cursor-no-drop" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Warning */}
+                  <div className="bg-yellow-100 text-sm text-orange-600 p-2 rounded">
+                    ⚠️ Vui lòng mua hàng trên ứng dụng Soundora để sử dụng ưu đãi.
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex justify-end px-6 py-3 border-t-1 border-gray-300 space-x-2">
+                  <button
+                    onClick={() => setTypeModal({ type: "Voucher", modal: false })}
+                    className="px-10 cursor-pointer py-2 rounded border text-gray-600 hover:bg-gray-100"
+                  >
+                    TRỞ LẠI
+                  </button>
+                  <button
+                    onClick={() => setTypeModal({ type: "Voucher", modal: false })}
+                    className="px-15 cursor-pointer hover:bg-red-600 py-2 rounded bg-red-500 text-white"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            </ModalOrder>
+          )}
+        </AnimatePresence>
+        <div className="flex justify-between p-3">
+          <div className="md:block hidden">
+            <h3>Soundora Voucher</h3>
+          </div>
           <div className="flex flex-col space-y-5">
+            <div>
+              <button
+                onClick={() => setTypeModal({ type: "Voucher", modal: true })}
+                className="text-teal-500 hover:text-teal-600 cursor-pointer"
+              >
+                Chọn voucher
+              </button>
+            </div>
+            {/* <div className="relative">
+              <input
+                type="text"
+                className="w-70 border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm pl-20"
+                placeholder="Nhập mã voucher"
+              />
+              <label className="text-md font-bold absolute left-3 top-2">Voucher</label>
+            </div> */}
             <div className="flex justify-between space-x-30">
               <h4 className="text-gray-600">Tổng tiền hàng :</h4>
-              <span>{total?.toLocaleString("vi-VN")}</span>
+              <span>{total?.toLocaleString("vi-VN")}đ</span>
             </div>
             <div className="flex justify-between space-x-30">
               <h4 className="text-gray-600">Tổng tiền phí vận chuyển :</h4>
-              <span>50.000</span>
+              <span>50.000đ</span>
             </div>
             <div className="flex justify-between space-x-30">
               <h4 className="text-gray-600">Tổng thanh toán :</h4>
-              <span className="text-2xl text-red-500">{total?.toLocaleString("vi-VN")}</span>
+              <span className="text-2xl text-red-500">
+                {newVoucherTotal ? newVoucherTotal?.discountedTotal?.toLocaleString("vi-VN") : total?.toLocaleString("vi-VN")}đ
+              </span>
             </div>
+            {newVoucherTotal && <div className="flex items-center justify-between">
+              <span className="text-md text-red-500">Tiết kiệm được :</span>
+              <span>{newVoucherTotal?.discount?.toLocaleString("vi-VN")}đ</span>
+            </div>}
           </div>
         </div>
         <div className="flex justify-end p-3">

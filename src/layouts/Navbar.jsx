@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { IoLogOut, IoSearch } from "react-icons/io5";
 import { LuUserRound } from "react-icons/lu";
 import { AiOutlineBell } from "react-icons/ai";
@@ -22,7 +22,14 @@ import { LogoutAuth } from "../services/Client/Auth";
 import { FaBorderAll } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import ReactStars from "react-rating-stars-component";
+import { getNotificationById, markAsRead } from "../services/Client/Notification";
+import { getProfileUser } from "../services/Client/Auth";
+import AvatarContext from "../context/AvatarContext";
 const Navbar = () => {
+  const { avatarUrl } = useContext(AvatarContext);
+  // console.log(avatarUrl);
+
   const user = Cookies?.get("User");
   const { Name, id } = user ? JSON?.parse(user) : "";
   const navigate = useNavigate();
@@ -38,16 +45,51 @@ const Navbar = () => {
     User: false,
   });
   const [valueSearch, setValueSearch] = useState("");
+  const [isRead,setIsRead] = useState(null)
   const { data, isLoading, isPending } = useQuery({
     queryKey: ["search", valueSearch],
     queryFn: () => SearchProducts(valueSearch),
   });
-  // console.log(data?.resultSearch);
+  const { data: dataUser } = useQuery({
+    queryKey: ["profile", id],
+    queryFn: () => getProfileUser(id),
+  });
+  // console.log(dataUser?.isCheckUser);
+  console.log("123123");
+
   const { data: dataProduct } = useQuery({
     queryKey: ["product"],
     queryFn: () => GetAllProducts(),
   });
-  // console.log(dataProduct.data);
+  const { data: dataNotification } = useQuery({
+    queryKey: ["notification", id],
+    queryFn: () => getNotificationById(id),
+  });
+  const mutationmarkAsRead = useMutation({
+    mutationKey: ["markAsRead"],
+    mutationFn: () => markAsRead(id),
+    onSuccess: (data) => {
+      setIsRead(data);
+    },
+  });
+  useEffect(() => {
+    if (openModal.Notification) {
+      mutationmarkAsRead.mutate(id);
+    }
+  }, [openModal.Notification]);
+  // console.log(openModal.Notification);
+  const [isShaking, setIsShaking] = useState(false);
+
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIsShaking(true);
+  //     setTimeout(() => setIsShaking(false), 500);
+  //   }, 1000);
+
+  //   return () => clearInterval(interval); // cleanup
+  // }, []);
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       navigate("/Product", {
@@ -59,8 +101,11 @@ const Navbar = () => {
       setOpenModal({ ...openModal, Search: false });
     }
   };
+  const handleCheckIsRead = () => {
+    setOpenModal({ ...openModal, Notification: false });
+  };
   // console.log(valueSearch);
-  
+
   const mutationLogout = useMutation({
     mutationKey: ["logout"],
     mutationFn: () => LogoutAuth(),
@@ -75,38 +120,6 @@ const Navbar = () => {
     setOpenModal({ ...openModal, User: false });
   };
 
-  const Notifitcation = [
-    {
-      id: 1,
-      Name: "Alex",
-      Image: "https://i.pravatar.cc/100",
-      text: "Đã xác nhận thông báo cho bạn",
-    },
-    {
-      id: 2,
-      Name: "Peter",
-      Image: "https://i.pravatar.cc/100",
-      text: "Bạn đã thêm headphone vào giỏ hàng",
-    },
-    {
-      id: 3,
-      Name: "Cursor",
-      Image: "https://i.pravatar.cc/100",
-      text: "Đã xác nhận thông báo cho baise",
-    },
-    {
-      id: 4,
-      Name: "Dany",
-      Image: "https://i.pravatar.cc/100",
-      text: "Bạn đã thêm headphone vào giỏ hàng",
-    },
-    {
-      id: 5,
-      Name: "Rock",
-      Image: "https://i.pravatar.cc/100",
-      text: "Admin đã xác nhận đơn hàng của bạn!",
-    },
-  ];
   useEffect(() => {
     if (isSidebarOpen) {
       document.body.classList.add("overflow-hidden");
@@ -120,10 +133,8 @@ const Navbar = () => {
     setOpenModal((prev) => ({
       ...prev,
       [KeyModal]: !prev[KeyModal],
-      // isOpen : KeyModal === openModal[KeyModal] ? false : true,
     }));
   };
-  // console.log(openModal);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -201,7 +212,7 @@ const Navbar = () => {
           <div className="relative">
             <input
               type="text"
-              className="rounded-3xl border-2  h-10 pl-3 border-teal-400 focus:outline-none "
+              className="rounded-3xl border-2 lg:w-50 md:w-50 w-45 h-10 pl-3 border-teal-400 focus:outline-none "
               placeholder="Tìm kiếm..."
               // onFocus={() => handleOpenModal("Search")}
               onClick={() => handleOpenModal("Search")}
@@ -223,7 +234,7 @@ const Navbar = () => {
           >
             <div className="flex justify-between items-center ml-5 mr-2">
               {/* {valueSearch && <div className=" mt-2 font-semibold text-md ">Kết quả tìm kiếm :</div>} */}
-              {!valueSearch && <h1 className=" mt-2  text-md font-semibold ">Top tìm kiếm</h1>}
+              {!valueSearch && <h1 className=" mt-2 ml-3 text-md font-semibold ">Sản phẩm được tìm kiếm nhiều nhất</h1>}
               {!valueSearch && (
                 <div className="h-5 w-5 mt-2 lg:mr-0 mr-2 flex justify-center items-center rounded-full bg-white cursor-pointer">
                   <span onClick={() => setOpenModal({ ...openModal, Search: false })}>
@@ -265,23 +276,24 @@ const Navbar = () => {
                   <div className="flex justify-between items-center w-full">
                     <div>
                       <h2 className="font-normal lg:text-md md:text-md text-sm ">{Product.Name}</h2>
-                      <span className="text-yellow-400 text-sm">★★★★★</span>
+                      {/* <span className="text-yellow-400 text-sm">★★★★★</span> */}
+                      <ReactStars count={5} size={14} value={Product.Rating} isHalf={true} edit={false} />
                       {/* <del>$200</del> */}
                     </div>
-                    <span className="font-semibold mr-5">{Product.Price?.toLocaleString("vi-VN")}$</span>
+                    <span className="font-semibold mr-5">{Product.minPrice?.toLocaleString("vi-VN")}đ</span>
                   </div>
                 </Link>
               ))}
           </div>
           {/* boxModal */}
           {!user ? (
-            <li onClick={() => handleOpenModal("User")} className="text-xl cursor-pointer relative">
-              <LuUserRound />
-            </li>
+            <Link className="flex justify-center text-white rounded-md items-center h-10 w-27 bg-teal-500" to={"/Auth/Login"}>
+              Đăng nhập
+            </Link>
           ) : (
             <div onClick={() => handleOpenModal("User")} className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
               {" "}
-              <img src="https://tse3.mm.bing.net/th/id/OIP.D-GbAYTGDq2O0bGwwgmw2QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
+              <img className="w-8 h-8 rounded-full object-cover" src={avatarUrl || dataUser?.isCheckUser?.Image?.path} alt="" />
             </div>
           )}
           <div
@@ -293,7 +305,11 @@ const Navbar = () => {
             {/* <hr className="border-t-2 border-gray-300" /> */}
             <div className="p-2 flex flex-col ">
               {Name && (
-                <div className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg">
+                <Link
+                  onClick={() => setOpenModal({ ...openModal, User: false })}
+                  to={`/Auth/Profile`}
+                  className="flex items-center hover:bg-gray-200 p-2 cursor-pointer rounded-lg"
+                >
                   <div className="h-10 w-11 bg-gray-300 rounded-full flex items-center justify-center">
                     <span>
                       <FaUser />
@@ -302,7 +318,7 @@ const Navbar = () => {
                   <div className=" w-full text-black p-2 rounded-lg ">
                     <span className="text-md">{Name}</span>
                   </div>
-                </div>
+                </Link>
               )}
               {id && (
                 <Link
@@ -365,9 +381,16 @@ const Navbar = () => {
               )}
             </div>
           </div>
-          <li className="relative text-xl cursor-pointer" onClick={() => handleOpenModal("Notification")}>
-            <AiOutlineBell />
-          </li>
+          {user && (
+            <li className="relative text-xl cursor-pointer" onClick={() => handleOpenModal("Notification")}>
+              <AiOutlineBell className={` text-gray-700 bell-shake`} />
+              {dataNotification?.result?.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {dataNotification?.result?.length}
+                </span>
+              )}
+            </li>
+          )}
           <div
             ref={notificationRef}
             className={`absolute top-full  lg:w-110 w-90 h-86 overflow-auto hide-scrollbar lg:ml-0 ml-4 rounded-md bg-gray-50 shadow-lg z-20 transition-all duration-200 ease-in-out ${
@@ -376,33 +399,42 @@ const Navbar = () => {
           >
             <div className="absolute -top-2 right-15 w-4 h-4 bg-gray-50 rotate-45 z-70"></div>
             <div className="flex justify-between items-center p-3">
-              <h1 className="font-semibold text-lg">Notification</h1>
+              <h1 className="font-semibold text-lg">Thông báo</h1>
               <div className="h-5 w-5 flex justify-center items-center rounded-full bg-white cursor-pointer">
-                <span onClick={() => setOpenModal({ ...openModal, Notification: false })}>
+                <span onClick={() => handleCheckIsRead()}>
                   <IoCloseSharp />
                 </span>
               </div>
             </div>
             <hr className="border-t-2 border-gray-300" />
-            {Notifitcation.map((item) => (
+            {dataNotification?.result.map((item) => (
               <div
-                onClick={() => setCheckColor(item.id)}
-                className={`flex items-center space-x-3 p-3 hover:bg-gray-100 cursor-pointer ${
+                onClick={() => setCheckColor(item._id)}
+                className={`p-3 hover:bg-gray-100 cursor-pointer flex items-center space-x-2 ${
                   checkColor === item.id ? "bg-gray-100" : ""
                 }`}
               >
-                <img className="w-12 h-12 rounded-full" src="https://i.pravatar.cc/100" alt="" />
-                <span className="font-semibold w-20">{item.Name}</span>
-                <p className="font-light text-sm w-full">{item.text}</p>
+                <img
+                  className="w-12 h-12 rounded-full"
+                  src="https://i.pinimg.com/736x/21/1f/7b/211f7b50032a6b8ce2cdad7d5004e9b4.jpg"
+                  alt=""
+                />
+                <div>
+                  <span className="font-semibold w-20">{item.title}</span>
+                  <p className="font-light text-sm w-full">{item.message}</p>
+                </div>
               </div>
             ))}
           </div>
-          <li onClick={() => setIsSidebarOpen(true)} className="text-xl cursor-pointer">
+          <Link to="/Cart" className="text-xl cursor-pointer">
             <IoCartOutline />
-          </li>
+          </Link>
+          {/* <li onClick={() => setIsSidebarOpen(true)} className="text-xl cursor-pointer">
+            <IoCartOutline />
+          </li> */}
         </div>
       </div>
-      <SidebarReview keyOpen="cart" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      {/* <SidebarReview keyOpen="cart" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} /> */}
       {/* overlay */}
       {isOpen && <div className="fixed inset-0 bg-black/60 bg-opacity-50 z-40" onClick={() => setIsOpen(false)}></div>}
       {/* overlay */}

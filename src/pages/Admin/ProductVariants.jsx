@@ -66,7 +66,7 @@ const ProductVariants = () => {
       toast.error("Error Delete Product Variants!");
       setTypeModal({ ...typeModal, modal: false });
     },
-  })
+  });
   // handle create & update data to server
   const handleSendData = () => {
     if (typeModal.type === "AddProductVariant") {
@@ -106,6 +106,16 @@ const ProductVariants = () => {
     ],
   });
 
+  // useEffect(() => {
+  //   setValue({
+  //     Color: "",
+  //     Size: "",
+  //     Price: "",
+  //     Image: "",
+  //     Stock: "",
+  //   });
+  // }, [typeModal.type === "AddProductVariant"]);
+
   //   Hnadle get value modal
   const handleGetvalue = (e) => {
     const { name, value, files, type } = e.target;
@@ -141,7 +151,7 @@ const ProductVariants = () => {
     }
   };
   console.log(value);
-  
+
   const handleDeleteProduct = async (id) => {
     mutationDelete.mutate(id);
   };
@@ -310,8 +320,11 @@ const ProductVariants = () => {
                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
                       Stock
                     </th>
-                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
                       Price
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                      Name
                     </th>
                     <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
                       Action
@@ -332,6 +345,8 @@ const ProductVariants = () => {
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Size}</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Stock}</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Price}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{item.Id_Products.Name}</td>
+
                       <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium space-x-4">
                         <button
                           onClick={() => handleOpenModal(item._id)}

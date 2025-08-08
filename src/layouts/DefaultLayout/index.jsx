@@ -8,7 +8,7 @@ function DefaultLayout({ children }) {
   return (
     <div>
       <Navbar />
-      <Header/>
+      {/* <Header/> */}
       <div className="content">{children}</div>
       <Footer/>
     </div>

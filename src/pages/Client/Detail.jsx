@@ -84,13 +84,15 @@ const Detail = () => {
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
   };
-  // console.log(dataProduct);
+  console.log(dataProduct);
 
   // handle call detail variants by id product
   const mutationDetailVariants = useMutation({
     mutationFn: GetProductVariants,
   });
-
+const handleAddFavorite = () => {
+    
+  };
   // handle send id to mutationDetail
   useEffect(() => {
     mutationDetail.mutate(id);
@@ -181,7 +183,7 @@ const Detail = () => {
                 <div className="flex items-center text-sm border border-gray-300 rounded-full px-4 py-2 space-x-2 lg:w-fit w-full ">
                   <span>⚠️</span>
                   <span className="select-none line-clamp-1">
-                    Order in <span class="font-bold text-red-600">02:30:25</span> to get next day delivery
+                    Đặt hàng ngay <span class="font-bold text-red-600">hôm ngay</span> để được nhận hàng sớm!!!!
                   </span>
                   {/* {listVariants?.map((item) => (
                 <p>
@@ -197,14 +199,14 @@ const Detail = () => {
                   <div>
                     <h1 className="text-gray-500 pb-2">Kích thước</h1>
                     <div className="flex space-x-1 items-center">
-                      {mutationDetailVariants?.data?.resultVariantByid?.map((item) => (
+                      {["S","M","L","XL","XXL"]?.map((item) => (
                         <button
-                          onClick={() => handleChangeSize(item.Size)}
+                          onClick={() => handleChangeSize(item)}
                           className={`lg:h-8 lg:w-20 w-full h-7 cursor-pointer rounded-md border-1 border-gray-300 ${
-                            activeVariant.Size === item.Size ? "bg-gray-700 text-white" : ""
+                            activeVariant.Size === item ? "bg-gray-700 text-white" : ""
                           }  `}
                         >
-                          {item.Size}
+                          {item}
                         </button>
                       ))}
                     </div>
@@ -248,7 +250,7 @@ const Detail = () => {
                 </div>
                 <div className="flex items-center justify-center border-1 border-gray-200 rounded-full lg:w-12 lg:h-12 h-10 w-10 text-2xl cursor-pointer">
                   {" "}
-                  <span>
+                  <span onClick={() => handleAddFavorite()}>
                     <IoMdHeartEmpty />
                   </span>
                 </div>

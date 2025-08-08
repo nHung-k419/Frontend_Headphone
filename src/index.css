@@ -133,3 +133,22 @@
   scrollbar-width: thin;
   scrollbar-color: #aaa transparent;
 }
+
+.input {
+  @apply w-full px-4 py-2 mb-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400;
+}
+
+.btn {
+  @apply bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition;
+}
+@keyframes bell-shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.bell-shake {
+  animation: bell-shake 0.5s ease-in-out ;
+}

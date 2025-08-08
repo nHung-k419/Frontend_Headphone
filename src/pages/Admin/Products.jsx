@@ -30,7 +30,7 @@ const Products = () => {
     queryKey: ["brand"],
     queryFn: GetBrand,
   });
-  console.log(form);
+  // console.log(form);
 
   // Get value from input
   const handleGetvalue = (e) => {

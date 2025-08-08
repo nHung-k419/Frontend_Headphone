@@ -9,6 +9,7 @@ import { FiHeadphones } from "react-icons/fi";
 import { RiColorFilterFill } from "react-icons/ri";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import Header from "../../layouts/Header";
 import ProductSeller from "../../components/ProductSeller";
 const Home = () => {
   const [selected, setSelected] = useState("15-Hour Battery Life");
@@ -25,6 +26,7 @@ const Home = () => {
     <div>
       {/* <hr className="my-8 border-t-2 border-gray-300 max-w-7xl mx-auto w-full" /> */}
       {/* Info Section */}
+      <Header/>
       <section className="bg-gray-50 lg:w-full w-[380px] lg:ml-0 ml-1.5 max-h-full h-fit lg:mt-20 mt-10 ">
         <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 place-items-center max-w-7xl mx-auto space-y-10 lg:pt-15 pt-10 pb-10">
           <motion.div
@@ -254,7 +256,7 @@ const Home = () => {
           <h1 className="font-medium text-xl"> Âm thanh hoàn hảo</h1>
           <p className="mb-10 font-light">Hãy tăng âm lượng và tận hưởng sự bùng nổ mạnh mẽ.</p>
           <a href="#" className="text-sm font-semibold underline mt-2 inline-block">
-            Read More
+            Xem thêm
           </a>
         </motion.div>
         <motion.div
@@ -277,7 +279,7 @@ const Home = () => {
           <h1 className="font-medium text-xl">Chống ồn chủ động</h1>
           <p className="mb-10 font-light">Loại bỏ tiếng ồn, chỉ giữ lại điều bạn muốn nghe.</p>
           <a href="#" className="text-sm font-semibold underline mt-2 inline-block text-red-600">
-            Read More
+            Xem thêm
           </a>
         </motion.div>
         <motion.div
@@ -300,7 +302,7 @@ const Home = () => {
           <h1 className="font-medium text-xl">Hỗ trợ Discord</h1>
           <p className="mb-10 font-light">Truyền tải âm thanh rõ ràng khi giao tiếp và chơi game.</p>
           <a href="#" className="text-sm font-semibold underline mt-2 inline-block">
-            Read More
+            Xem thêm
           </a>
         </motion.div>
       </div>

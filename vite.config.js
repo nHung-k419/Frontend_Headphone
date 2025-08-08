@@ -7,9 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/api-province": {
-        target: "http://provinces.open-api.vn",
+        target: "https://provinces.open-api.vn",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api-province/, ""),
+        secure: false,
       },
     },
   },

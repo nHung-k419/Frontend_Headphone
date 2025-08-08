@@ -27,4 +27,22 @@ const LogoutAuth = async (data) => {
     throw error;
   }
 };
-export { RegisterAuth, loginAuth,LogoutAuth };
+const getProfileUser = async (id) => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/getProfileUser/${id}`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+const updateProfile = async ({ id, data }) => {
+  try {
+    const response = await axios.put(`http://localhost:3000/api/updateProfile/${id}`, data, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export { RegisterAuth, loginAuth, LogoutAuth, getProfileUser,updateProfile };

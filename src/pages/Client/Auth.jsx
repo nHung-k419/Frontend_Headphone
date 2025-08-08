@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
-const FAQS = () => {
+const Auth = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showRegisterContent, setShowRegisterContent] = useState(false);
@@ -23,35 +23,35 @@ const FAQS = () => {
     mutationFn: RegisterAuth,
     onSuccess: () => {
       toast.success("Đăng ký thành công");
-      navigate("/Auth/Login");
+      setIsLogin(true);
     },
     onError: (error) => {
       if (error.status === 400) {
-        toast.warning("Tài khoản đã tồn tại");
+        toast.warning("Email đã tồn tại");
       }
     },
   });
   useEffect(() => {
     setFocus("Email");
-  },[])
+  }, []);
   useEffect(() => {
-    if(showRegisterContent){
+    if (showRegisterContent) {
       setFocus("Name");
-    }else{
+    } else {
       setFocus("Email");
     }
-  },[showRegisterContent])
+  }, [showRegisterContent]);
   const mutationLogin = useMutation({
     mutationFn: loginAuth,
     onSuccess: (data) => {
       // console.log(data);
       toast.success("Đăng nhập thành công");
-      const userData = {
-        Email: data?.Email,
-        Name: data?.Name,
-        id: data?.id,
-      };
-      Cookies.set("User", JSON.stringify(userData));
+      // const userData = {
+      //   Email: data?.Email,
+      //   Name: data?.Name,
+      //   id: data?.id,
+      // };
+      // Cookies.set("User", JSON.stringify(userData));
       navigate("/");
     },
     onError: (error) => {
@@ -82,7 +82,6 @@ const FAQS = () => {
     setFocus,
   } = useForm({ shouldFocusError: false });
   // console.log(errors);
-  
 
   const onSubmit = (data) => {
     if (showRegisterContent) {
@@ -98,14 +97,14 @@ const FAQS = () => {
     if (errors.Name || showRegisterContent) {
       setFocus("Name");
       // console.log(errors);
-    }else{
+    } else {
       setFocus("Email");
     }
   };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gray-100">
-      <div className="relative w-[800px] h-[600px] bg-white rounded-xl shadow-xl overflow-hidden flex">
+      <div className="relative w-[950px] h-[600px] bg-white rounded-xl shadow-xl overflow-hidden flex mt-15">
         {/* FORM CONTAINER */}
         {/* FORM WRAPPER */}
         <motion.div
@@ -133,7 +132,7 @@ const FAQS = () => {
                   <span>in</span>
                 </button>
               </div>
-              <h3 className="text-center text-gray-400">
+              <h3 className="text-center text-gray-400 text-sm">
                 {showRegisterContent ? "Hoặc bạn có thể dùng email để đăng ký" : "Hoăc bạn có thể dùng email"}
               </h3>
             </div>
@@ -145,7 +144,7 @@ const FAQS = () => {
                   </span>
                   <input
                     {...register("Name", { required: "Tên người dùng bắt buộc" })}
-                    className="input !pl-8 w-full"
+                    className="input !pl-8 w-full select-none"
                     placeholder="Tên người dùng"
                     type="text"
                   />
@@ -161,7 +160,7 @@ const FAQS = () => {
                     required: "Email bắt buộc",
                     pattern: { value: /^\S+@\S+$/i, message: "Email không hợp lệ" },
                   })}
-                  className="input !pl-8 w-full"
+                  className="input !pl-8 w-full select-none"
                   placeholder="Your@email.com"
                   type="email"
                 />
@@ -177,7 +176,7 @@ const FAQS = () => {
                     required: "Mật khẩu bắt buộc",
                     minLength: { value: 6, message: "Mật khẩu tối thiểu 6 ký tự" },
                   })}
-                  className="input !pl-8 w-full"
+                  className="input !pl-8 w-full select-none"
                   placeholder="Mật khẩu"
                   type="password"
                 />
@@ -189,15 +188,18 @@ const FAQS = () => {
     {showRegisterContent ? "Đăng ký" : "Đăng nhập"}
   </button> */}
               <button className="btn mt-4 cursor-pointer w-full">{showRegisterContent ? "Đăng ký" : "Đăng nhập"}</button>
+              <div className="flex items-center mt-4 space-x-1">
+                <input type="checkbox" />
+                <p className="text-sm">Quên mật khẩu</p>
+              </div>
               <p className="text-gray-400 mt-4 sm:block md:hidden">
                 Bạn không có tài khoản?{" "}
-                <span onClick={() => setShowRegisterContent(!showRegisterContent)|| reset()} className="text-teal-500 font-bold">
+                <span onClick={() => setShowRegisterContent(!showRegisterContent) || reset()} className="text-teal-500 font-bold">
                   Đăng ký
                 </span>
               </p>
             </form>
-
-            <div className="absolute bottom-4 w-85 text-xs ">
+            <div className="absolute bottom-4 w-100 text-xs ">
               <p className="text-gray-400 font-medium">
                 Bằng việc đăng nhập, bạn đồng ý với{" "}
                 <Link to={"/Auth/Policy"} className="text-teal-500 font-medium">
@@ -219,7 +221,7 @@ const FAQS = () => {
           transition={{ duration: 0.7, ease: "easeInOut" }}
           className={`absolute top-0 h-full w-1/2 hidden ${
             showRegisterContent ? "bg-gradient-to-r from-teal-400 to-teal-600" : "bg-gradient-to-tr from-teal-400 to-cyan-600"
-          }  text-white p-10 md:flex flex-col justify-center items-center text-center z-10 `}
+          }  text-white p-10 md:flex flex-col justify-center items-center text-center z-5 `}
         >
           <div className="absolute w-24 h-24 bg-white !opacity-10 rounded-lg top-10 left-10 rotate-12"></div>
           <div className="absolute w-16 h-16 bg-white opacity-10 rounded-full bottom-20 left-1/2 -translate-x-1/2"></div>
@@ -235,7 +237,7 @@ const FAQS = () => {
               transition={{ duration: 0.7, ease: "easeInOut" }}
             >
               <h2 className="text-3xl font-bold mb-4">Chào mừng trở lại!</h2>
-              <p className="text-sm">Bạn đã có tài khoản ? Hãy click vào đây để đăng nhập</p>
+              <p className="text-sm">Bạn đã có tài khoản ? Hãy click vào đây để đăng nhập!</p>
             </motion.div>
             <motion.div
               className="absolute right-0-0 top-0 w-full"
@@ -246,7 +248,7 @@ const FAQS = () => {
               <h2 className=" text-3xl font-bold mb-4">
                 Soun<span className="text-white">dora</span> xin chào!
               </h2>
-              <p className="text-sm">Bạn chưa có tài khoản? Hãy click vào đây để đăng ký</p>
+              <p className="text-sm">Bạn chưa có tài khoản? Hãy click vào đây để đăng ký ngay!</p>
             </motion.div>
           </div>
           <motion.button
@@ -279,4 +281,4 @@ const FAQS = () => {
   );
 };
 
-export default FAQS;
+export default Auth;

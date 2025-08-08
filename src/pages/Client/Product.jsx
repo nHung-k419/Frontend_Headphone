@@ -17,6 +17,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useRef } from "react";
 import SkeletonProductCard from "../../components/Skeleton/ProductSkeleton";
 import ReactStars from "react-rating-stars-component";
+import { SlHeart } from "react-icons/sl";
 // import "./embla.css";
 const Product = () => {
   const dispatch = useDispatch();
@@ -170,7 +171,7 @@ const Product = () => {
             </div>
             <div
               className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                checkVisible.Categories ? "visible h-40" : ""
+                checkVisible.Categories ? "visible h-80" : ""
               }`}
             >
               {result[0]?.data?.getAllCategory?.map((item, index) => (
@@ -196,7 +197,7 @@ const Product = () => {
             </div>
             <div
               className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                checkVisible.Brand ? "visible h-40" : ""
+                checkVisible.Brand ? "visible h-80" : ""
               }`}
             >
               {result[1]?.data?.data?.map((item, index) => (
@@ -240,7 +241,7 @@ const Product = () => {
               </div>
               <div
                 className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                  checkVisible.Categories ? "visible h-40" : ""
+                  checkVisible.Categories ? "visible h-80" : ""
                 }`}
               >
                 {result[0]?.data?.getAllCategory?.map((item, index) => (
@@ -266,7 +267,7 @@ const Product = () => {
               </div>
               <div
                 className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                  checkVisible.Brand ? "visible h-40" : ""
+                  checkVisible.Brand ? "visible h-80" : ""
                 }`}
               >
                 {result[1]?.data?.data?.map((item, index) => (
@@ -360,7 +361,7 @@ const Product = () => {
                     {dataFilterProduct?.products?.map((product, index) => (
                       <div
                         key={product._id}
-                        className="bg-white rounded-2xl my-4 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden hover:translate-y-[-5px]  transfrom transition-all duration-300 ease-in-out"
+                        className="relative bg-white rounded-2xl my-4 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden hover:translate-y-[-5px]  transfrom transition-all duration-300 ease-in-out"
                       >
                         <Link to={`/Products/Detail/${product._id}`}>
                           <img
@@ -369,10 +370,11 @@ const Product = () => {
                             alt=""
                           />
                         </Link>
+                        {/* <span><SlHeart className="absolute top-4 right-4 size-5 select-none" /></span> */}
                         <div>
                           <div className="pl-3 flex justify-between items-center">
                             <h1 className="text-xl font-semibold w-2/3 truncate">{product.Name}</h1>
-                            <span className="mr-3 font-bold text-red-600 text-sm">SALE</span>
+                            {/* <span className="mr-3 font-bold text-red-600 text-sm">SALE</span> */}
                           </div>
                           <div className="ml-3">
                             {/* <span className="text-yellow-400 text-sm"><ReactStars count /></span>
@@ -382,8 +384,8 @@ const Product = () => {
                           <p className="ml-3 mr-3 text-sm text-gray-400 line-clamp-2">{product.Description}</p>
                           <div className="flex justify-between items-center ml-3 mr-3 mt-5">
                             <div className="space-x-2">
-                              <span className="font-semibold text-lg">{product.Price.toLocaleString("vi-VN")}$</span>
-                              <del className="text-red-600 text-[13px]">$380</del>
+                              <span className="font-semibold text-lg">{product?.minPrice?.toLocaleString("vi-VN")}đ</span>
+                              {/* <del className="text-red-600 text-[13px]">380đ</del> */}
                             </div>
                             <Link
                               to={`/Products/Detail/${product._id}`}

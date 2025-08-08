@@ -22,7 +22,7 @@ const Chatbot = () => {
         <Lottie
           animationData={chatbot}
           loop={true}
-          className="w-40 h-30" // 👈 điều chỉnh kích thước tại đây
+          className="size-37 h-30" // 👈 điều chỉnh kích thước tại đây
         />
       </button>
     </>

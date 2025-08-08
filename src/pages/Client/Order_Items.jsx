@@ -7,7 +7,7 @@ import { RiArrowLeftRightLine } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
 import { getOrderItems } from "../../services/Client/Order";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -15,6 +15,9 @@ import { Link } from "react-router-dom";
 import ModalOrder from "../../components/ModalOrder/ModalOrder";
 import { AnimatePresence } from "framer-motion";
 import { CiLocationOn } from "react-icons/ci";
+import { requestCancleOrder } from "../../services/Client/Order";
+import Loading from "../../components/Loading";
+import { toast } from "react-toastify";
 const Order_Items = () => {
   const scrollRef = useRef(null);
   const btnRefs = useRef([]);
@@ -23,6 +26,7 @@ const Order_Items = () => {
   const [status, setStatus] = useState({
     status: "Đơn hàng",
   });
+  const [isLoading, setIsLoading] = useState(false);
   const [viewMore, setViewMore] = useState([]);
   const [detailOrder, setDeitalOrder] = useState({});
   const [cancleIdOrder, setCancleIdOrder] = useState(null);
@@ -32,6 +36,49 @@ const Order_Items = () => {
     queryKey: ["order-items", idUser, status.status],
     queryFn: () => getOrderItems({ Id_User: idUser, status }),
   });
+  const [valueCancle, setValueCancle] = useState({
+    reason: "",
+    note: "",
+  });
+
+  const handleGetvalueReson = (e) => {
+    const { name, value } = e.target;
+    setValueCancle((prev) => ({ ...prev, [name]: value }));
+  };
+  const mutationCancle = useMutation({
+    mutationKey: ["cancle-order"],
+    mutationFn: (data) => requestCancleOrder(data),
+    onSuccess: (data) => {
+      setTimeout(() => {
+        setTypeModal({ type: "", modal: false });
+        setIsLoading(false);
+        toast.success("Yêu cầu huỷ đơn hàng thành công, vui lòng chờ xác nhận");
+      }, 2000);
+    },
+    onError: (error) => {
+      if (error.status === 400) {
+        setTimeout(() => {
+          setTypeModal({ type: "", modal: false });
+          setIsLoading(false);
+          toast.error("Bạn đã gửi yêu cầu hủy đơn hàng trước đó rồi , vui lòng chờ xác nhận !");
+        }, 2000);
+      }
+    },
+  });
+
+  const handleSenReqCancleOrder = (orderId) => {
+    if (!valueCancle.reason) {
+      return toast.warning("Vui lòng chọn lý do huỷ đơn hàng");
+    }
+    setIsLoading(true);
+    const data = {
+      orderId: orderId,
+      reason: valueCancle.reason,
+      note: valueCancle.note,
+      userId: idUser,
+    };
+    mutationCancle.mutate(data);
+  };
 
   const handleViewMore = (id) => {
     setViewMore((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -192,64 +239,68 @@ const Order_Items = () => {
         </AnimatePresence>
       </div>
       <AnimatePresence>
-      {typeModal.type === "reqCancle" && (
-        <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
-          <div className="max-w-2xl w-140 mx-auto mt-12 bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-800 mb-6">🛑 Yêu cầu hủy đơn hàng</h1>
+        {typeModal.type === "reqCancle" && (
+          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
+            <div className="max-w-2xl w-140 mx-auto mt-12 bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+              <h1 className="text-2xl font-bold text-gray-800 mb-6">🛑 Yêu cầu hủy đơn hàng</h1>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-1">Mã đơn hàng</label>
-              <input
-                type="text"
-                value={'#'+cancleIdOrder}
-                readOnly
-                className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Lý do hủy đơn</label>
-              <select
-                // value={reason}
-                // onChange={(e) => setReason(e.target.value)}
-                className="w-full border px-3 py-2 rounded-lg"
-              >
-                <option value="">-- Chọn lý do --</option>
-                <option value="changed_mind">Tôi đổi ý</option>
-                <option value="found_better">Tìm sản phẩm tốt hơn</option>
-                <option value="shipping_delay">Thời gian giao hàng lâu</option>
-                <option value="other">Lý do khác</option>
-              </select>
-            </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-1">Mã đơn hàng</label>
+                <input
+                  type="text"
+                  value={"#" + cancleIdOrder}
+                  readOnly
+                  className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block font-medium mb-1">Lý do hủy đơn</label>
+                <select
+                  // value={reason}
+                  name="reason"
+                  onChange={(e) => handleGetvalueReson(e)}
+                  className="w-full border px-3 py-2 rounded-lg"
+                >
+                  <option value="">-- Chọn lý do --</option>
+                  <option value="Tôi dổi ý">Tôi đổi ý</option>
+                  <option value="Tìm sản phẩm tốt hơn">Tìm sản phẩm tốt hơn</option>
+                  <option value="Thời gian giao hàng lâu">Thời gian giao hàng lâu</option>
+                  <option value="Lý do khác">Lý do khác</option>
+                </select>
+              </div>
 
-            <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-1">
-                <label className="block font-medium mb-1">Ghi chú thêm (tuỳ chọn)</label>
-              </label>
-              <textarea
-                rows="5"
-                placeholder="Ví dụ: Tôi đặt nhầm sản phẩm, đổi ý sau khi đặt hàng..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:outline-none resize-none"
-              ></textarea>
-            </div>
+              <div className="mb-6">
+                <label className="block text-gray-700 font-medium mb-1">
+                  <label className="block font-medium mb-1">Ghi chú thêm (tuỳ chọn)</label>
+                </label>
+                <textarea
+                  name="note"
+                  onChange={(e) => handleGetvalueReson(e)}
+                  rows="5"
+                  placeholder="Ví dụ: Tôi đặt nhầm sản phẩm, đổi ý sau khi đặt hàng..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:outline-none resize-none"
+                ></textarea>
+              </div>
 
-            <div className="flex items-center justify-end space-x-2">
-              <button
-                onClick={() => setTypeModal({ modal: false })}
-                type="button"
-                className="w-25 cursor-pointer bg-gray-500 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 lg:hidden block"
-              >
-                Đóng
-              </button>
-              <button
-                type="button"
-                className="lg:w-full w-35 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
-              >
-                Gửi yêu cầu
-              </button>
+              <div className="flex items-center justify-end space-x-2">
+                <button
+                  onClick={() => setTypeModal({ modal: false })}
+                  type="button"
+                  className="w-25 cursor-pointer bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 "
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={() => handleSenReqCancleOrder(cancleIdOrder)}
+                  type="button"
+                  className="lg:w-full w-35 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
+                >
+                  {isLoading ? <Loading /> : "Gửi yêu cầu"}
+                </button>
+              </div>
             </div>
-          </div>
-        </ModalOrder>
-      )}
+          </ModalOrder>
+        )}
       </AnimatePresence>
       <div>
         {/* {isPending  ? <>
@@ -348,15 +399,17 @@ const Order_Items = () => {
                         <span className="font-semibold ">#{orderBlock.orderInfo._id}</span>
                       </div>
                       <div className="space-x-3 flex">
-                        <button
-                          className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group"
-                          onClick={() => handleReqCancle(orderBlock.orderInfo._id)}
-                        >
-                          <span className="relative z-5 group-hover:text-white text-black transition duration-600 ">Yêu cầu hủy</span>
-                          <span
-                            className={`absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out`}
-                          ></span>
-                        </button>
+                        {orderBlock.orderInfo?.Status === "Chờ xác nhận" && (
+                          <button
+                            className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group"
+                            onClick={() => handleReqCancle(orderBlock.orderInfo._id)}
+                          >
+                            <span className="relative z-5 group-hover:text-white text-black transition duration-600 ">Yêu cầu hủy</span>
+                            <span
+                              className={`absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out`}
+                            ></span>
+                          </button>
+                        )}
                         <button
                           className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group"
                           onClick={() => handleSeendeitalOrder(orderBlock)}

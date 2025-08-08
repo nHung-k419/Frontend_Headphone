@@ -1,6 +1,8 @@
 import React from 'react'
 import Home from '../../pages/Client/Home';
 import Navbar from '../Navbar'
+import Footer from '../footer';
+
 function NavbarOnly({ children }) {
   // console.log(children);
   return (
@@ -9,6 +11,7 @@ function NavbarOnly({ children }) {
       <div className='content'>
         {children}
       </div>
+      <Footer/>
     </div>
   )
 }

@@ -36,33 +36,46 @@ const getOrderItems = async ({ Id_User, status }) => {
   }
 };
 
-const getAddressProvices = async () => {
+ const getAddressProvices = async () => {
   try {
-    const response = await axios.get(`http://localhost:5173/api-province/api/p/`);
-    return response.data;
+    const response = await fetch(`/api-province/api/p/`);
+    if (!response.ok) throw new Error("Failed to fetch provinces");
+
+    const data = await response.json();
+    // console.log(data);
+    return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
-const getAddressDistricts = async ({ code }) => {
+
+ const getAddressDistricts = async ({ code }) => {
   try {
-    const response = await axios.get(`http://localhost:5173/api-province/api/p/${code}?depth=2`);
-    return response.data;
+    const response = await fetch(`/api-province/api/p/${code}?depth=2`);
+    if (!response.ok) throw new Error("Failed to fetch districts");
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
-const getAddressCommune = async ({ code }) => {
+
+ const getAddressCommune = async ({ code }) => {
   try {
-    const response = await axios.get(`http://localhost:5173/api-province/api/d/${code}?depth=2`);
-    return response.data;
+    const response = await fetch(`/api-province/api/d/${code}?depth=2`);
+    if (!response.ok) throw new Error("Failed to fetch communes");
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
+
 
 const getInfoAddressOrder = async (Id_User) => {
   try {
@@ -72,6 +85,16 @@ const getInfoAddressOrder = async (Id_User) => {
     console.log(error);
   }
 };
+
+const requestCancleOrder = async (data) => {
+   try {
+    const response = await axios.post(`http://localhost:3000/api/requestCancle`,data, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    // console.log(error);
+    throw error;
+  }
+}
 export {
   getProductOrder,
   createProductOrder,
@@ -81,4 +104,5 @@ export {
   getAddressDistricts,
   getAddressCommune,
   getInfoAddressOrder,
+  requestCancleOrder
 };

@@ -13,6 +13,8 @@ import Register from "../pages/Client/Register.jsx";
 import DefaultLayout from "../layouts/DefaultLayout/index.jsx";
 import Order_Items from "../pages/Client/Order_Items.jsx";
 import Notfound from "../pages/Client/Notfound.jsx";
+import Auth from "../pages/Client/Auth.jsx";
+import Proflle from "../pages/Client/Proflle.jsx";
 // Page Admin
 import Admin from "../pages/Admin/Admin.jsx";
 import layoutAdmin from "../layouts/LayoutAdmin/index.jsx";
@@ -35,8 +37,9 @@ const PublicRoutes = [
     {path : '/Cart', component: Cart, layout : NavbarOnly},
     {path : '/OrderConfirmation', component: Order_Confirmation, layout : NavbarOnly},
     {path : '/OrderItems', component: Order_Items, layout : NavbarOnly},
-    {path : '/Auth/Login', component: Login, layout : NavbarOnly},
+    {path : '/Auth/Login', component: Auth, layout : DefaultLayout},
     {path : '/Auth/Register', component: Register, layout : NavbarOnly},
+    {path : '/Auth/Profile', component: Proflle, layout : NavbarOnly},
     // Amin
     {path : '/Admin', component: Admin,layout : layoutAdmin},
     {path : '/Admin/Categories', component: Categories,layout : layoutAdmin},

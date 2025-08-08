@@ -69,7 +69,7 @@ const CommentSidebar = ({ isOpen, onClose }) => {
     queryKey: ["getReviewsById", id],
     queryFn: () => getReviewsById(id),
   });
-  // console.log(dataReviews?.result);
+  console.log(dataReviews?.result);
   const handleDeleteImage = (image, index) => {
     setImages((prev) => prev.filter((item) => item !== image));
     setFileUrl((prev) => prev.filter((item) => item !== fileUrl[index]));

@@ -16,6 +16,7 @@ const GetCartItemsByUser = async (idUser) => {
     console.log(error);
   }
 };
+
 const handlePrevious = async (data) => {
   try {
     const response = await axios.post(`http://localhost:3000/api/Previous`,data, { withCredentials: true });

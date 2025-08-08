@@ -35,7 +35,6 @@ const CartSidebar = ({ isOpen, onClose }) => {
   const mutationPrevious = useMutation({
     mutationFn: handlePrevious,
     onSuccess: () => {
-      // khi mutation thành công, refetch lại cart items
       queryClient.invalidateQueries({ queryKey: ["CartItems", idUser, isOpen] });
     },
   });
@@ -43,7 +42,6 @@ const CartSidebar = ({ isOpen, onClose }) => {
   const mutationNext = useMutation({
     mutationFn: handleNext,
     onSuccess: () => {
-      // khi mutation thành công, refetch lagi cart items
       queryClient.invalidateQueries({ queryKey: ["CartItems", idUser, isOpen] });
     },
   });
@@ -86,7 +84,8 @@ const CartSidebar = ({ isOpen, onClose }) => {
         {data?.resultCartItems?.length <= 0 && <div className="text-red-500 flex justify-center items-center text-xl">Giỏ hàng trống</div>}
         <div className="flex flex-col lg:overflow-y-auto lg:h-[calc(100vh-160px)] md:h-[calc(100vh-160px)] h-fit hide-scrollbar p-5 space-y-3">
           {data?.resultCartItems.map((item) => (
-            <div className="grid grid-cols-[1fr_4fr] space-y-5 space-x-4 pt-2 pl-2 pr-2 bg-white rounded-xl ">
+            <div
+            key={item?._id} className="grid grid-cols-[1fr_4fr] space-y-5 space-x-4 pt-2 pl-2 pr-2 bg-white rounded-xl ">
               <div className="max-w-25 h-25 ">
                 <img
                   src={item?.Image ? item?.Image : item?.Id_Product?.ImageUrl?.path}
@@ -98,7 +97,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
                 <div className="space-y-1">
                   <h1 className="text-lg text-gray-600">{item?.Id_ProductVariants?.Id_Products?.Name}</h1>
                   <div className="flex items-center space-x-3">
-                    <span className="text-sm text-gray-700 font-medium">${item?.Id_ProductVariants?.Price?.toLocaleString("vi-VN")} </span>
+                    <span className="text-sm text-gray-700 font-medium">{item?.Id_ProductVariants?.Price?.toLocaleString("vi-VN")}đ </span>
                     <span className="text-green-600">In Stock</span>
                   </div>
                   <div className="flex mt-3 space-x-2 w-full ">
@@ -145,22 +144,22 @@ const CartSidebar = ({ isOpen, onClose }) => {
           <h1 className="pl-5 mt-11 text-lg mb-10">Thông tin</h1>
           <div className="flex justify-between pl-5 pr-5">
             <span className="text-gray-500">Tổng phụ</span>
-            <span>0.00$</span>
+            <span>0.00đ</span>
           </div>
           <div className="flex justify-between pl-5 pr-5">
             <span className="text-gray-500">Phí vận chuyển</span>
-            <span>0.00$</span>
+            <span>0.00đ</span>
           </div>
           <div className="flex justify-between pl-5 pr-5">
             <span className="text-gray-500">Thuế</span>
-            <span>0.00$</span>
+            <span>0.00đ</span>
           </div>
         </div>
         <div className="lg:space-y-10 space-y-10 lg:mt-0 mt-5">
           <div className="">
             <div className="flex justify-between pl-5 pr-5">
               <h1 className="text-gray-500">Tổng</h1>
-              <span>{total?.toLocaleString("vi-VN")}$</span>
+              <span>{total?.toLocaleString("vi-VN")}đ</span>
             </div>
           </div>
           <Link to={data?.resultCartItems.length > 0 && "/OrderConfirmation"} className="flex justify-center mr-5 ml-5">

@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { GetAllOrder, UpdateStatusOrder } from "../../services/Admin/Order";
+import { GetAllOrder, UpdateStatusOrder, getAllCancleRequests, updateStatusCancleRequest } from "../../services/Admin/Order";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BsFillEyeFill } from "react-icons/bs";
 import { BsBell } from "react-icons/bs";
 import Modal from "../../components/ModalAdmin/Modal";
-
 const Order = () => {
   const queryClient = useQueryClient();
   const [typeModal, setTypeModal] = useState({
@@ -15,6 +14,24 @@ const Order = () => {
     queryKey: ["order"],
     queryFn: GetAllOrder,
   });
+
+  const { data: dataCancleRequest } = useQuery({
+    queryKey: ["orderCancle"],
+    queryFn: getAllCancleRequests,
+  });
+
+  const mutationUpdateSatusCancle = useMutation({
+    mutationKey: ["updateStatusCancle"],
+    mutationFn: updateStatusCancleRequest,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["orderCancle"]);
+    },
+  });
+  const handleUpdateStatusCancle = (id, orderId, status) => {
+    const data = { status : status.status , orderId };
+    mutationUpdateSatusCancle.mutate({ id, data });
+  };
+
   const mutationUpdateOrder = useMutation({
     mutationKey: ["updateOrder"],
     mutationFn: UpdateStatusOrder,
@@ -49,30 +66,41 @@ const Order = () => {
         {typeModal.modal && (
           <Modal typeModal={typeModal} setTypeModal={setTypeModal}>
             <div className="max-w-6xl w-180 rounded-xl mx-auto p-10 bg-white">
-              <h2 className="text-2xl font-semibold mb-6">Yêu cầu hủy đơn hàng</h2>
+              <h2 className="text-2xl font-semibold mb-6"> Danh sách yêu cầu hủy đơn hàng</h2>
 
               <div className="space-y-4 overflow-y-scroll h-130">
                 {/* Mỗi yêu cầu là 1 item */}
-                {[1, 2, 3,4,5,6,7].map((item) => (
+                {dataCancleRequest?.allRequests.map((item) => (
                   <div
-                    key={item}
+                    key={item._id}
                     className="bg-white shadow-md rounded-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-gray-100"
                   >
                     {/* Thông tin đơn hàng */}
                     <div>
                       <p className="font-medium text-gray-800">
-                        Mã đơn: <span className="text-blue-600">#ORD123456</span>
+                        Mã đơn: <span className="text-blue-600">#{item?.orderId?._id}</span>
                       </p>
-                      <p className="text-gray-500 text-sm">Khách hàng: Nguyễn Văn A</p>
-                      <p className="text-gray-500 text-sm">Lý do: Muốn thay đổi sản phẩm</p>
-                      <p className="text-gray-400 text-xs">Gửi lúc: 21/07/2025, 14:30</p>
+                      <p className="text-gray-500 text-sm">Khách hàng: {item?.orderId?.Fullname}</p>
+                      <p className="text-gray-500 text-sm">Lý do: {item?.reason}</p>
+                      <p className="text-gray-500 text-sm">Trạng thái: {item?.status}</p>
+                      <p className="text-gray-400 text-xs mt-2">Gửi lúc: {new Date(item.requestedAt).toLocaleString("vi-VN")}</p>
                     </div>
                     {/* Nút xác nhận & từ chối */}
                     <div className="flex gap-2">
-                      <button className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 transition text-sm">
+                      <button
+                        disabled={item?.status === "Xác nhận"}
+                        onClick={() => handleUpdateStatusCancle(item._id, item.orderId?._id, { status: "Xác nhận" })}
+                        className="px-4 py-2 rounded-md bg-green-500 text-white hover:bg-green-600 transition text-sm cursor-pointer"
+                      >
                         Xác nhận
                       </button>
-                      <button className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition text-sm">Từ chối</button>
+                      <button
+                         disabled={item?.status === "Xác nhận" || item?.status === "Từ chối"}
+                        onClick={() => handleUpdateStatusCancle(item._id, item.orderId?._id, { status: "Từ chối" })}
+                        className="px-4 py-2 rounded-md bg-red-500 text-white hover:bg-red-600 transition text-sm cursor-pointer"
+                      >
+                        Từ chối
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -152,7 +180,7 @@ const Order = () => {
                               Lựa chọn
                             </option>
                             <option
-                              disabled={item.Status === "Chờ giao hàng" || item.Status === "Đã giao"}
+                              disabled={item.Status === "Chờ giao hàng" || item.Status === "Đã giao" || item.Status === "Đã hủy"}
                               className="text-center h-10"
                               value="Xác nhận"
                             >
