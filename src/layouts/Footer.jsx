@@ -6,7 +6,7 @@ import { FaTiktok } from "react-icons/fa";
 const Footer = () => {
   return (
     <div>
-      <footer className=" max-w-7xl mx-auto h-full mt-10  text-black rounded-3xl px-8 py-12">
+      <div className=" max-w-7xl mx-auto h-full mt-10  text-black rounded-3xl px-8 py-12">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-10 lg:items-start">
           {/* Social + Title */}
           <div className="flex flex-col items-center lg:items-start gap-8">
@@ -74,7 +74,7 @@ const Footer = () => {
             Soun<span className="text-teal-500">dora</span>
           </p>
         </h1>
-      </footer>
+      </div>
     </div>
   );
 };
