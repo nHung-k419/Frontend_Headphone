@@ -196,7 +196,9 @@ console.log(AddressInfo);
     },
   });
 
-  const handlePostOrder = (e) => {    
+  const handlePostOrder = (e) => {
+    console.log(newVoucherTotal);
+        
     if (value.Fullname && value.Phone && value.Address && value.PaymentMethod && !isLoading) {
       setIsLoading(true);
       const dataOrder = {

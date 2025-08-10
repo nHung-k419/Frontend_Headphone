@@ -18,6 +18,7 @@ import { CiLocationOn } from "react-icons/ci";
 import { requestCancleOrder } from "../../services/Client/Order";
 import Loading from "../../components/Loading";
 import { toast } from "react-toastify";
+import Cart404empty from "../../components/Cart404";
 const Order_Items = () => {
   const scrollRef = useRef(null);
   const btnRefs = useRef([]);
@@ -32,9 +33,14 @@ const Order_Items = () => {
   const [cancleIdOrder, setCancleIdOrder] = useState(null);
   const user = Cookies?.get("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
-  const { data, isPending } = useQuery({
+  const {
+    data,
+    isPending,
+    isLoading: isLoadingOrderItems,
+  } = useQuery({
     queryKey: ["order-items", idUser, status.status],
     queryFn: () => getOrderItems({ Id_User: idUser, status }),
+    
   });
   const [valueCancle, setValueCancle] = useState({
     reason: "",
@@ -331,7 +337,9 @@ const Order_Items = () => {
             </button> */}
           </div>
         </div>
-        {isPending ? (
+        {!isLoadingOrderItems && !data?.allOrderItems ? (
+          <Cart404empty type={"orderItems"} />
+        ) : isPending ? (
           Array(1)
             .fill(0)
             .map((_, idx) => (
