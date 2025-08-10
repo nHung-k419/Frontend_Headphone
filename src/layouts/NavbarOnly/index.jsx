@@ -1,7 +1,7 @@
 import React from 'react'
 import Home from '../../pages/Client/Home';
 import Navbar from '../Navbar'
-import Footer from '../footer';
+import Footer from '../Footer';
 
 function NavbarOnly({ children }) {
   // console.log(children);

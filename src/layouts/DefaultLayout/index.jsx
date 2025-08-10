@@ -2,7 +2,7 @@ import React from "react";
 import Home from "../../pages/Client/Home";
 import Header from "../Header";
 import Navbar from "../Navbar";
-import Footer from "../Footer";
+import Footer from "../Footer.jsx";
 function DefaultLayout({ children }) {
   // console.log(children.props);
   return (
