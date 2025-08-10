@@ -13,6 +13,7 @@ export default function AdminRoute({ children }) {
     if (user.Role !== "admin") {
       return <Navigate to="/Page404" replace />;
     }
+   
     return children;
   } catch {
     return <Navigate to="/Auth/Login" replace />;

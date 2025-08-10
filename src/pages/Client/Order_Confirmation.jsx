@@ -80,7 +80,7 @@ const Order_Confirmation = () => {
     queryKey: ["Districts", valueCode.codeDistricts],
     queryFn: () => getAddressDistricts({ code: valueCode?.codeDistricts }),
   });
-  // console.log(dataDistricts?.districts);
+  // console.log(dataDistricts);
 
   const { data: dataCommune } = useQuery({
     queryKey: ["Communate", valueCode.codeCommunate],
@@ -89,6 +89,7 @@ const Order_Confirmation = () => {
   // console.log(dataCommune?.wards);
 
   const handleGetValueAddress = ({ provinces, code, value }) => {
+    
     if (provinces === "Provinces") {
       setValueInputAddress((prev) => ({ ...prev, Provinces: value }));
       setValueCode((prev) => ({ ...prev, codeDistricts: code }));
@@ -103,11 +104,13 @@ const Order_Confirmation = () => {
     }
   };
 
+
   // get Info Address user
   const { data: AddressInfo } = useQuery({
     queryKey: ["infoAddress", idUser],
     queryFn: () => getInfoAddressOrder(idUser),
   });
+console.log(AddressInfo);
 
   useEffect(() => {
     setValue((prev) => ({
@@ -193,9 +196,7 @@ const Order_Confirmation = () => {
     },
   });
 
-  const handlePostOrder = (e) => {
-    // console.log(value);
-
+  const handlePostOrder = (e) => {    
     if (value.Fullname && value.Phone && value.Address && value.PaymentMethod && !isLoading) {
       setIsLoading(true);
       const dataOrder = {
@@ -330,7 +331,7 @@ const Order_Confirmation = () => {
                         {dataProvinces?.map((item, index) => (
                           <span
                             key={index}
-                            onClick={(e) => handleGetValueAddress({ provinces: "Provinces", code: item.code, value: item.name })}
+                            onClick={(e) => handleGetValueAddress({ provinces: "Provinces", code: item.code, value: item.name_with_type })}
                             className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
                           >
                             {item.name}
@@ -339,10 +340,10 @@ const Order_Confirmation = () => {
                       </div>
                     ) : currentTab === 1 ? (
                       <div className="h-full w-full overflow-y-auto flex flex-col select-none">
-                        {dataDistricts?.districts?.map((item, index) => (
+                        {dataDistricts?.map((item, index) => (
                           <span
                             key={index}
-                            onClick={() => handleGetValueAddress({ provinces: "Districts", code: item.code, value: item.name })}
+                            onClick={() => handleGetValueAddress({ provinces: "Districts", code: item.code, value: item.name_with_type })}
                             className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
                           >
                             {item.name}
@@ -352,10 +353,10 @@ const Order_Confirmation = () => {
                     ) : (
                       currentTab === 2 && (
                         <div className="h-full w-full overflow-y-auto flex flex-col select-none ">
-                          {dataCommune?.wards?.map((item, index) => (
+                          {dataCommune?.map((item, index) => (
                             <span
                               key={index}
-                              onClick={(e) => handleGetValueAddress({ provinces: "Communate", code: item.code, value: item.name })}
+                              onClick={(e) => handleGetValueAddress({ provinces: "Communate", code: item.code, value: item.name_with_type })}
                               className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
                             >
                               {item.name}
@@ -395,13 +396,13 @@ const Order_Confirmation = () => {
         </div>
         <div className="ml-6 flex items-center space-x-5">
           <h3 className="font-bold">
-            {AddressInfo?.findAdressOrder?.Fullname ? AddressInfo?.findAdressOrder?.Fullname : value ? value.Fullname : "Chưa có thông tin"}
+            {value.Fullname ? value.Fullname : (AddressInfo?.findAdressOrder?.Fullname ? AddressInfo?.findAdressOrder?.Fullname : value ? value.Fullname : "Chưa có thông tin")}
             <span>
-              (+84) {AddressInfo?.findAdressOrder?.Phone ? AddressInfo?.findAdressOrder?.Phone : value ? value.Phone : "Chưa có thông tin"}
+              (+84) {value.Phone? value.Phone : (AddressInfo?.findAdressOrder?.Phone ? AddressInfo?.findAdressOrder?.Phone : value ? value.Phone : "Chưa có thông tin")}
             </span>{" "}
           </h3>
           <p>
-            {AddressInfo?.findAdressOrder?.Address
+            {valueInputAddress.Provinces && valueInputAddress.Districts && valueInputAddress.Commune ? `${valueInputAddress.Provinces}, ${valueInputAddress.Districts}, ${valueInputAddress.Commune}` : (AddressInfo?.findAdressOrder?.Address
               ? AddressInfo?.findAdressOrder?.Address.replace(/(Thành phố|Tỉnh)/g, " - $1")
                   ?.replace(/(Quận|Huyện)/g, " - $1")
                   ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
@@ -411,7 +412,7 @@ const Order_Confirmation = () => {
                   ?.replace(/(Quận|Huyện)/g, " - $1")
                   ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
                   ?.replace(/^ - /, "")
-              : "Chưa có thông tin"}
+              : "Chưa có thông tin")}
           </p>
           <span className="flex items-center justify-center border-1 border-red-500 text-[10px] p-1 text-red-500">Mặc Định</span>
           <button onClick={() => setTypeModal({ type: "ModalAddress", modal: true })} className="cursor-pointer ml-5 text-blue-800">
@@ -595,14 +596,18 @@ const Order_Confirmation = () => {
               <span>50.000đ</span>
             </div>
             <div className="flex justify-between space-x-30">
+              <h4 className="text-gray-600">Giảm giá từ voucher :</h4>
+              <span>{newVoucherTotal?.discount?.toLocaleString("vi-VN")}</span>
+            </div>
+            <div className="flex justify-between space-x-30">
               <h4 className="text-gray-600">Tổng thanh toán :</h4>
               <span className="text-2xl text-red-500">
                 {newVoucherTotal ? newVoucherTotal?.discountedTotal?.toLocaleString("vi-VN") : total?.toLocaleString("vi-VN")}đ
               </span>
             </div>
             {newVoucherTotal && <div className="flex items-center justify-between">
-              <span className="text-md text-red-500">Tiết kiệm được :</span>
-              <span>{newVoucherTotal?.discount?.toLocaleString("vi-VN")}đ</span>
+              <span className="text-md ">Tiết kiệm được :</span>
+              <span className="text-red-500">{newVoucherTotal?.discount?.toLocaleString("vi-VN")}đ</span>
             </div>}
           </div>
         </div>

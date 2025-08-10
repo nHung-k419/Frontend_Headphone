@@ -36,9 +36,9 @@ const getOrderItems = async ({ Id_User, status }) => {
   }
 };
 
- const getAddressProvices = async () => {
+const getAddressProvices = async () => {
   try {
-    const response = await fetch(`/api-province/api/p/`);
+    const response = await fetch(`http://localhost:3000/api/getProvinces`);
     if (!response.ok) throw new Error("Failed to fetch provinces");
 
     const data = await response.json();
@@ -49,10 +49,9 @@ const getOrderItems = async ({ Id_User, status }) => {
     throw error;
   }
 };
-
- const getAddressDistricts = async ({ code }) => {
+const getAddressDistricts = async ({ code }) => {
   try {
-    const response = await fetch(`/api-province/api/p/${code}?depth=2`);
+    const response = await fetch(`http://localhost:3000/api/getDistricts/${code}`);
     if (!response.ok) throw new Error("Failed to fetch districts");
 
     const data = await response.json();
@@ -63,9 +62,9 @@ const getOrderItems = async ({ Id_User, status }) => {
   }
 };
 
- const getAddressCommune = async ({ code }) => {
+const getAddressCommune = async ({ code }) => {
   try {
-    const response = await fetch(`/api-province/api/d/${code}?depth=2`);
+    const response = await fetch(`http://localhost:3000/api/getWards/${code}`);
     if (!response.ok) throw new Error("Failed to fetch communes");
 
     const data = await response.json();
@@ -75,7 +74,6 @@ const getOrderItems = async ({ Id_User, status }) => {
     throw error;
   }
 };
-
 
 const getInfoAddressOrder = async (Id_User) => {
   try {
@@ -87,14 +85,14 @@ const getInfoAddressOrder = async (Id_User) => {
 };
 
 const requestCancleOrder = async (data) => {
-   try {
-    const response = await axios.post(`http://localhost:3000/api/requestCancle`,data, { withCredentials: true });
+  try {
+    const response = await axios.post(`http://localhost:3000/api/requestCancle`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     // console.log(error);
     throw error;
   }
-}
+};
 export {
   getProductOrder,
   createProductOrder,
@@ -104,5 +102,5 @@ export {
   getAddressDistricts,
   getAddressCommune,
   getInfoAddressOrder,
-  requestCancleOrder
+  requestCancleOrder,
 };
