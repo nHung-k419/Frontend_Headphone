@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Footer from "./layouts/footer";
 import { PublicRoutes } from "./routes";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Chatbot from "./components/ChatBot/Chatbot";
