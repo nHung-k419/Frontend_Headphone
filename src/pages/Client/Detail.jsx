@@ -21,7 +21,7 @@ import ProductSeller from "../../components/ProductSeller";
 
 const Detail = () => {
   const QueryClient = useQueryClient();
-  const user = Cookies?.get("User");
+  const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -90,9 +90,7 @@ const Detail = () => {
   const mutationDetailVariants = useMutation({
     mutationFn: GetProductVariants,
   });
-const handleAddFavorite = () => {
-    
-  };
+  const handleAddFavorite = () => {};
   // handle send id to mutationDetail
   useEffect(() => {
     mutationDetail.mutate(id);
@@ -199,7 +197,7 @@ const handleAddFavorite = () => {
                   <div>
                     <h1 className="text-gray-500 pb-2">Kích thước</h1>
                     <div className="flex space-x-1 items-center">
-                      {["S","M","L","XL","XXL"]?.map((item) => (
+                      {["S", "M", "L", "XL", "XXL"]?.map((item) => (
                         <button
                           onClick={() => handleChangeSize(item)}
                           className={`lg:h-8 lg:w-20 w-full h-7 cursor-pointer rounded-md border-1 border-gray-300 ${
@@ -242,7 +240,9 @@ const handleAddFavorite = () => {
                     disabled={activeVariant.id_color === "" || activeVariant.Size === ""}
                     onClick={() => handleAddToCart()}
                     className={`lg:h-12 h-10 w-full hover:bg-gray-700 hover:text-white transform duration-300 ease-in-out rounded-xl flex items-center justify-center ${
-                      idUser && activeVariant.id_color && activeVariant.Size ? "cursor-pointer bg-gray-700 text-white" : "cursor-not-allowed bg-gray-200 text-gray-600"
+                      idUser && activeVariant.id_color && activeVariant.Size
+                        ? "cursor-pointer bg-gray-700 text-white"
+                        : "cursor-not-allowed bg-gray-200 text-gray-600"
                     }`}
                   >
                     <span className={``}>Thêm giỏ hàng</span>

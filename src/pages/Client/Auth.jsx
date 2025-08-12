@@ -46,11 +46,14 @@ const Auth = () => {
     onSuccess: (data) => {
       // console.log(data);
       toast.success("Đăng nhập thành công");
-      // const userData = {
-      //   Email: data?.Email,
-      //   Name: data?.Name,
-      //   id: data?.id,
-      // };
+      const userData = {
+        Email: data?.Email,
+        Name: data?.Name,
+        id: data?.id,
+        Role : data?.Role
+      };
+      localStorage.setItem("User", JSON.stringify(userData));
+      
       // Cookies.set("User", JSON.stringify(userData));
       navigate("/");
     },

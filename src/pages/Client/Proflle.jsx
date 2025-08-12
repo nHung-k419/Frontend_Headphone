@@ -12,8 +12,8 @@ import AvatarContext from "../../context/AvatarContext";
 const Proflle = () => {
   const { setAvatarUrl } = useContext(AvatarContext);
   const queryClient = useQueryClient();
-  const user = Cookies?.get("User");
-  const { id, Email } = user ? JSON?.parse(user) : "";
+   const user = localStorage.getItem("User");
+  const { id,Email } = user ? JSON?.parse(user) : "";
   const [editingField, setEditingField] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef();

@@ -30,8 +30,8 @@ const Order_Confirmation = () => {
     Commune: "",
   });
   const navigate = useNavigate();
-  const user = Cookies?.get("User");
-  const { id: idUser, Email } = user ? JSON?.parse(user) : "";
+   const user = localStorage.getItem("User");
+  const { id: idUser,Email } = user ? JSON?.parse(user) : "";
   const [value, setValue] = useState({
     Fullname: "",
     Phone: "",

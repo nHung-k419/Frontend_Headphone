@@ -31,7 +31,7 @@ const Order_Items = () => {
   const [viewMore, setViewMore] = useState([]);
   const [detailOrder, setDeitalOrder] = useState({});
   const [cancleIdOrder, setCancleIdOrder] = useState(null);
-  const user = Cookies?.get("User");
+   const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const {
     data,

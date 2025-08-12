@@ -29,9 +29,11 @@ import AvatarContext from "../context/AvatarContext";
 const Navbar = () => {
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
-
-  const user = Cookies?.get("User");
+  const user = localStorage.getItem("User");
   const { Name, id } = user ? JSON?.parse(user) : "";
+
+  // const user = Cookies?.get("User");
+  // const { Name, id } = user ? JSON?.parse(user) : "";
   const navigate = useNavigate();
   const searchRef = useRef(null);
   const notificationRef = useRef(null);
@@ -45,7 +47,7 @@ const Navbar = () => {
     User: false,
   });
   const [valueSearch, setValueSearch] = useState("");
-  const [isRead,setIsRead] = useState(null)
+  const [isRead, setIsRead] = useState(null);
   const { data, isLoading, isPending } = useQuery({
     queryKey: ["search", valueSearch],
     queryFn: () => SearchProducts(valueSearch),
@@ -55,7 +57,6 @@ const Navbar = () => {
     queryFn: () => getProfileUser(id),
   });
   // console.log(dataUser?.isCheckUser);
-  console.log("123123");
 
   const { data: dataProduct } = useQuery({
     queryKey: ["product"],
@@ -79,7 +80,6 @@ const Navbar = () => {
   }, [openModal.Notification]);
   // console.log(openModal.Notification);
   const [isShaking, setIsShaking] = useState(false);
-
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -111,6 +111,7 @@ const Navbar = () => {
     mutationFn: () => LogoutAuth(),
     onSuccess: () => {
       navigate("/Auth/Login");
+      localStorage.removeItem("User");
       toast.success("Đăng xuất thành công");
       Cookies.remove("User");
     },

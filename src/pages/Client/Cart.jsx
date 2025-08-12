@@ -7,7 +7,9 @@ import { Link } from "react-router-dom";
 import Cart404empty from "../../components/Cart404";
 const Cart = () => {
   const queryClient = useQueryClient();
-  const user = Cookies?.get("User");
+  // const user = Cookies?.get("User");
+  // const { id: idUser } = user ? JSON?.parse(user) : "";
+  const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const [quantity, setQuantity] = useState([]);
   const [optimisticCart, setOptimisticCart] = useState([]);
