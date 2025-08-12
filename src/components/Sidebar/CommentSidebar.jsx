@@ -20,7 +20,7 @@ import ReviewItemSkeleton from "../Skeleton/ReviewsSkeleton";
 const CommentSidebar = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
   const { id } = useParams();
-  const user = Cookies?.get("User");
+  const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
   const [rating, setRating] = useState(5);
