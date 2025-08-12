@@ -8,6 +8,7 @@ export default defineConfig({
     outDir: 'dist'
   },
   server: {
+    historyApiFallback: true,
     proxy: {
       "/api-province": {
         target: "https://provinces.open-api.vn",
