@@ -8,8 +8,8 @@ export default function AdminRoute({ children }) {
   }
 
  try {
-    const user = JSON.parse(user);
-    if (user.Role !== "admin") {
+    const userLocal = JSON.parse(user);
+    if (userLocal.Role !== "admin") {
       return <Navigate to="/Page404" replace />;
     }
    
