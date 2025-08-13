@@ -2,14 +2,13 @@ import { Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 export default function AdminRoute({ children }) {
-  const userCookie = Cookies.get("User");
-
-  if (!userCookie) {
+ const user = localStorage.getItem("User");
+  if (!user) {
     return <Navigate to="/Auth/Login" replace />;
   }
 
  try {
-    const user = JSON.parse(userCookie);
+    const user = JSON.parse(user);
     if (user.Role !== "admin") {
       return <Navigate to="/Page404" replace />;
     }
