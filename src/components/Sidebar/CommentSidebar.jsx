@@ -256,7 +256,7 @@ const CommentSidebar = ({ isOpen, onClose }) => {
         ) : (
           <>
             {dataReviews?.result?.map((review, index) => (
-              <div key={index} className="border-b pb-4 w-150 ">
+              <div key={index} className="border-b pb-4 md:w-150 w-full ">
                 <div className="flex items-center space-x-3">
                   <img
                     src={
