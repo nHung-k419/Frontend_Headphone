@@ -2,7 +2,7 @@ import axios from "axios";
 
 const sendImageComment = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/sendImageComment`, data, {
+    const response = await axios.post(`https://backend-headphone.onrender.com/api/sendImageComment`, data, {
       withCredentials: true,
     });
     return response.data;
@@ -13,7 +13,7 @@ const sendImageComment = async (data) => {
 
 const getReviewsById = async (idProduct) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/getReviewsById/${idProduct}`, {
+    const response = await axios.get(`https://backend-headphone.onrender.com/api/getReviewsById/${idProduct}`, {
       withCredentials: true,
     });
     return response.data;

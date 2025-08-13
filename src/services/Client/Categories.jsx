@@ -2,7 +2,7 @@ import axios from "axios";
 
 const GetAllCategory = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/GetAllCategory", { withCredentials: true });
+    const response = await axios.get("https://backend-headphone.onrender.com/api/GetAllCategory", { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);

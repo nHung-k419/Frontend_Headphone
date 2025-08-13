@@ -1,7 +1,7 @@
 import axios from "axios";
 const getProductOrder = async (idUser) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/GetOrder/${idUser}`, { withCredentials: true });
+    const response = await axios.get(`https://backend-headphone.onrender.com/api/GetOrder/${idUser}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     throw error;
@@ -10,7 +10,7 @@ const getProductOrder = async (idUser) => {
 };
 const createProductOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/CreateOrder`, data, { withCredentials: true });
+    const response = await axios.post(`https://backend-headphone.onrender.com/api/CreateOrder`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -19,7 +19,7 @@ const createProductOrder = async (data) => {
 };
 const PaymentProductOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/OrderPaymentZalo`, data, { withCredentials: true });
+    const response = await axios.post(`https://backend-headphone.onrender.com/api/OrderPaymentZalo`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     throw error;
@@ -29,7 +29,7 @@ const PaymentProductOrder = async (data) => {
 const getOrderItems = async ({ Id_User, status }) => {
   const data = status;
   try {
-    const response = await axios.post(`http://localhost:3000/api/GetOrderItems/${Id_User}`, data, { withCredentials: true });
+    const response = await axios.post(`https://backend-headphone.onrender.com/api/GetOrderItems/${Id_User}`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -38,7 +38,7 @@ const getOrderItems = async ({ Id_User, status }) => {
 
 const getAddressProvices = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getProvinces`);
+    const response = await fetch(`https://backend-headphone.onrender.com/api/getProvinces`);
     if (!response.ok) throw new Error("Failed to fetch provinces");
 
     const data = await response.json();
@@ -51,7 +51,7 @@ const getAddressProvices = async () => {
 };
 const getAddressDistricts = async ({ code }) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getDistricts/${code}`);
+    const response = await fetch(`https://backend-headphone.onrender.com/api/getDistricts/${code}`);
     if (!response.ok) throw new Error("Failed to fetch districts");
 
     const data = await response.json();
@@ -64,7 +64,7 @@ const getAddressDistricts = async ({ code }) => {
 
 const getAddressCommune = async ({ code }) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getWards/${code}`);
+    const response = await fetch(`https://backend-headphone.onrender.com/api/getWards/${code}`);
     if (!response.ok) throw new Error("Failed to fetch communes");
 
     const data = await response.json();
@@ -77,7 +77,7 @@ const getAddressCommune = async ({ code }) => {
 
 const getInfoAddressOrder = async (Id_User) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/GetAddressOrder/${Id_User}`, { withCredentials: true });
+    const response = await axios.get(`https://backend-headphone.onrender.com/api/GetAddressOrder/${Id_User}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -86,7 +86,7 @@ const getInfoAddressOrder = async (Id_User) => {
 
 const requestCancleOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/requestCancle`, data, { withCredentials: true });
+    const response = await axios.post(`https://backend-headphone.onrender.com/api/requestCancle`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     // console.log(error);
