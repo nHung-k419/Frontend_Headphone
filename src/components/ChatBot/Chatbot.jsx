@@ -4,8 +4,24 @@ import { useState } from "react";
 import Lottie from "lottie-react";
 import RobotAi from "../../assets/RobotAi.json";
 import chatbot from "../../assets/chatbot.json";
+import { useEffect } from "react";
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+  if (isOpen) {
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = "hidden";
+    document.body.style.paddingRight = `${scrollBarWidth}px`; // bù lại
+  } else {
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+    document.body.style.paddingRight = "";
+  };
+}, [isOpen]);
   return (
     <>
       <div

@@ -169,7 +169,7 @@ const Navbar = () => {
     { label: "FAQS", path: "/faqs" },
   ];
   return (
-    <div className="fixed z-10 top-0 w-full ">
+    <div className="fixed z-10 top-0 ">
       {/* sidebar */}
       <div
         className={`fixed top-0 h-full w-70 bg-gray-50 rounded-r-xl text-black shadow-lg z-50 transform transition-transform duration-300 ${

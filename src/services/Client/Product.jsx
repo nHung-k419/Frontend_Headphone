@@ -34,6 +34,7 @@ const productBestSeller = async () => {
     return response.data
   } catch (error) {
     console.log(error);
+     throw new Error('Không thể tải sản phẩm bán chạy');
   }
 };
 

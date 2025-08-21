@@ -28,6 +28,8 @@ const PaymentProductOrder = async (data) => {
 };
 const getOrderItems = async ({ Id_User, status }) => {
   const data = status;
+  console.log(data);
+  
   try {
     const response = await axios.post(`https://backend-headphone.onrender.com/api/GetOrderItems/${Id_User}`, data, { withCredentials: true });
     return response.data;

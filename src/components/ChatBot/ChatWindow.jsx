@@ -10,7 +10,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 const ChatWindow = ({ onClose }) => {
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
-  const user = Cookies?.get("User");
+  const user = localStorage?.getItem("User");
   const { id: idUser, Name } = user ? JSON?.parse(user) : "";
   const [isLoading, setIsLoading] = useState(false);
   const [isExistArrowDown, setIsExistArrowDown] = useState(false);
