@@ -1,6 +1,8 @@
 // utils/highlightText.js
 import { IoSearch } from "react-icons/io5";
 export function highlightText(text, keyword) {
+  console.log(text, keyword);
+  
   if (!keyword) return text;
 
   const parts = text.split(new RegExp(`(${keyword})`, "gi"));

@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { FaRegHeart } from "react-icons/fa";
 import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
 import { BsArrowLeftRight } from "react-icons/bs";
-import { Mutation, QueryClient, useMutation, useQueries, useQuery } from "@tanstack/react-query";
-import { GetAllProducts, GetProductFilter } from "../../services/Client/Product";
+import { Mutation, QueryClient, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GetAllProducts, GetProductFilter, FavouriteProduct, getFavouriteByUser } from "../../services/Client/Product";
 import { GetAllCategory } from "../../services/Client/Categories";
 import { GrPrevious } from "react-icons/gr";
 import { GrNext } from "react-icons/gr";
@@ -17,9 +16,17 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useRef } from "react";
 import SkeletonProductCard from "../../components/Skeleton/ProductSkeleton";
 import ReactStars from "react-rating-stars-component";
-import { SlHeart } from "react-icons/sl";
+import { IoCartOutline } from "react-icons/io5";
+import { IoCheckmarkOutline } from "react-icons/io5";
+import { FaHeart, FaRegEye } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa6";
+import { AddProductCart } from "../../services/Client/Cart";
+import { Toaster, toast } from "sonner";
 // import "./embla.css";
 const Product = () => {
+  const queryclient = useQueryClient();
+  const user = localStorage.getItem("User");
+  const { id: idUser } = user ? JSON?.parse(user) : "";
   const dispatch = useDispatch();
   const location = useLocation();
   const keyWord = location.state?.keyWord;
@@ -29,12 +36,26 @@ const Product = () => {
     Brand: true,
     // Color: true,
   });
+  const [added, setAdded] = useState({
+    productId: [],
+  });
+  const [heart, setHeart] = useState({
+    productId: [],
+  });
   const [checkActive, setCheckActive] = useState({
     idCategory: "",
     isActiveCategory: false,
     idBrand: "",
     isActiveBrand: false,
     valuePrice: "",
+  });
+  const [dataProduct, setDataProduct] = useState({
+    Id_ProductVariants: "",
+    quantity: 1,
+    Color: "",
+    Price: 0,
+    Size: "M",
+    Image: "",
   });
   const [dataFilter, setDataFilter] = useState({
     idCategory: "",
@@ -47,12 +68,86 @@ const Product = () => {
   const [valueSelect, setValueSelect] = useState({
     type: "",
   });
+  const mutationAddcart = useMutation({
+    mutationKey: ["addCart"],
+    mutationFn: AddProductCart,
+  });
+  const handleAddToCart = (product) => {
+    if (!idUser) {
+      toast.warning("Vui lòng đăng nhập!");
+    } else {
+      setTimeout(() => {
+        setAdded((prev) => ({ ...prev, productId: [...prev.productId, product._id] }));
+        toast.success("Đã thêm vào giỏ hàng!");
+        const data = {
+          Id_ProductVariants: product.maxVariant._id,
+          quantity: 1,
+          Color: product.maxVariant.Color,
+          Price: product.maxVariant.Price,
+          Size: "M",
+          Image: product.maxVariant.Image.path,
+        };
+        mutationAddcart.mutate({ idUser: idUser, data: data });
+      }, 200);
+    }
+  };
+  useEffect(() => {
+    if (added.productId.length === 0) return;
+    const firstId = added.productId[0];
+
+    const timer = setTimeout(() => {
+      setAdded((prev) => ({
+        ...prev,
+        productId: prev.productId.filter((item) => item !== firstId),
+      }));
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [added.productId]);
+
+  const { data: dataFavourite } = useQuery({
+    queryKey: ["getfavourite"],
+    queryFn: () => getFavouriteByUser(idUser),
+  });
+  console.log(dataFavourite);
+
+  const mutationFavourite = useMutation({
+    mutationKey: ["favourite"],
+    mutationFn: FavouriteProduct,
+    onSuccess: (data) => {
+      console.log(data);
+
+      if (data.message === "Product added to favourite successfully") {
+        queryclient.invalidateQueries(["getfavourite"]);
+        toast.success("Đã thêm vào danh sách yêu thích!");
+      } else if (data.message === "Product deleted from favourite successfully") {
+        queryclient.invalidateQueries(["getfavourite"]);
+        toast.warning("Đã xóa khỏi danh sách yêu thích!");
+      }
+    },
+  });
+  const handleAddFavourite = (product) => {
+    if (!idUser) {
+      toast.warning("Vui lòng đăng nhập!");
+    } else {
+      mutationFavourite.mutate({ idUser: idUser, idProduct: product?._id });
+
+      // setTimeout(() => {
+      //   if (heart.productId.includes(product?._id)) {
+      //     toast.warning("Đã xóa khỏi danh sách yêu thích!");
+      //     setHeart((prev) => ({ ...prev, productId: prev.productId.filter((item) => item !== product?._id) }));
+      //   } else {
+      //     toast.success("Đã thêm vào danh sách yeu thich!");
+      //     setHeart((prev) => ({ ...prev, productId: [...prev.productId, product?._id] }));
+      //   }
+      // }, 200);
+    }
+  };
   useEffect(() => {
     if (keyWord) {
       setKeySearch(keyWord);
     }
   }, [keyWord]);
-  // console.log(KeySearch);
 
   // Handle call api
   const result = useQueries({
@@ -67,10 +162,6 @@ const Product = () => {
       },
     ],
   });
-
-  const handleAddToCart = (product) => {
-    dispatch(AddCart(product));
-  };
 
   const handleGetSelect = (e) => {
     setValueSelect((prev) => ({ ...prev, type: e.target.value }));
@@ -113,6 +204,7 @@ const Product = () => {
     queryFn: () => GetProductFilter({ data: checkActive, page: currentPage, limit: 6, keyWord: KeySearch, type: valueSelect.type }),
     keepPreviousData: true,
   });
+  // console.log(dataFilterProduct);
 
   const handleNextcurrentPage = () => {
     if (currentPage < dataFilterProduct?.totalPages) {
@@ -130,9 +222,9 @@ const Product = () => {
   // end page navigation **//
 
   const banners = [
-    { id: 1, src: "https://images.pexels.com/photos/1082328/pexels-photo-1082328.jpeg", alt: "Tai nghe 1" },
-    { id: 2, src: "https://images.pexels.com/photos/16303235/pexels-photo-16303235.jpeg", alt: "Tai nghe 2" },
-    { id: 3, src: "https://images.pexels.com/photos/16303235/pexels-photo-16303235.jpeg", alt: "Tai nghe 3" },
+    { id: 1, src: "https://i.pinimg.com/1200x/6b/32/98/6b32986399a6255fdc064eb0218d8684.jpg", alt: "Tai nghe 1" },
+    { id: 2, src: "https://i.pinimg.com/1200x/dc/f6/23/dcf6239bbf6a973c7b06908f8fe03409.jpg", alt: "Tai nghe 2" },
+    { id: 3, src: "https://i.pinimg.com/1200x/c3/ce/95/c3ce95ba550d7fbf458ee642bd4d25ee.jpg", alt: "Tai nghe 3" },
   ];
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const autoplayRef = useRef();
@@ -225,7 +317,7 @@ const Product = () => {
         {/* </div> */}
       </div>
       {/*end Sidebar */}
-      <section className="grid lg:grid-cols-[1fr_3fr] grid-cols-1 max-w-7xl mx-auto mt-30">
+      <section className="grid lg:grid-cols-[1fr_3fr] grid-cols-1 max-w-7xl mx-auto mt-25">
         <div className="sticky top-0 w-[300px] h-fit rounded-sm lg:block md:block hidden">
           <div>
             <h1 className="font-bold ml-4">
@@ -294,11 +386,11 @@ const Product = () => {
           </div>
         </div>
         <div>
-          <div className="overflow-hidden" ref={emblaRef}>
+          <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
             <div className="flex">
               {banners.map((banner) => (
                 <div className="min-w-full" key={banner.id}>
-                  <img src={banner.src} alt={banner.alt} className="w-full h-[350px] object-cover" />
+                  <img src={banner.src} alt={banner.alt} className="w-full h-[400px] object-cover" />
                 </div>
               ))}
             </div>
@@ -347,62 +439,117 @@ const Product = () => {
               transition={{ duration: 0.4 }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center gap-8 lg:max-w-7xl lg:mx-auto lg:mt-5 mt-5"
             >
-              
-                {isLoading ? (
-                  <>
-                    {Array(6)
-                      .fill()
-                      .map((_, index) => (
-                        <SkeletonProductCard key={index} />
-                      ))}
-                  </>
-                ) : (
-                  <>
-                    {dataFilterProduct?.products?.map((product, index) => (
-                      <div
-                        key={product._id}
-                        className="relative bg-white rounded-2xl my-4 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden hover:translate-y-[-5px]  transfrom transition-all duration-300 ease-in-out"
-                      >
+              {isLoading ? (
+                <>
+                  {Array(6)
+                    .fill()
+                    .map((_, index) => (
+                      <SkeletonProductCard key={index} />
+                    ))}
+                </>
+              ) : (
+                <>
+                  {dataFilterProduct?.products?.map((product, index) => (
+                    <div
+                      key={product._id}
+                      className="relative bg-white rounded-2xl my-2 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden hover:translate-y-[-5px] group transfrom transition-all duration-300 ease-in-out"
+                    >
+                      <Link to={`/Products/Detail/${product._id}`}>
+                        <img
+                          className="w-full h-[170px] object-contain group-hover:scale-105 transition-all duration-300 ease-in-out"
+                          src={product?.maxVariant?.Image?.path}
+                          alt=""
+                        />
+                      </Link>
+                      <div className="group-hover:opacity-100 group-hover:translate-x-[-5px] translate-x-5 opacity-0 transition-all duration-300 ease-in-out absolute top-6 right-5 flex flex-col space-y-2">
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.85 }}
+                          transition={{ duration: 0.2 }}
+                          className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-1 border-teal-600"
+                          onClick={() => handleAddFavourite(product)}
+                        >
+                          <span className={`group-hover:text-teal-600 overflow-hidden `}>
+                            {dataFavourite?.result?.some((item) => item.Id_Product === product._id) ? (
+                              <FaHeart className={`text-red-600`} size={18} />
+                            ) : (
+                              <FaRegHeart className={`text-teal-600`} size={18} />
+                            )}
+                          </span>
+                        </motion.div>
                         <Link to={`/Products/Detail/${product._id}`}>
-                          <img
-                            className="w-full h-[170px] object-contain hover:scale-105 transition-all duration-300 ease-in-out"
-                            src={product.ImageUrl.path}
-                            alt=""
-                          />
+                          <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.85 }}
+                            transition={{ duration: 0.2 }}
+                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white border-1 border-teal-600"
+                          >
+                            <span to={`/Products/Detail/${product._id}`} className="group-hover:text-teal-600">
+                              <FaRegEye />
+                            </span>
+                          </motion.div>
                         </Link>
-                        {/* <span><SlHeart className="absolute top-4 right-4 size-5 select-none" /></span> */}
-                        <div>
-                          <div className="pl-3 flex justify-between items-center">
-                            <h1 className="text-xl font-semibold w-2/3 truncate">{product.Name}</h1>
-                            {/* <span className="mr-3 font-bold text-red-600 text-sm">SALE</span> */}
+                      </div>
+                      {/* <span><SlHeart className="absolute top-4 right-4 size-5 select-none" /></span> */}
+                      <div>
+                        <div className="pl-3 flex justify-between items-center">
+                          <h1 className="text-xl font-semibold w-5/6 truncate">{product.Name}</h1>
+                          {/* <span className="mr-3 font-bold text-red-600 text-sm">SALE</span> */}
+                        </div>
+                        <div className="ml-3 flex items-center space-x-0.5">
+                          {/* <span className="text-yellow-400 text-sm"><ReactStars count /></span>
+                           */}
+                          <ReactStars count={5} size={14} value={product.Rating} isHalf={true} edit={false} />
+                          <span className="text-xs text-gray-400">({Math.ceil(product.Rating)})</span>
+                        </div>
+                        <p className="ml-3 mr-3 text-sm text-gray-400 line-clamp-2">{product.Description}</p>
+                        <div className="flex justify-between items-center ml-3 mr-3 mt-3">
+                          <div className="space-x-2">
+                            <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent truncate">
+                              {product?.maxVariant?.Price?.toLocaleString("vi-VN")}đ
+                            </span>
+                            {/* <del className="text-red-600 text-[13px]">380đ</del> */}
                           </div>
-                          <div className="ml-3">
-                            {/* <span className="text-yellow-400 text-sm"><ReactStars count /></span>
-                             */}
-                             <ReactStars count = {5} size={17} value={product.Rating} isHalf={true}  edit={false} />
+                          {/* <Link
+                            to={`/Products/Detail/${product._id}`}
+                            className=" relative group flex items-center justify-center overflow-hidden border border-gray-200 shadow-md rounded-lg w-30 h-10 font-medium group cursor-pointer transform transition duration-400 ease-in-out bg-white"
+                          >
+                            <span className=" z-5 relative text-black group-hover:text-white font-normal transition duration-400">
+                              Xem thêm
+                            </span>
+                            <span className="absolute w-full h-full left-0 top-0 bg-teal-500 to-gray-800 transform -translate-x-full group-hover:translate-x-0 transition duration-400 ease-in-out"></span>
+                          </Link> */}
+                          <motion.button
+                            whileTap={{ scale: 0.85 }}
+                            onClick={() => handleAddToCart(product)}
+                            className={`flex items-center justify-center w-10 h-10 hover:border-teal-600 rounded-full cursor-pointer transition-colors duration-300 border-1 group border-gray-300
+        ${added.productId.includes(product._id) ? "bg-green-500 text-white" : "bg-white text-black"}`}
+                          >
+                            {added.productId.includes(product._id) ? (
+                              <IoCheckmarkOutline size={18} />
+                            ) : (
+                              <IoCartOutline className="group-hover:text-teal-600" size={18} />
+                            )}
+                          </motion.button>
+                        </div>
+                        <div className="ml-3 mt-1 flex items-center justify-between">
+                          <div className="flex items-center justify-center bg-green-50 w-25 rounded-full">
+                            <span
+                              className={`h-2 w-2 rounded-full ${product?.StockQuantity <= 0 ? "bg-red-600" : "bg-green-600"} mt-0.5`}
+                            ></span>
+                            <span className={`text-xs  p-1.5 ${product?.StockQuantity <= 0 ? "text-red-600" : "text-green-600"}`}>
+                              {product?.maxVariant?.Stock <= 0 ? "Hết hàng" : "Còn hàng"}
+                            </span>
                           </div>
-                          <p className="ml-3 mr-3 text-sm text-gray-400 line-clamp-2">{product.Description}</p>
-                          <div className="flex justify-between items-center ml-3 mr-3 mt-5">
-                            <div className="space-x-2">
-                              <span className="font-semibold text-lg">{product?.minPrice?.toLocaleString("vi-VN")}đ</span>
-                              {/* <del className="text-red-600 text-[13px]">380đ</del> */}
-                            </div>
-                            <Link
-                              to={`/Products/Detail/${product._id}`}
-                              className=" relative group flex items-center justify-center overflow-hidden border border-gray-200 shadow-md rounded-lg w-30 h-10 font-medium group cursor-pointer transform transition duration-400 ease-in-out bg-white"
-                            >
-                              <span className=" z-5 relative text-black group-hover:text-white font-normal transition duration-400">
-                                Xem thêm
-                              </span>
-                              <span className="absolute w-full h-full left-0 top-0 bg-teal-500 to-gray-800 transform -translate-x-full group-hover:translate-x-0 transition duration-400 ease-in-out"></span>
-                            </Link>
+                          <div className="mr-3">
+                            <span className="text-xs text-gray-600 font-semibold">{product?.maxVariant?.Stock} trong kho</span>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </>
-                )}
-              
+                    </div>
+                  ))}
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
 
@@ -410,7 +557,7 @@ const Product = () => {
             <div className="flex items-center justify-end lg:mr-0 mr-7 space-x-3">
               <button
                 onClick={() => handlePrevcurrentPage()}
-                className="text-sm h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out"
+                className="text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out"
               >
                 <span>
                   <GrPrevious />
@@ -421,7 +568,7 @@ const Product = () => {
               </span>
               <button
                 onClick={() => handleNextcurrentPage()}
-                className={`text-sm h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out`}
+                className={`text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out`}
               >
                 <span>
                   <GrNext />

@@ -31,7 +31,7 @@ const PublicRoutes = [
     {path : '/', component: Home},
     {path : '/Products/Detail/:id', component: Detail, layout : NavbarOnly},
     // {path : '/Brand', component: Brand, layout : NavbarOnly},
-    // {path : '/FAQS', component: FAQS, layout : NavbarOnly},
+    {path : '/FAQS', component: FAQS, layout : NavbarOnly},
     {path : '/Product', component: Product, layout : NavbarOnly},
     {path : '/About', component: About, layout : NavbarOnly},
     {path : '/Cart', component: Cart, layout : NavbarOnly},

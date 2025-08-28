@@ -14,7 +14,7 @@ import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 import WaveLoader from "../../components/AnimateDotLoading";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import ModalOrder from "../../components/ModalOrder/ModalOrder";
 import { GrLocation } from "react-icons/gr";
 import Skeleton from "react-loading-skeleton";

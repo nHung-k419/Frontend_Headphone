@@ -1,66 +1,54 @@
 import React, { useState } from "react";
-import { FaHouseMedical } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { 
+  MdSpaceDashboard 
+} from "react-icons/md";
+import { 
+  FaLayerGroup, FaBoxOpen, FaShoppingCart, FaStar, 
+  FaUserFriends, FaBoxes, FaTrademark, FaWarehouse 
+} from "react-icons/fa";
+
 const SidebarAdmin = () => {
-  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(null);
+ const [open, setOpen] = useState(true);
   const listNavbar = [
-    {
-      name: "Thống kê",
-      link: "/Admin/dashboard",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Danh mục",
-      link: "/Admin/Categories",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Sản phẩm",
-      link: "/Admin/Products",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Đơn hàng",
-      link: "/Admin/Orders",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Đánh giá",
-      link: "/Admin/Reviews",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Tài khoản",
-      link: "/Admin/Users",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Sản phẩm biến thể",
-      link: "/Admin/ProductVariants",
-      icon: <FaHouseMedical />,
-    },
-    {
-      name: "Thương hiệu",
-      link: "/Admin/Brand",
-      icon: <FaHouseMedical />,
-    },
-     {
-      name: "Quản lý kho",
-      link: "/Admin/Stock",
-      icon: <FaHouseMedical />,
-    },
+    { name: "Thống kê", link: "/Admin/dashboard", icon: <MdSpaceDashboard /> },
+    { name: "Danh mục", link: "/Admin/Categories", icon: <FaLayerGroup /> },
+    { name: "Sản phẩm", link: "/Admin/Products", icon: <FaBoxOpen /> },
+    { name: "Đơn hàng", link: "/Admin/Orders", icon: <FaShoppingCart /> },
+    { name: "Đánh giá", link: "/Admin/Reviews", icon: <FaStar /> },
+    { name: "Tài khoản", link: "/Admin/Users", icon: <FaUserFriends /> },
+    { name: "Sản phẩm biến thể", link: "/Admin/ProductVariants", icon: <FaBoxes /> },
+    { name: "Thương hiệu", link: "/Admin/Brand", icon: <FaTrademark /> },
+    { name: "Quản lý kho", link: "/Admin/Stock", icon: <FaWarehouse /> },
   ];
+
   return (
-    <div className="w-[250px] bg-gray-100 h-screen">
-      <h1>SidebarAdmin</h1>
-      <div className="flex flex-col mt-10 space-y-5">
+    <div className={`${open ? "w-64 " : "w-0"} transition-all duration-500 h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-gray-300 shadow-xl flex flex-col sticky top-0`}>
+      {/* Logo */}
+      <div className={`px-6 py-6 text-xl font-bold text-white border-b border-slate-700 transform transition-all duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"}`}>
+        Admin Soundora
+      </div>
+{/* <button
+        onClick={() => setOpen(!open)}
+        className="absolute -right-3 top-5 bg-blue-600 text-white rounded-full p-1"
+      >
+        {open ? "Đóng" : "Mở"}
+      </button> */}
+      {/* Menu */}
+      <div className={`flex flex-col mt-6 space-y-2 px-4 transform transition-all duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"}`}>
         {listNavbar.map((item, index) => (
           <Link
+            key={index}
             to={item.link}
-            className="flex items-center space-x-2 w-full hover:bg-blue-600 transition duration-300 ease-in-out rounded-md hover:text-white cursor-pointer h-10 p-2"
+            onClick={() => setActive(index)}
+            className={`flex items-center space-x-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-300
+              ${active === index 
+                ? "bg-blue-600 text-white shadow-md" 
+                : "hover:bg-slate-700 hover:text-white"}`}
           >
-            <span>{item.icon}</span>
-            <span>{item.name}</span>
+            <span className="text-lg">{item.icon}</span>
+            <span className="font-medium">{item.name}</span>
           </Link>
         ))}
       </div>

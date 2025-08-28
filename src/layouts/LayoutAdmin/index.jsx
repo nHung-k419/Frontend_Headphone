@@ -5,7 +5,7 @@ const layoutAdmin = ({ children }) => {
     <div className="flex min-h-screen">
       <SidebarAdmin />
 
-      <div className="flex-1 flex flex-col">
+      <div className="">
         <NavbarAdmin />
         <main className="flex-1 p-4 bg-gray-50">{children}</main>
       </div>
@@ -14,3 +14,4 @@ const layoutAdmin = ({ children }) => {
 };
 
 export default layoutAdmin;
+// flex-1 flex flex-col

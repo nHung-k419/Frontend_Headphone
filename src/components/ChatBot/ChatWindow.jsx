@@ -105,7 +105,7 @@ const ChatWindow = ({ onClose }) => {
           value={input}
           placeholder="Nhập câu hỏi..."
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" ? handleSend() : null}
           className="flex-1 border-1 border-gray-300 rounded-full px-3 py-2 focus:outline-none focus:ring-1 focus:ring-teal-500 hover:border-gray-500 transform transition duration-200 ease-in-out"
         />
         <button onClick={handleSend} className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-700 cursor-pointer lg:hidden md:block sm:block">

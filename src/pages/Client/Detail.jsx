@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoDiscOutline } from "react-icons/io5";
 import { GoPackage } from "react-icons/go";
@@ -15,16 +15,20 @@ import { AddCart } from "../../redux/features/CartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AddProductCart } from "../../services/Client/Cart";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import ProductDetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 import ProductSeller from "../../components/ProductSeller";
+import { IoIosHelpCircleOutline } from "react-icons/io";
 
 const Detail = () => {
+  const btnRefs = useRef([]);
   const QueryClient = useQueryClient();
   const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [lineStyle, setLineStyle] = useState({ left: 0, width: 118 });
   const [activeVariant, setActiveVariant] = useState({
     Image: "",
     id_color: "",
@@ -41,6 +45,13 @@ const Detail = () => {
     Size: "",
     Image: "",
   });
+  const handleCallStatus = (item, index) => {
+    setActiveTab(index);
+    if (btnRefs.current[index]) {
+      setLineStyle({ left: btnRefs.current[index].offsetLeft, width: btnRefs.current[index].offsetWidth });
+    }
+  };
+
   const [Stock, setStock] = useState(null);
   // handle call api used useQueries to call many api
   const result = useQueries({
@@ -84,7 +95,7 @@ const Detail = () => {
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
   };
-  console.log(dataProduct);
+  // console.log(dataProduct);
 
   // handle call detail variants by id product
   const mutationDetailVariants = useMutation({
@@ -200,7 +211,7 @@ const Detail = () => {
                       {["S", "M", "L", "XL", "XXL"]?.map((item) => (
                         <button
                           onClick={() => handleChangeSize(item)}
-                          className={`lg:h-8 lg:w-20 w-full h-7 cursor-pointer rounded-md border-1 border-gray-300 ${
+                          className={`lg:h-10 lg:w-20 w-full h-9 cursor-pointer rounded-md border-1 border-gray-300 ${
                             activeVariant.Size === item ? "bg-gray-700 text-white" : ""
                           }  `}
                         >
@@ -216,7 +227,7 @@ const Detail = () => {
                       {mutationDetailVariants?.data?.resultVariantByid?.map((item) => (
                         <button
                           onClick={() => handleChangeColor(item)}
-                          className={`lg:h-8 lg:w-20 w-full line-clamp-1 h-7 cursor-pointer rounded-md border-1 border-gray-300 ${
+                          className={`lg:h-10 lg:w-20 w-full line-clamp-1 h-9 cursor-pointer rounded-md border-1 border-gray-300 ${
                             activeVariant?.id_color === item?._id ? "bg-gray-700 text-white" : ""
                           }`}
                         >
@@ -239,9 +250,9 @@ const Detail = () => {
                   <button
                     disabled={activeVariant.id_color === "" || activeVariant.Size === ""}
                     onClick={() => handleAddToCart()}
-                    className={`lg:h-12 h-10 w-full hover:bg-gray-700 hover:text-white transform duration-300 ease-in-out rounded-xl flex items-center justify-center ${
+                    className={`lg:h-12 h-10 w-full hover:bg-gray-700 hover:text-white transform duration-300 ease-in-out rounded-md flex items-center justify-center ${
                       idUser && activeVariant.id_color && activeVariant.Size
-                        ? "cursor-pointer bg-gray-700 text-white"
+                        ? "cursor-pointer bg-gray-600 text-white"
                         : "cursor-not-allowed bg-gray-200 text-gray-600"
                     }`}
                   >
@@ -255,62 +266,125 @@ const Detail = () => {
                   </span>
                 </div>
               </div>
-              <div className="w-full rounded-2xl border-1 border-gray-200">
-                <div class="flex justify-between items-center cursor-pointer pt-3 pl-3">
-                  <h3 class="font-semibold">Mô tả</h3>
-                  <span>▾</span>
+              <div className="relative ">
+                <div className="flex space-x-5 mt-5 mb-5">
+                  {["Mô tả sản phẩm", "Thông số kỹ thuật", "Hỏi và đáp", "Vận chuyển"]?.map((item, index) => (
+                    <div>
+                      <button
+                        onClick={() => handleCallStatus(item, index)}
+                        ref={(el) => (btnRefs.current[index] = el)}
+                        className={`cursor-pointer font-semibold relative transform hover:text-black duration-200 text-gray-500 ${index === activeTab ? "text-teal-600" : ""}`}
+                      >
+                        {item}
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <p class="text-md text-gray-600 p-3">{data?.result?.Description}</p>
+                <div
+                  className={`bottom-[-10px] h-0.5 bg-black transform duration-300 ease-in-out absolute `}
+                  style={{ left: lineStyle.left, width: lineStyle.width }}
+                ></div>
               </div>
-              <div className="w-full rounded-2xl border-1 border-gray-200 space-y-3 ">
-                <h1 className="p-3 font-semibold">Vận chuyển</h1>
-                <div className="grid grid-cols-2 lg:ml-7 ml-1 lg:mr-0 mr-1 gap-y-5 pb-6">
-                  <div className="flex items-center space-x-2">
-                    <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                      <span className="lg:text-2xl text-xl">
-                        <IoDiscOutline />
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-400 ">Giảm giá</span>
-                      <p className="text-md">Giảm giá 20%</p>
-                    </div>
+              {activeTab === 0 && (
+                <div className="w-full rounded-lg border-1 border-gray-200">
+                  <div class="flex justify-between items-center cursor-pointer pt-3 pl-3">
+                    <h3 class="font-semibold">Mô tả</h3>
+                    <span>▾</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                      <span className="lg:text-2xl text-xl">
-                        <GoPackage />
-                      </span>
+                  <p class="text-md text-gray-600 p-3">{data?.result?.Description}</p>
+                </div>
+              )}
+              {activeTab === 1 && (
+                <div>
+                  <h1 className="text-center font-semibold">Hiện chưa có thông số kỹ thuật!</h1>
+                </div>
+              )}
+              {activeTab === 2 && (
+                <div className="border-1 border-gray-200 rounded-lg p-6 shadow-sm bg-white">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center">
+                        <IoIosHelpCircleOutline className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h2 className="font-bold text-lg">Hỏi và đáp</h2>
+                        <p className="text-gray-500 text-sm">Đặt câu hỏi về sản phẩm</p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-sm text-gray-400">Gói</span>
-                      <p className="text-md">Gói thông thường</p>
-                    </div>
+                    <button className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm hover:bg-gray-800">Đăng nhập để hỏi</button>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                      <span className="lg:text-2xl text-xl">
-                        <FaDelicious />
-                      </span>
+
+                  {/* Question Summary */}
+                  <div className="flex items-center gap-6">
+                    {/* Counter */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-2xl font-bold">0</span>
+                      <p className="text-gray-500 text-sm">câu hỏi</p>
                     </div>
-                    <div>
-                      <span className="text-sm text-gray-400">Thời gian giao hàng</span>
-                      <p className="text-md">Kể từ lúc nhận hàng</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                      <span className="lg:text-2xl text-xl">
-                        <CiDeliveryTruck />
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-400">Ước tính văn chuyển</span>
-                      <p className="text-md">3 - 4 ngày</p>
+
+                    {/* Empty state */}
+                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                      <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center mb-3">
+                        <IoIosHelpCircleOutline className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <p className="font-medium">Chưa có câu hỏi nào</p>
+                      <p className="text-gray-500 text-sm">Hãy là người đầu tiên đặt câu hỏi về sản phẩm này!</p>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+              {activeTab === 3 && (
+                <div className="w-full rounded-2xl border-1 border-gray-200 space-y-3 ">
+                  <h1 className="p-3 font-semibold">Vận chuyển</h1>
+                  <div className="grid grid-cols-2 lg:ml-7 ml-1 lg:mr-0 mr-1 gap-y-5 pb-6">
+                    <div className="flex items-center space-x-2">
+                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
+                        <span className="lg:text-2xl text-xl">
+                          <IoDiscOutline />
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400 ">Giảm giá</span>
+                        <p className="text-md">Giảm giá 20%</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
+                        <span className="lg:text-2xl text-xl">
+                          <GoPackage />
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Gói</span>
+                        <p className="text-md">Gói thông thường</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
+                        <span className="lg:text-2xl text-xl">
+                          <FaDelicious />
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Thời gian giao hàng</span>
+                        <p className="text-md">Kể từ lúc nhận hàng</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
+                        <span className="lg:text-2xl text-xl">
+                          <CiDeliveryTruck />
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-gray-400">Ước tính vận chuyển</span>
+                        <p className="text-md">3 - 4 ngày</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           {/* <div>

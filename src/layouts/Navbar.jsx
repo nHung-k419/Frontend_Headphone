@@ -21,11 +21,12 @@ import { TbLogin } from "react-icons/tb";
 import { LogoutAuth } from "../services/Client/Auth";
 import { FaBorderAll } from "react-icons/fa";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import ReactStars from "react-rating-stars-component";
 import { getNotificationById, markAsRead } from "../services/Client/Notification";
 import { getProfileUser } from "../services/Client/Auth";
 import AvatarContext from "../context/AvatarContext";
+import Loading from "../components/Loading";
 const Navbar = () => {
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
@@ -169,7 +170,7 @@ const Navbar = () => {
     { label: "FAQS", path: "/faqs" },
   ];
   return (
-    <div className="fixed z-10 top-0 ">
+    <div className="fixed z-10 top-0 w-full ">
       {/* sidebar */}
       <div
         className={`fixed top-0 h-full w-70 bg-gray-50 rounded-r-xl text-black shadow-lg z-50 transform transition-transform duration-300 ${
@@ -255,6 +256,12 @@ const Navbar = () => {
                   {highlightText(Product.Name, valueSearch)}
                 </Link>
               ))}
+            {isLoading && (
+              <div className="flex justify-center items-center">
+                <Loading />
+              </div>
+            )}
+            {/* {isLoading && <p>Đang load...</p>} */}
             {data?.resultSearch?.length === 0 && (
               <h1 className="text-red-600 mt-5 font-semibold text-lg flex justify-center items-end ">
                 Không tìm thấy sản phẩm nào "{valueSearch}"

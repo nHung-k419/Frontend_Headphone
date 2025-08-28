@@ -26,7 +26,7 @@ const Home = () => {
     <div>
       {/* <hr className="my-8 border-t-2 border-gray-300 max-w-7xl mx-auto w-full" /> */}
       {/* Info Section */}
-      <Header/>
+      <Header />
       <section className="bg-gray-50 lg:w-full w-[380px] lg:ml-0 ml-1.5 max-h-full h-fit lg:mt-20 mt-10 ">
         <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 place-items-center max-w-7xl mx-auto space-y-10 lg:pt-15 pt-10 pb-10">
           <motion.div
@@ -402,15 +402,14 @@ const Home = () => {
             <div class="flex items-center space-x-4">
               <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
-                <p class="text-sm font-semibold text-black">Alexander Drox</p>
-                <p class="text-xs text-gray-400">Headphone lovers</p>
+                <p class="text-sm font-semibold text-black">Nguyễn Ngọc Hùng</p>
+                <p class="text-xs text-gray-400">Diễn viên</p>
               </div>
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
-              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
-              dây nối.”
+              “Âm thanh cực kỳ trong trẻo, bass mạnh mẽ mà không bị ù. Đeo lâu không bị đau tai vì phần đệm rất mềm. Pin dùng được gần 2
+              ngày liên tục, sạc nhanh trong vòng 1 tiếng là đầy. Rất hài lòng với mức giá này!”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
@@ -441,15 +440,14 @@ const Home = () => {
             <div class="flex items-center space-x-4">
               <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
-                <p class="text-sm font-semibold text-black">Alexander Drox</p>
-                <p class="text-xs text-gray-400">Headphone lovers</p>
+                <p class="text-sm font-semibold text-black">Trần Thị Thanh Thảo</p>
+                <p class="text-xs text-gray-400">Vận động viên</p>
               </div>
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
-              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
-              dây nối.”
+              “Thiết kế đẹp, nhẹ và ôm tai chắc chắn. Mic thu âm khá rõ khi gọi điện hoặc chơi game. Tuy nhiên khi bật max volume thì âm
+              treble hơi chói tai. Nhưng nhìn chung vẫn đáng mua, đặc biệt là cho nhu cầu học online hoặc làm việc.”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
@@ -480,15 +478,14 @@ const Home = () => {
             <div class="flex items-center space-x-4">
               <img src="https://i.pravatar.cc/100" alt="Avatar" class="w-12 h-12 rounded-full" />
               <div>
-                <p class="text-sm font-semibold text-black">Alexander Drox</p>
-                <p class="text-xs text-gray-400">Headphone lovers</p>
+                <p class="text-sm font-semibold text-black">Nguyễn Thị Mỹ Vi</p>
+                <p class="text-xs text-gray-400">Giám đốc nhân sự</p>
               </div>
             </div>
 
             <p class="text-sm text-gray-700 leading-relaxed">
-              “Những chiếc tai nghe này giữ cho cảm xúc của bạn luôn tràn đầy năng lượng. Với chất âm sống động, giàu chi tiết và thiết kế
-              tinh tế phù hợp với phong cách cá nhân, chúng được tạo ra để đồng hành cùng bạn mọi lúc mọi nơi — hoàn toàn không vướng bận
-              dây nối.”
+              “Pin ổn, kết nối Bluetooth nhanh nhưng đôi lúc vẫn bị trễ 0.5s khi xem phim. Âm bass không quá nổi bật, ai thích EDM có thể sẽ
+              thấy hơi thiếu lực. Được cái giá hợp lý, phù hợp để nghe nhạc nhẹ hoặc xem video hằng ngày.”
             </p>
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">

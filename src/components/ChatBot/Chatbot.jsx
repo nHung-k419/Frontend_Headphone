@@ -25,7 +25,7 @@ const Chatbot = () => {
   return (
     <>
       <div
-        className={`fixed lg:bottom-30 md:bottom-30 bottom-9 lg:right-6 md:right-5 right-4 z-40 lg:w-[420px] md:w-[420px] w-89 lg:h-[550px] md:h-[550px] h-193 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform transition-all duration-300 ease-in-out ${
+        className={`fixed lg:bottom-30 md:bottom-30 bottom-9 lg:right-6 md:right-5 right-4 z-40 lg:w-[420px] md:w-[420px] w-89 lg:h-[550px] md:h-[550px] h-153 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform transition-all duration-300 ease-in-out ${
           isOpen ? "opacity-100 scale-110 visible pointer-events-auto" : "opacity-0 scale-90 invisible pointer-events-none"
         }`}
       >

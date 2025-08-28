@@ -11,7 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginAuth, RegisterAuth } from "../../services/Client/Auth";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 const Auth = () => {

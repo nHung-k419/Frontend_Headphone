@@ -17,7 +17,7 @@ import { AnimatePresence } from "framer-motion";
 import { CiLocationOn } from "react-icons/ci";
 import { requestCancleOrder } from "../../services/Client/Order";
 import Loading from "../../components/Loading";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import Cart404empty from "../../components/Cart404";
 const Order_Items = () => {
   const scrollRef = useRef(null);
@@ -146,7 +146,7 @@ const Order_Items = () => {
         <AnimatePresence>
           {typeModal.type === "detailOrder" && (
             <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
-              <div className="max-w-5xl mx-auto p-6 bg-white lg:rounded-2xl h-screen ">
+              <div className="max-w-5xl mx-auto p-6 bg-white lg:rounded-2xl h-[790px] ">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Chi tiết đơn hàng</h2>
 
                 {/* Thông tin đơn hàng */}
@@ -198,7 +198,7 @@ const Order_Items = () => {
                 </div>
 
                 {/* Danh sách sản phẩm */}
-                <div className="mb-6 h-[300px] overflow-hidden overflow-y-auto hide-scrollbar">
+                <div className="mb-6 h-[260px] overflow-hidden overflow-y-auto hide-scrollbar">
                   <h3 className="text-lg font-medium text-gray-700 mb-2">Sản phẩm</h3>
                   <div className="">
                     {detailOrder.order.items.map((item) => (
