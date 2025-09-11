@@ -65,9 +65,9 @@ const Detail = () => {
   const mutationAddCart = useMutation({
     mutationKey: ["AddCart"],
     mutationFn: AddProductCart,
-    onSuccess: (data) => {
-      toast.success("Đã thêm vào giỏ hàng!");
-    },
+    // onSuccess: (data) => {
+    //   toast.success("Đã thêm vào giỏ hàng!");
+    // },
     onError: () => {
       toast.error("Lỗi khi thêm giỏ hàng!");
     },
@@ -92,6 +92,7 @@ const Detail = () => {
     } else if (activeVariant.id_color === "" || activeVariant.Size === "") {
       toast.warning("Vui lòng chọn màu và size!");
     } else {
+      toast.success("Đã thêm vào giỏ hàng!");
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
   };
