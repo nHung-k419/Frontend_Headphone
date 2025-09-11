@@ -6,7 +6,7 @@ import { BsBell } from "react-icons/bs";
 const NavbarAdmin = () => {
   return (
     <div className="w-[1259px]">
-      <div className="flex justify-between w-full p-5">
+      <div className="flex justify-between w-full p-6">
         <div className="flex space-x-4 ">
           <div className="flex items-center justify-center w-11 h-11 rounded-md border-1 border-gray-300 cursor-pointer">
             <span>

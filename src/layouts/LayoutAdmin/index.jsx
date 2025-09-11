@@ -7,7 +7,7 @@ const layoutAdmin = ({ children }) => {
 
       <div className="">
         <NavbarAdmin />
-        <main className="flex-1 p-4 bg-gray-50">{children}</main>
+        <main className="flex-1 bg-gray-50">{children}</main>
       </div>
     </div>
   );

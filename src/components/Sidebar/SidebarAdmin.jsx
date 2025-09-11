@@ -5,7 +5,7 @@ import {
 } from "react-icons/md";
 import { 
   FaLayerGroup, FaBoxOpen, FaShoppingCart, FaStar, 
-  FaUserFriends, FaBoxes, FaTrademark, FaWarehouse 
+  FaUserFriends, FaBoxes, FaTrademark, FaWarehouse ,FaBox
 } from "react-icons/fa";
 
 const SidebarAdmin = () => {
@@ -21,10 +21,11 @@ const SidebarAdmin = () => {
     { name: "Sản phẩm biến thể", link: "/Admin/ProductVariants", icon: <FaBoxes /> },
     { name: "Thương hiệu", link: "/Admin/Brand", icon: <FaTrademark /> },
     { name: "Quản lý kho", link: "/Admin/Stock", icon: <FaWarehouse /> },
+    { name: "Quản lý Vouchers", link: "/Admin/Voucher", icon: <FaBox /> },
   ];
 
   return (
-    <div className={`${open ? "w-64 " : "w-0"} transition-all duration-500 h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-gray-300 shadow-xl flex flex-col sticky top-0`}>
+    <div className={`${open ? "w-70 " : "w-0"} transition-all duration-500 h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-gray-300  sticky top-0 left-0`}>
       {/* Logo */}
       <div className={`px-6 py-6 text-xl font-bold text-white border-b border-slate-700 transform transition-all duration-300 ${open ? "opacity-100 visible" : "opacity-0 invisible"}`}>
         Admin Soundora
@@ -44,7 +45,7 @@ const SidebarAdmin = () => {
             onClick={() => setActive(index)}
             className={`flex items-center space-x-3 px-4 py-2 rounded-lg cursor-pointer transition-all duration-300
               ${active === index 
-                ? "bg-blue-600 text-white shadow-md" 
+                ? "bg-teal-600 text-white shadow-md" 
                 : "hover:bg-slate-700 hover:text-white"}`}
           >
             <span className="text-lg">{item.icon}</span>

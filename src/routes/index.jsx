@@ -27,6 +27,7 @@ import Users from "../pages/Admin/Users.jsx";
 import ProductVariants from "../pages/Admin/ProductVariants.jsx";
 import BrandAdmin from "../pages/Admin/Brand.jsx";
 import Stock from "../pages/Admin/Stock.jsx";
+import Voucher from "../pages/Admin/Voucher.jsx";
 const PublicRoutes = [
     {path : '/', component: Home},
     {path : '/Products/Detail/:id', component: Detail, layout : NavbarOnly},
@@ -41,7 +42,7 @@ const PublicRoutes = [
     {path : '/Auth/Register', component: Register, layout : NavbarOnly},
     {path : '/Auth/Profile', component: Proflle, layout : NavbarOnly},
     // Amin
-    {path : '/Admin', component: Admin,layout : layoutAdmin},
+    {path : '/Admin', component: DashBoard,layout : layoutAdmin},
     {path : '/Admin/Categories', component: Categories,layout : layoutAdmin},
     {path : '/Admin/DashBoard', component: DashBoard,layout : layoutAdmin},
     {path : '/Admin/Products', component: Products,layout : layoutAdmin},
@@ -51,6 +52,7 @@ const PublicRoutes = [
     {path : '/Admin/Users', component: Users,layout : layoutAdmin},
     {path : '/Admin/Brand', component: BrandAdmin,layout : layoutAdmin},
     {path : '/Admin/Stock', component: Stock,layout : layoutAdmin},
+    {path : '/Admin/Voucher', component: Voucher,layout : layoutAdmin},
 
 
     // 404 

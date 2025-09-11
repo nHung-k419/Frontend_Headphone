@@ -6,11 +6,12 @@ import Chatbot from "./components/ChatBot/Chatbot";
 import { AvatarProvider } from "./context/AvatarContext";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import AdminRoute from "./routes/AdminRoute";
+import { useLocation } from "react-router-dom";
 const App = () => {
   return (
     <Router>
       <AvatarProvider>
-      <Chatbot/>
+      {window.location.pathname.startsWith("/Admin") ? null : <Chatbot />}
       <Routes>
         {PublicRoutes.map((route, index) => {
           let Layout = DefaultLayout;

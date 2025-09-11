@@ -4,6 +4,7 @@ import { MdArrowOutward } from "react-icons/md";
 import { MdOutlineNotes } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 const Header = () => {
   const [actionImage, setActionImage] = useState("");
   const listActionImages = [
@@ -115,13 +116,15 @@ const Header = () => {
                 <MdArrowOutward />
               </span>
             </button>
-            <button className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer">
-              <span className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</span>
-              <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
-                <MdOutlineNotes />
-              </span>
-              <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-out z-0"></span>
-            </button>
+            <Link to="/Product">
+              <button className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer">
+                <span className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</span>
+                <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
+                  <MdOutlineNotes />
+                </span>
+                <span className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-out z-0"></span>
+              </button>
+            </Link>
           </motion.div>
         </div>
         <div className="flex justify-between items-center pt-15">
@@ -190,7 +193,7 @@ const Header = () => {
               duration: 1,
             },
           }}
-          className="w-full  lg:max-w-32 bg-gradient-to-r from-black to-gray-600 rounded-md h-10 text-white relative pr-4 cursor-pointe "
+          className="w-full  lg:max-w-32 bg-teal-500 rounded-md h-10 text-white relative pr-4 cursor-pointe "
         >
           Buy Now
           <span className="absolute right-3 inline-flex pt-1 ">
@@ -214,7 +217,7 @@ const Header = () => {
           }}
           className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer"
         >
-          <span className="relative z-5 text-black group-hover:text-white transition duration-300">See More</span>
+          <Link to={"/Product"} className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</Link>
           <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
             <MdOutlineNotes />
           </span>

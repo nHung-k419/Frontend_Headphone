@@ -108,7 +108,7 @@ const Proflle = () => {
               <Link
                 to={item.link}
                 key={i}
-                className="flex items-center gap-3 pl-6 transition cursor-pointer hover:bg-teal-500 h-12 hover:text-white"
+                className={`flex items-center gap-3 pl-6 transition cursor-pointer hover:bg-teal-500 h-12 hover:text-white rounded-xl`}
               >
                 <span className="text-lg">{item.icon}</span>
                 <span className="text-sm font-medium">{item.label}</span>

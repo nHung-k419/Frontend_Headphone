@@ -228,10 +228,14 @@ const Home = () => {
               },
             }}
           >
-            <button className="w-32 h-10  border-1 border-gray-600 rounded-3xl relative group overflow-hidden cursor-pointer">
-              <span className="relative z-5 left-0 top-0 group-hover:text-white transition duration-600">Mua ngay</span>
-              <span className="absolute left-0 top-0 w-full h-full bg-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
-            </button>
+            <Link to={"/Product"}>
+              <button
+                className="w-32 h-10  border-1 border-gray-600 rounded-3xl relative group overflow-hidden cursor-pointer"
+              >
+                <span className="relative z-5 left-0 top-0 group-hover:text-white transition duration-600">Xem thêm</span>
+                <span className="absolute left-0 top-0 w-full h-full bg-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
+              </button>
+            </Link>
           </motion.div>
         </div>
       </article>
@@ -414,8 +418,8 @@ const Home = () => {
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
               <div class="flex items-center text-sm text-black space-x-1">
-                <span>★</span>
-                <span>(4.9)</span>
+                <span class="text-yellow-400">★</span>
+                <span className="text-xs">(4.9)</span>
               </div>
               <div class="text-gray-400 text-lg">❝</div>
             </div>
@@ -452,8 +456,8 @@ const Home = () => {
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
               <div class="flex items-center text-sm text-black space-x-1">
-                <span>★</span>
-                <span>(4.9)</span>
+                <span class="text-yellow-400">★</span>
+                <span className="text-xs">(4.9)</span>
               </div>
               <div class="text-gray-400 text-lg">❝</div>
             </div>
@@ -490,8 +494,8 @@ const Home = () => {
 
             <div class="flex items-center justify-between bg-gray-100 rounded-full px-4 py-2">
               <div class="flex items-center text-sm text-black space-x-1">
-                <span>★</span>
-                <span>(4.9)</span>
+                <span class="text-yellow-400">★</span>
+                <span className="text-xs">(4.9)</span>
               </div>
               <div class="text-gray-400 text-lg">❝</div>
             </div>

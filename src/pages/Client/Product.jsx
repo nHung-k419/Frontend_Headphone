@@ -115,7 +115,7 @@ const Product = () => {
     mutationKey: ["favourite"],
     mutationFn: FavouriteProduct,
     onSuccess: (data) => {
-      console.log(data);
+      // console.log(data);
 
       if (data.message === "Product added to favourite successfully") {
         queryclient.invalidateQueries(["getfavourite"]);
@@ -126,10 +126,20 @@ const Product = () => {
       }
     },
   });
+   useEffect(() => {
+  if (dataFavourite?.result) {
+    setHeart((prev) => ({
+      ...prev,
+      productId: dataFavourite.result.map((item) => item.Id_Product),
+    }));
+  }
+}, [dataFavourite]);
+
   const handleAddFavourite = (product) => {
     if (!idUser) {
       toast.warning("Vui lòng đăng nhập!");
     } else {
+      setHeart((prev) => ({ ...prev, productId: prev.productId.includes(product?._id) ? prev.productId.filter((item) => item !== product?._id) : [...prev.productId, product?._id] }));
       mutationFavourite.mutate({ idUser: idUser, idProduct: product?._id });
 
       // setTimeout(() => {
@@ -143,6 +153,8 @@ const Product = () => {
       // }, 200);
     }
   };
+  console.log(heart);
+  
   useEffect(() => {
     if (keyWord) {
       setKeySearch(keyWord);
@@ -452,7 +464,7 @@ const Product = () => {
                   {dataFilterProduct?.products?.map((product, index) => (
                     <div
                       key={product._id}
-                      className="relative bg-white rounded-2xl my-2 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden hover:translate-y-[-5px] group transfrom transition-all duration-300 ease-in-out"
+                      className="relative bg-white rounded-2xl my-2 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden group transfrom transition-all duration-300 ease-in-out"
                     >
                       <Link to={`/Products/Detail/${product._id}`}>
                         <img
@@ -461,7 +473,7 @@ const Product = () => {
                           alt=""
                         />
                       </Link>
-                      <div className="group-hover:opacity-100 group-hover:translate-x-[-5px] translate-x-5 opacity-0 transition-all duration-300 ease-in-out absolute top-6 right-5 flex flex-col space-y-2">
+                      <div className="group-hover:opacity-100 md:group-hover:translate-x-[-5px] md:translate-x-5 translate-x-1 md:opacity-0 sm:opacity-100 transition-all duration-300 ease-in-out absolute top-6 right-5 flex flex-col space-y-2">
                         <motion.div
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.85 }}

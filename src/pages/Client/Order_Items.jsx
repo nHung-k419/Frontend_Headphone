@@ -146,7 +146,7 @@ const Order_Items = () => {
         <AnimatePresence>
           {typeModal.type === "detailOrder" && (
             <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
-              <div className="max-w-5xl mx-auto p-6 bg-white lg:rounded-2xl h-[790px] ">
+              <div className="max-w-5xl mx-auto p-6 bg-white lg:rounded-2xl md:h-[690px] sm:h-[790px] ">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Chi tiết đơn hàng</h2>
 
                 {/* Thông tin đơn hàng */}
@@ -391,7 +391,7 @@ const Order_Items = () => {
           <>
             {data?.allOrderItems?.map((orderBlock) => (
               <div>
-                <div className={` w-full shadow-md mt-5 rounded-xl mb-10`}>
+                <div className={`w-full shadow-md mt-5 rounded-xl mb-10`}>
                   <div
                     className={`max-w-6xl mx-auto pt-5 transform duration-300 ease-in-out ${
                       orderBlock?.items.length > 3 && !viewMore?.includes(orderBlock.orderInfo._id)
