@@ -6,10 +6,11 @@ import SkeletonCart from "../../components/Skeleton/CartSkeleton";
 import { Link } from "react-router-dom";
 import Cart404empty from "../../components/Cart404";
 import { IoTrash, IoAdd, IoRemove, IoHeart, IoHeartOutline } from 'react-icons/io5';
+import { removeFromCart } from "../../redux/features/CartSlice";
+import { useDispatch } from "react-redux";
 const Cart = () => {
   const queryClient = useQueryClient();
-  // const user = Cookies?.get("User");
-  // const { id: idUser } = user ? JSON?.parse(user) : "";
+  const dispatch = useDispatch();
   const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const [quantity, setQuantity] = useState([]);
@@ -20,12 +21,17 @@ const Cart = () => {
     queryFn: () => GetCartItemsByUser(idUser),
     enabled: !!idUser,
   });
+  // useEffect(() => {
+  //   if(data?.resultCartItems){
+  //     localStorage.setItem("cart", JSON.stringify(data.resultCartItems));
+  //   }
+  // },[data])
   useEffect(() => {
     if (data?.resultCartItems) {
       setOptimisticCart(data.resultCartItems);
     }
   }, [data]);
-  console.log(idUser);
+  // console.log(data?.resultCartItems);
 
   const total = optimisticCart?.reduce((sum, item) => {
     const price = item.Id_ProductVariants?.Price || 0;
@@ -108,6 +114,7 @@ const Cart = () => {
       prev.filter((item) => item.Id_Cart !== Id_Cart || item.Id_ProductVariants._id !== Id_ProductVariants || item.Color !== Color)
     );
     mutationDelete.mutate({ Id_Cart, Id_ProductVariants, Color });
+    dispatch(removeFromCart(Id_ProductVariants));
   };
 
   return (
@@ -247,7 +254,7 @@ const Cart = () => {
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-gray-600">
-                    <p>Tiết kiệm được: <span className="text-green-600 font-semibold">180,000₫</span></p>
+                    {/* <p>Tiết kiệm được: <span className="text-green-600 font-semibold">180,000₫</span></p> */}
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-600">Tổng tạm tính</p>

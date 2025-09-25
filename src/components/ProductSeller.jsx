@@ -84,7 +84,8 @@ const ProductSeller = () => {
                     <Link to={`/Products/Detail/${item?.item?.Id_Products?._id}`} className="flex justify-between items-center mt-4">
                       <div>
                         <span className="text-lg font-semibold">{item?.item?.Price?.toLocaleString("vi-VN")}đ</span>
-                        <del className="text-sm text-red-400 ml-2">$249</del>
+                       
+                        <p><del className="text-sm text-red-400">{(item?.item?.Price * 1.1)?.toLocaleString("vi-VN")}đ</del></p>
                       </div>
                       <button className="bg-white text-black text-sm px-5 py-2 cursor-pointer rounded-md hover:bg-gray-200 transition">
                         Xem thêm

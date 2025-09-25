@@ -30,6 +30,8 @@ const Product = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const keyWord = location.state?.keyWord;
+const cartItems = useSelector((state) => state.cart.CartItem);
+// console.log(cartItems);
 
   const [checkVisible, setCheckVisible] = useState({
     Categories: true,
@@ -79,6 +81,7 @@ const Product = () => {
       setTimeout(() => {
         setAdded((prev) => ({ ...prev, productId: [...prev.productId, product._id] }));
         toast.success("Đã thêm vào giỏ hàng!");
+        dispatch(AddCart(product));
         const data = {
           Id_ProductVariants: product.maxVariant._id,
           quantity: 1,
@@ -109,7 +112,7 @@ const Product = () => {
     queryKey: ["getfavourite"],
     queryFn: () => getFavouriteByUser(idUser),
   });
-  console.log(dataFavourite);
+  // console.log(dataFavourite);
 
   const mutationFavourite = useMutation({
     mutationKey: ["favourite"],
@@ -126,20 +129,25 @@ const Product = () => {
       }
     },
   });
-   useEffect(() => {
-  if (dataFavourite?.result) {
-    setHeart((prev) => ({
-      ...prev,
-      productId: dataFavourite.result.map((item) => item.Id_Product),
-    }));
-  }
-}, [dataFavourite]);
+  useEffect(() => {
+    if (dataFavourite?.result) {
+      setHeart((prev) => ({
+        ...prev,
+        productId: dataFavourite.result.map((item) => item.Id_Product),
+      }));
+    }
+  }, [dataFavourite]);
 
   const handleAddFavourite = (product) => {
     if (!idUser) {
       toast.warning("Vui lòng đăng nhập!");
     } else {
-      setHeart((prev) => ({ ...prev, productId: prev.productId.includes(product?._id) ? prev.productId.filter((item) => item !== product?._id) : [...prev.productId, product?._id] }));
+      setHeart((prev) => ({
+        ...prev,
+        productId: prev.productId.includes(product?._id)
+          ? prev.productId.filter((item) => item !== product?._id)
+          : [...prev.productId, product?._id],
+      }));
       mutationFavourite.mutate({ idUser: idUser, idProduct: product?._id });
 
       // setTimeout(() => {
@@ -153,8 +161,8 @@ const Product = () => {
       // }, 200);
     }
   };
-  console.log(heart);
-  
+  // console.log(heart);
+
   useEffect(() => {
     if (keyWord) {
       setKeySearch(keyWord);
@@ -520,7 +528,7 @@ const Product = () => {
                             <span className="text-base sm:text-lg font-bold bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent truncate">
                               {product?.maxVariant?.Price?.toLocaleString("vi-VN")}đ
                             </span>
-                            {/* <del className="text-red-600 text-[13px]">380đ</del> */}
+                            <del className="text-gray-500 text-sm">{(product?.maxVariant?.Price * 1.1)?.toLocaleString("vi-VN")}đ</del>
                           </div>
                           {/* <Link
                             to={`/Products/Detail/${product._id}`}
@@ -534,7 +542,7 @@ const Product = () => {
                           <motion.button
                             whileTap={{ scale: 0.85 }}
                             onClick={() => handleAddToCart(product)}
-                            className={`flex items-center justify-center w-10 h-10 hover:border-teal-600 rounded-full cursor-pointer transition-colors duration-300 border-1 group border-gray-300
+                            className={`flex items-center justify-center w-10 h-10 hover:border-teal-600 rounded-full cursor-pointer transition-colors duration-300 border-2 group border-gray-300 active:border-teal-600
         ${added.productId.includes(product._id) ? "bg-green-500 text-white" : "bg-white text-black"}`}
                           >
                             {added.productId.includes(product._id) ? (

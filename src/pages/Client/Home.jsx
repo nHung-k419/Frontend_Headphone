@@ -27,7 +27,7 @@ const Home = () => {
       {/* <hr className="my-8 border-t-2 border-gray-300 max-w-7xl mx-auto w-full" /> */}
       {/* Info Section */}
       <Header />
-      <section className="bg-gray-50 lg:w-full w-[380px] lg:ml-0 ml-1.5 max-h-full h-fit lg:mt-20 mt-10 ">
+      <section className="bg-gray-50 lg:w-full w-[380px] lg:ml-0 ml-1.5 max-h-full h-fit">
         <div className="grid lg:grid-cols-2 md:grid-cols-2 grid-cols-1 place-items-center max-w-7xl mx-auto space-y-10 lg:pt-15 pt-10 pb-10">
           <motion.div
             initial={{ y: 100, opacity: 0 }}

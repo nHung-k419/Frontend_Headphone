@@ -14,20 +14,27 @@ import { useMutation } from "@tanstack/react-query";
 import { Toaster, toast } from "sonner";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "../../redux/features/CartSlice";
 const Auth = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showRegisterContent, setShowRegisterContent] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const mutationRegister = useMutation({
     mutationFn: RegisterAuth,
     onSuccess: () => {
       toast.success("Đăng ký thành công");
       setIsLogin(true);
+      setIsLoading(false);
     },
     onError: (error) => {
       if (error.status === 400) {
-        toast.warning("Email đã tồn tại");
+        setTimeout(() => {
+          setIsLoading(false);
+          toast.warning("Email đã tồn tại");
+        }, 1000);
       }
     },
   });
@@ -50,17 +57,32 @@ const Auth = () => {
         Email: data?.Email,
         Name: data?.Name,
         id: data?.id,
-        Role : data?.Role
+        Role: data?.Role,
       };
+      dispatch(fetchCart(data.id));
       localStorage.setItem("User", JSON.stringify(userData));
-      
+      setIsLoading(false);
       // Cookies.set("User", JSON.stringify(userData));
       navigate("/");
     },
     onError: (error) => {
-      console.log(error);
-
-      toast.error("Đăng nhập thất bại");
+      if (error.response.data.message === "Invalid password") {
+        setTimeout(() => {
+          setIsLoading(false);
+          toast.error("Mật khẩu không chính xác!");
+        }, 1000);
+      } else if (error.response.data.message === "User not found") {
+        setTimeout(() => {
+          setIsLoading(false);
+          toast.error("Tài khoản không tồn tại!");
+        }, 1000);
+      } else if (error.message === "Network Error") {
+        setTimeout(() => {
+          setIsLoading(false);
+          toast.error("Lỗi khi đăng nhập!");
+        }, 1000);
+      }
+      // console.log(error);
     },
   });
   useEffect(() => {
@@ -90,9 +112,11 @@ const Auth = () => {
     if (showRegisterContent) {
       // Đăng ký
       mutationRegister.mutate(data);
+      setIsLoading(true);
     } else {
       // Đăng nhập
       mutationLogin.mutate(data);
+      setIsLoading(true);
     }
     // reset();
   };
@@ -190,7 +214,18 @@ const Auth = () => {
               {/* <button type="submit" className="btn mt-4 cursor-pointer">
     {showRegisterContent ? "Đăng ký" : "Đăng nhập"}
   </button> */}
-              <button className="btn mt-4 cursor-pointer w-full">{showRegisterContent ? "Đăng ký" : "Đăng nhập"}</button>
+              <button className="btn mt-4 cursor-pointer w-full active:scale-95 transform duration-300 ease-in-out">
+                {isLoading ? (
+                  <div className="flex justify-center items-center space-x-2">
+                    <Loading />
+                    {/* <WaveLoader /> */}
+                  </div>
+                ) : showRegisterContent ? (
+                  "Đăng ký"
+                ) : (
+                  "Đăng nhập"
+                )}
+              </button>
               <div className="flex items-center mt-4 space-x-1">
                 <input type="checkbox" />
                 <p className="text-sm">Quên mật khẩu</p>
@@ -198,7 +233,7 @@ const Auth = () => {
               <p className="text-gray-400 mt-4 sm:block md:hidden">
                 Bạn không có tài khoản?{" "}
                 <span onClick={() => setShowRegisterContent(!showRegisterContent) || reset()} className="text-teal-500 font-bold">
-                  Đăng ký
+                  {showRegisterContent ? "Đăng Nhập" : "Đăng Ký"}
                 </span>
               </p>
             </form>

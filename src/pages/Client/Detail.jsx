@@ -19,6 +19,7 @@ import { Toaster, toast } from "sonner";
 import ProductDetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 import ProductSeller from "../../components/ProductSeller";
 import { IoIosHelpCircleOutline } from "react-icons/io";
+import ListQuestions from "../../components/ListQuestions";
 
 const Detail = () => {
   const btnRefs = useRef([]);
@@ -45,6 +46,7 @@ const Detail = () => {
     Size: "",
     Image: "",
   });
+
   const handleCallStatus = (item, index) => {
     setActiveTab(index);
     if (btnRefs.current[index]) {
@@ -53,6 +55,7 @@ const Detail = () => {
   };
 
   const [Stock, setStock] = useState(null);
+
   // handle call api used useQueries to call many api
   const result = useQueries({
     queries: [
@@ -62,27 +65,24 @@ const Detail = () => {
       },
     ],
   });
+
   const mutationAddCart = useMutation({
     mutationKey: ["AddCart"],
     mutationFn: AddProductCart,
-    // onSuccess: (data) => {
-    //   toast.success("Đã thêm vào giỏ hàng!");
-    // },
     onError: () => {
       toast.error("Lỗi khi thêm giỏ hàng!");
     },
   });
-  // console.log(data);
 
   // handle call detail product
   const mutationDetail = useMutation({
     mutationFn: getDetailProduct,
   });
+
   const { data, isPending, isLoading } = useQuery({
     queryKey: ["getDetailProduct", id],
     queryFn: () => getDetailProduct(id),
   });
-  // console.log(data);
 
   const handleAddToCart = () => {
     if (!idUser) {
@@ -96,21 +96,21 @@ const Detail = () => {
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
   };
-  // console.log(dataProduct);
 
   // handle call detail variants by id product
   const mutationDetailVariants = useMutation({
     mutationFn: GetProductVariants,
   });
+
   const handleAddFavorite = () => {};
+
   // handle send id to mutationDetail
   useEffect(() => {
     mutationDetail.mutate(id);
     mutationDetailVariants.mutate(id);
   }, []);
-  // console.log(mutationDetailVariants?.data?.resultVariantByid);
 
-  // handle change iamge based on color
+  // handle change image based on color
   const handleChangeColor = (item) => {
     setActiveVariant((prev) => ({
       ...prev,
@@ -120,7 +120,6 @@ const Detail = () => {
     }));
     setDataProduct((prev) => ({ ...prev, Id_ProductVariants: item._id, Color: item.Color, Image: item.Image.path, Price: item.Price }));
     setStock(item.Stock);
-    // QueryClient.invalidateQueries({ queryKey: ["getDetailProduct", id] });
   };
 
   // handle change size
@@ -138,98 +137,109 @@ const Detail = () => {
       document.body.style.paddingRight = "";
     }
   }, [isSidebarOpen]);
-  return (
-    <article className={`lg:mt-30 mt-15 relative max-w-7xl mx-auto lg:w-full w-full shadow-md lg:p-5 p-5`}>
-      {isLoading ? (
-        <ProductDetailSkeleton />
-      ) : (
-        <>
-          <div className="max-w-7xl mx-auto mb-6">
-            <Link to={"/"} className="text-gray-400 flex items-center gap-x-2">
-              <span className="text-black">
-                <FaArrowLeft />
-              </span>
-              Trang chủ
-            </Link>
-          </div>
-          <div className="grid lg:grid-cols-2 sm:grid-cols-1 lg:max-w-7xl mx-auto lg:h-full h-full ">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeVariant.id_color}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -30 }}
-                transition={{ duration: 0.4 }}
-                className="lg:w-full w-full aspect-[10/8] bg-white relative"
-              >
-                <img
-                  className="w-full h-full object-contain rounded-3xl"
-                  src={activeVariant.Image ? activeVariant.Image : data?.result?.ImageUrl?.path}
-                  alt=""
-                />
-              </motion.div>
-            </AnimatePresence>
-            <div className="max-w-xl w-full h-full mx-auto space-y-3">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-semibold  lg:mt-0 mt-3">{data?.result?.Name}</h1>
-                  <p className="text-xl font-semibold ">
-                    {dataProduct?.Price > 0 && Stock > 0 ? dataProduct?.Price?.toLocaleString("Vi-VN") + "đ" : ""}
-                  </p>
-                </div>
-                <div className="flex items-center space-x-1">
-                  {Stock > 0 ? (
-                    <>
-                      {" "}
-                      <p className="font-semibold">Tồn kho : </p>
-                      <span>{Stock}</span>
-                    </>
-                  ) : Stock === 0 ? (
-                    <p className="text-red-500 font-semibold">Sản phẩm hiện đã hết hàng</p>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="flex items-center text-sm border border-gray-300 rounded-full px-4 py-2 space-x-2 lg:w-fit w-full ">
-                  <span>⚠️</span>
-                  <span className="select-none line-clamp-1">
-                    Đặt hàng ngay <span class="font-bold text-red-600">hôm ngay</span> để được nhận hàng sớm!!!!
-                  </span>
-                  {/* {listVariants?.map((item) => (
-                <p>
-                {activeVariant.id_color === item._id && activeVariant.Size === item.Size && activeVariant.Size && activeVariant.id_color  ? item.Stock  : ""}
 
-                </p>
-              ))} */}
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {isLoading ? (
+          <ProductDetailSkeleton />
+        ) : (
+          <>
+            {/* Breadcrumb - Compact */}
+            <div className="mb-4">
+              <Link to={"/"} className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 text-sm font-medium">
+                <FaArrowLeft className="w-3 h-3" />
+                Trang chủ
+              </Link>
+            </div>
+
+            {/* Main Product - Compact Grid */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+              <div className="grid lg:grid-cols-2 gap-0">
+                {/* Product Image - Smaller */}
+                <div className="aspect-square  relative">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeVariant.id_color}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full"
+                    >
+                      <img
+                        className="w-full h-full object-contain p-8"
+                        src={activeVariant.Image ? activeVariant.Image : data?.result?.ImageUrl?.path}
+                        alt={data?.result?.Name}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
-              </div>
-              <div>
-                <div className="lg:space-y-5 space-y-3 lg:ml-0 ml-1 items-center ">
-                  {/* <span>Select Size</span> */}
-                  <div>
-                    <h1 className="text-gray-500 pb-2">Kích thước</h1>
-                    <div className="flex space-x-1 items-center">
-                      {["S", "M", "L", "XL", "XXL"]?.map((item) => (
+
+                {/* Product Info - Compact */}
+                <div className="p-6">
+                  {/* Header - Smaller */}
+                  <div className="mb-4">
+                    <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">{data?.result?.Name}</h1>
+
+                    {dataProduct?.Price > 0 && Stock > 0 && (
+                      <div className="inline-block bg-teal-600 text-white px-4 py-2 rounded-lg">
+                        <span className="text-lg font-bold">{dataProduct?.Price?.toLocaleString("Vi-VN")}₫</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Stock Status - Compact */}
+                  <div className="mb-4">
+                    {Stock > 0 ? (
+                      <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-sm">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                        Còn {Stock} sản phẩm
+                      </div>
+                    ) : Stock === 0 ? (
+                      <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-3 py-1 rounded-lg text-sm">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        Hết hàng
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Warning - Smaller */}
+                  <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-sm text-amber-800">
+                      <span>⚡</span>
+                      Đặt hàng ngay <span className="font-bold text-red-600">hôm nay</span> để được giao miễn phí!
+                    </div>
+                  </div>
+
+                  {/* Size Selection - Compact */}
+                  <div className="mb-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Kích thước</h3>
+                    <div className="grid grid-cols-5 gap-2">
+                      {["S", "M", "L", "XL", "XXL"].map((size) => (
                         <button
-                          onClick={() => handleChangeSize(item)}
-                          className={`lg:h-10 lg:w-20 w-full h-9 cursor-pointer rounded-md border-1 border-gray-300 ${
-                            activeVariant.Size === item ? "bg-gray-700 text-white" : ""
-                          }  `}
+                          key={size}
+                          onClick={() => handleChangeSize(size)}
+                          className={`h-10 rounded-md text-sm font-medium transition-colors ${
+                            activeVariant.Size === size ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
+                          }`}
                         >
-                          {item}
+                          {size}
                         </button>
                       ))}
                     </div>
                   </div>
-                  {/* <span>|</span> */}
-                  <div>
-                    <h1 className="text-gray-500 pb-2">Màu sắc</h1>
-                    <div className="flex space-x-1 items-center">
+
+                  {/* Color Selection - Compact */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Màu sắc</h3>
+                    <div className="flex flex-wrap gap-2">
                       {mutationDetailVariants?.data?.resultVariantByid?.map((item) => (
                         <button
+                          key={item._id}
                           onClick={() => handleChangeColor(item)}
-                          className={`lg:h-10 lg:w-20 w-full line-clamp-1 h-9 cursor-pointer rounded-md border-1 border-gray-300 ${
-                            activeVariant?.id_color === item?._id ? "bg-gray-700 text-white" : ""
+                          className={`w-[calc(50%-0.25rem)] p-3 rounded-md text-sm font-medium text-left transition-colors ${
+                            activeVariant?.id_color === item?._id ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
                           }`}
                         >
                           {item.Color}
@@ -237,241 +247,179 @@ const Detail = () => {
                       ))}
                     </div>
                   </div>
-                </div>
-                {/* <div className="flex space-x-3 mt-2">
-              <span className="lg:h-8 lg:w-8 w-7 h-7 cursor-pointer rounded-full bg-amber-300"></span>
-              <span className="lg:h-8 lg:w-8 w-7 h-7 cursor-pointer rounded-full bg-amber-300"></span>
-              <span className="lg:h-8 lg:w-8 w-7 h-7 cursor-pointer rounded-full bg-amber-300"></span>
-              <span className="lg:h-8 lg:w-8 w-7 h-7 cursor-pointer rounded-full bg-amber-300"></span>
-              <span className="lg:h-8 lg:w-8 w-7 h-7 cursor-pointer rounded-full bg-amber-300"></span>
-            </div> */}
-              </div>
-              <div className="flex space-x-4 mt-8">
-                <div className="flex-1">
-                  <button
-                    disabled={activeVariant.id_color === "" || activeVariant.Size === ""}
-                    onClick={() => handleAddToCart()}
-                    className={`lg:h-12 h-10 w-full hover:bg-gray-700 hover:text-white transform duration-300 ease-in-out rounded-md flex items-center justify-center ${
-                      idUser && activeVariant.id_color && activeVariant.Size
-                        ? "cursor-pointer bg-gray-600 text-white"
-                        : "cursor-not-allowed bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    <span className={``}>Thêm giỏ hàng</span>
-                  </button>
-                </div>
-                <div className="flex items-center justify-center border-1 border-gray-200 rounded-full lg:w-12 lg:h-12 h-10 w-10 text-2xl cursor-pointer">
-                  {" "}
-                  <span onClick={() => handleAddFavorite()}>
-                    <IoMdHeartEmpty />
-                  </span>
+
+                  {/* Action Buttons - Compact */}
+                  <div className="flex gap-3">
+                    <button
+                      disabled={activeVariant.id_color === "" || activeVariant.Size === ""}
+                      onClick={handleAddToCart}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
+                        idUser && activeVariant.id_color && activeVariant.Size
+                          ? "bg-teal-600 text-white hover:bg-teal-700"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                    >
+                      Thêm giỏ hàng
+                    </button>
+
+                    <button
+                      onClick={handleAddFavorite}
+                      className="w-12 h-12 rounded-lg bg-gray-100 hover:bg-teal-50 text-gray-600 hover:text-teal-600 flex items-center justify-center transition-colors"
+                    >
+                      <IoMdHeartEmpty className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="relative ">
-                <div className="flex space-x-5 mt-5 mb-5">
-                  {["Mô tả sản phẩm", "Thông số kỹ thuật", "Hỏi và đáp", "Vận chuyển"]?.map((item, index) => (
-                    <div>
-                      <button
-                        onClick={() => handleCallStatus(item, index)}
-                        ref={(el) => (btnRefs.current[index] = el)}
-                        className={`cursor-pointer font-semibold relative transform hover:text-black duration-200 text-gray-500 ${index === activeTab ? "text-teal-600" : ""}`}
-                      >
-                        {item}
-                      </button>
-                    </div>
+            </div>
+
+            {/* Tabs Section - Compact */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+              {/* Tab Headers - Smaller */}
+              <div className="border-b border-gray-100 px-6 py-3">
+                <div className="flex gap-1 relative">
+                  {["Mô tả", "Thông số", "Hỏi đáp", "Vận chuyển"].map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleCallStatus(item, index)}
+                      ref={(el) => (btnRefs.current[index] = el)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        index === activeTab ? "bg-teal-600 text-white" : "text-gray-600 hover:bg-teal-50 hover:text-teal-600"
+                      }`}
+                    >
+                      {item}
+                    </button>
                   ))}
                 </div>
-                <div
-                  className={`bottom-[-10px] h-0.5 bg-black transform duration-300 ease-in-out absolute `}
-                  style={{ left: lineStyle.left, width: lineStyle.width }}
-                ></div>
               </div>
-              {activeTab === 0 && (
-                <div className="w-full rounded-lg border-1 border-gray-200">
-                  <div class="flex justify-between items-center cursor-pointer pt-3 pl-3">
-                    <h3 class="font-semibold">Mô tả</h3>
-                    <span>▾</span>
-                  </div>
-                  <p class="text-md text-gray-600 p-3">{data?.result?.Description}</p>
-                </div>
-              )}
-              {activeTab === 1 && (
-                <div>
-                  <h1 className="text-center font-semibold">Hiện chưa có thông số kỹ thuật!</h1>
-                </div>
-              )}
-              {activeTab === 2 && (
-                <div className="border-1 border-gray-200 rounded-lg p-6 shadow-sm bg-white">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center">
-                        <IoIosHelpCircleOutline className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <h2 className="font-bold text-lg">Hỏi và đáp</h2>
-                        <p className="text-gray-500 text-sm">Đặt câu hỏi về sản phẩm</p>
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm hover:bg-gray-800">Đăng nhập để hỏi</button>
-                  </div>
 
-                  {/* Question Summary */}
-                  <div className="flex items-center gap-6">
-                    {/* Counter */}
-                    <div className="flex flex-col items-center">
-                      <span className="text-2xl font-bold">0</span>
-                      <p className="text-gray-500 text-sm">câu hỏi</p>
-                    </div>
+              {/* Tab Content - Compact */}
+              <div className="p-6">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {activeTab === 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">Mô tả sản phẩm</h3>
+                        <div className="bg-gray-50 rounded-lg p-4">
+                          <p className="text-gray-700 text-sm leading-relaxed">{data?.result?.Description}</p>
+                        </div>
+                      </div>
+                    )}
 
-                    {/* Empty state */}
-                    <div className="flex-1 flex flex-col items-center justify-center text-center">
-                      <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center mb-3">
-                        <IoIosHelpCircleOutline className="w-6 h-6 text-gray-400" />
+                    {activeTab === 1 && (
+                      <div className="text-center py-8">
+                        <div className="text-4xl mb-3">📋</div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Thông số kỹ thuật</h3>
+                        <p className="text-gray-500 text-sm">Hiện chưa có thông số kỹ thuật</p>
                       </div>
-                      <p className="font-medium">Chưa có câu hỏi nào</p>
-                      <p className="text-gray-500 text-sm">Hãy là người đầu tiên đặt câu hỏi về sản phẩm này!</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {activeTab === 3 && (
-                <div className="w-full rounded-2xl border-1 border-gray-200 space-y-3 ">
-                  <h1 className="p-3 font-semibold">Vận chuyển</h1>
-                  <div className="grid grid-cols-2 lg:ml-7 ml-1 lg:mr-0 mr-1 gap-y-5 pb-6">
-                    <div className="flex items-center space-x-2">
-                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                        <span className="lg:text-2xl text-xl">
-                          <IoDiscOutline />
-                        </span>
-                      </div>
+                    )}
+
+                    {activeTab === 2 && (
                       <div>
-                        <span className="text-sm text-gray-400 ">Giảm giá</span>
-                        <p className="text-md">Giảm giá 20%</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Hỏi và đáp</h3>
+                        <ListQuestions />
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                        <span className="lg:text-2xl text-xl">
-                          <GoPackage />
-                        </span>
-                      </div>
+                    )}
+
+                    {activeTab === 3 && (
                       <div>
-                        <span className="text-sm text-gray-400">Gói</span>
-                        <p className="text-md">Gói thông thường</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Thông tin vận chuyển</h3>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {[
+                            { icon: <IoDiscOutline className="w-5 h-5" />, label: "Giảm giá", value: "Giảm 20%" },
+                            { icon: <GoPackage className="w-5 h-5" />, label: "Đóng gói", value: "Thông thường" },
+                            { icon: <FaDelicious className="w-5 h-5" />, label: "Xử lý", value: "Từ lúc đặt hàng" },
+                            { icon: <CiDeliveryTruck className="w-5 h-5" />, label: "Giao hàng", value: "3-4 ngày" },
+                          ].map((item, index) => (
+                            <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                              <div className="w-10 h-10 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center">
+                                {item.icon}
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500">{item.label}</p>
+                                <p className="text-sm font-semibold text-gray-900">{item.value}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                        <span className="lg:text-2xl text-xl">
-                          <FaDelicious />
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-400">Thời gian giao hàng</span>
-                        <p className="text-md">Kể từ lúc nhận hàng</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="lg:h-15 lg:w-15 w-10 h-10 rounded-full flex items-center justify-center bg-gray-100">
-                        <span className="lg:text-2xl text-xl">
-                          <CiDeliveryTruck />
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-sm text-gray-400">Ước tính vận chuyển</span>
-                        <p className="text-md">3 - 4 ngày</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          {/* <div>
-            <h3 className="text-3xl font-semibold ">Có thể bạn cũng thí ch</h3>
-            <ProductSeller/>
-          </div> */}
-          <div className="lg:grid lg:grid-cols-2 mt-10">
-            <div className="lg:flex items-center">
-              <div className="w-full">
-                <h1 className="font-semibold text-2xl ">Đánh giá & Bình luận</h1>
-                <div className="flex  items-center w-full">
-                  <h1 className="lg:text-9xl text-2xl font-semibold text-yellow-500">{data?.result.Rating.toFixed(1)}</h1>{" "}
-                  <span className="lg:pt-14 pt-3 text-gray-400 text-lg ">/ 5</span>
-                </div>
-                <p className="text-gray-500 mt-2">(50 đánh giá mới)</p>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
-              {/* <div className="flex flex-col items-center lg:mt-13 mt-8 lg:ml-5">
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-400">★ 5</span>
-                  <div className="relative lg:lg:w-50 w-40  rounded-md lg:h-2 h-1 bg-gray-300">
-                    <span className="absolute bg-black rounded-md w-35 lg:h-2 h-1 z-5"></span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-400">★ 4</span>
-                  <div className="relative lg:w-50 w-40 rounded-md lg:h-2 h-1 bg-gray-300">
-                    <span className="absolute bg-black rounded-md w-30 lg:h-2 h-1 z-5"></span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-400">★ 3</span>
-                  <div className="relative lg:w-50 w-40 rounded-md lg:h-2 h-1 bg-gray-300">
-                    <span className="absolute bg-black rounded-md w-20 lg:h-2 h-1 z-5"></span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-400">★ 2</span>
-                  <div className="relative lg:w-50 w-40 rounded-md lg:h-2 h-1 bg-gray-300">
-                    <span className="absolute bg-black rounded-md w-15 lg:h-2 h-1 z-5"></span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-400">★ 1</span>
-                  <div className="relative lg:w-50 w-40 rounded-md lg:h-2 h-1 bg-gray-300">
-                    <span className="absolute bg-black rounded-md w-10 lg:h-2 h-1 z-5"></span>
-                  </div>
-                </div>
-              </div> */}
             </div>
 
-            <div className="border-1 max-w-xl mx-auto border-gray-300 rounded-2xl w-full p-3 lg:mt-0 mt-5">
-              <div className="flex justify-between ">
-                <div className="flex items-center gap-x-2">
-                  <img
-                    className="lg:w-8 lg:h-8 text-sm w-7 h-7 rounded-full object-cover"
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&w=1000&q=80"
-                    alt=""
-                  />
-                  <h1 className="font-bold">Nguyễn Ngọc Hùng</h1>
+            {/* Reviews Section - Compact */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-6">
+                <div className="grid lg:grid-cols-3 gap-6">
+                  {/* Rating Overview - Smaller */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Đánh giá</h2>
+                    <div className="bg-teal-600 text-white rounded-lg p-4 text-center">
+                      <div className="text-3xl font-bold mb-2">{data?.result.Rating.toFixed(1)}</div>
+                      <div className="flex justify-center gap-1 mb-1">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className={`text-lg ${i < Math.floor(data?.result.Rating) ? "text-yellow-300" : "text-teal-300"}`}>
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-teal-100 text-xs">50 đánh giá</p>
+                    </div>
+                  </div>
+
+                  {/* Sample Review - Smaller */}
+                  <div className="lg:col-span-2">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-start gap-3 mb-3">
+                        <img
+                          className="w-10 h-10 rounded-full object-cover"
+                          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&w=1000&q=80"
+                          alt="User avatar"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-semibold text-gray-900 text-sm">Nguyễn Ngọc Hùng</h4>
+                            <span className="text-xs text-gray-500">13 Oct 2025</span>
+                          </div>
+                          <div className="flex gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className="text-yellow-400 text-sm">
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-gray-700 text-sm leading-relaxed">
+                            "Loose-fit sweatshirt hoodie in medium weight cotton-blend fabric with a generous, but not oversized
+                            silhouette..."
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setIsSidebarOpen(true)}
+                      className="w-full mt-4 py-2 bg-teal-600 text-white font-medium text-sm rounded-lg hover:bg-teal-700 transition-colors"
+                    >
+                      Xem tất cả đánh giá
+                    </button>
+                  </div>
                 </div>
-                <span className="text-gray-400 text-sm mt-2.5">13 Oct 2025</span>
-              </div>
-              <span className="text-yellow-400 pl-2">★★★★★</span>
-              <div>
-                <p className="p-2 text-gray-500">
-                  "Loose-fit sweatshirt hoodie in medium weight cotton-blend fabric with a generous, but not oversized silhouette.
-                  Jersey-lined, drawstring hood, dropped shoulders, long sleeves, and a kangaroo pocket. Wide ribbing at cuffs and hem.
-                  Soft, brushed inside."
-                </p>
-              </div>
-              <div className="relative w-30 rounded-md h-1 bg-gray-300 mx-auto">
-                <span className="absolute bg-black rounded-md w-15 h-1 z-5"></span>
               </div>
             </div>
+
             <SidebarReview keyOpen="detail" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="px-4 py-2 w-full bg-teal-500 text-white rounded-xl relative overflow-hidden group cursor-pointer lg:mt-0 mt-5 lg:mb-0 mb-3"
-            >
-              <span className="relative text-white group-hover:text-white z-10">Xem tất cả đánh giá</span>
-              <span className="absolute w-full h-full left-0 bg-gradient-to-r from-teal-400 to-teal-500 top-0 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600 ease-in-out z-0"></span>
-            </button>
-          </div>
-        </>
-      )}
-    </article>
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

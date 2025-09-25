@@ -27,12 +27,17 @@ import { getNotificationById, markAsRead } from "../services/Client/Notification
 import { getProfileUser } from "../services/Client/Auth";
 import AvatarContext from "../context/AvatarContext";
 import Loading from "../components/Loading";
+import { useSelector } from "react-redux";
 const Navbar = () => {
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
   const user = localStorage.getItem("User");
   const { Name, id } = user ? JSON?.parse(user) : "";
-
+  const cart = localStorage.getItem("cart");
+  const cartLocalstorage = cart ? JSON.parse(cart) : [];
+  const cartItems = useSelector((state) => state.cart.CartItem);
+  // console.log(cartItems);
+  
   // const user = Cookies?.get("User");
   // const { Name, id } = user ? JSON?.parse(user) : "";
   const navigate = useNavigate();
@@ -295,13 +300,13 @@ const Navbar = () => {
           </div>
           {/* boxModal */}
           {!user ? (
-            <Link className="flex justify-center text-white rounded-md items-center h-10 w-27 bg-teal-500" to={"/Auth/Login"}>
+            <Link className="flex justify-center text-white rounded-md items-center h-10 w-27 bg-teal-500 hover:bg-teal-600 transform transition-all duration-200 ease-in-out hover:rotate-1 hover:translate-y-[-3px]" to={"/Auth/Login"}>
               Đăng nhập
             </Link>
           ) : (
             <div onClick={() => handleOpenModal("User")} className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
               {" "}
-              <img className="w-8 h-8 rounded-full object-cover" src={avatarUrl || dataUser?.isCheckUser?.Image?.path} alt="" />
+              <img className={`w-8 h-8 rounded-full object-cover ${avatarUrl || dataUser?.isCheckUser?.Image?.path ? "" : "border-1 border-gray-500"}`} src={avatarUrl || dataUser?.isCheckUser?.Image?.path || "https://i.pinimg.com/736x/43/14/0a/43140a3803e5f1b39c1ffac1a35a3ec7.jpg"} alt="404" />
             </div>
           )}
           <div
@@ -434,9 +439,12 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-          <Link to="/Cart" className="text-xl cursor-pointer">
+          {user && (
+          <Link to="/Cart" className="text-xl cursor-pointer relative">
             <IoCartOutline />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{cartItems?.length}</span>
           </Link>
+          )}
           {/* <li onClick={() => setIsSidebarOpen(true)} className="text-xl cursor-pointer">
             <IoCartOutline />
           </li> */}

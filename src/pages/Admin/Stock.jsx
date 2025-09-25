@@ -252,7 +252,7 @@ const Stock = () => {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-gray-600 text-sm font-medium">Current Stock</p>
+                        <p className="text-gray-600 text-sm font-medium">Kho hiện tại</p>
                         <p className="text-2xl font-bold text-blue-600">{item.Stock || 0}</p>
                       </div>
                     </div>
@@ -272,7 +272,7 @@ const Stock = () => {
                           </svg>
                         </div>
                         <div>
-                          <p className="text-gray-600 text-sm font-medium">Color</p>
+                          <p className="text-gray-600 text-sm font-medium">Màu sắc</p>
                           <p className="text-lg font-semibold text-purple-600">{item.Color}</p>
                         </div>
                       </div>
@@ -287,7 +287,7 @@ const Stock = () => {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-gray-600 text-sm font-medium">Units Sold</p>
+                        <p className="text-gray-600 text-sm font-medium">Đã bán</p>
                         <p className="text-lg font-bold text-green-600">{item.Sold || 0}</p>
                       </div>
                     </div>
@@ -300,7 +300,7 @@ const Stock = () => {
                     <input
                       type="number"
                       name="quantity"
-                      placeholder="Enter new stock quantity"
+                      placeholder="Nhập số lượng tồn kho"
                       onChange={(e) => handleStockChange(e)}
                       className="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-center font-medium"
                     />
@@ -329,7 +329,7 @@ const Stock = () => {
                           d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                         />
                       </svg>
-                      <span>Update Stock</span>
+                      <span>Cập nhật</span>
                     </div>
                   </button>
                 </div>
@@ -337,7 +337,7 @@ const Stock = () => {
                 {/* Stock Status Indicator */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Stock Status:</span>
+                    <span className="text-sm text-gray-500">Trạng thái:</span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         (item.Stock || 0) === 0
@@ -347,7 +347,7 @@ const Stock = () => {
                           : "bg-green-100 text-green-800"
                       }`}
                     >
-                      {(item.Stock || 0) === 0 ? "Out of Stock" : (item.Stock || 0) < 10 ? "Low Stock" : "In Stock"}
+                      {(item.Stock || 0) === 0 ? "Hết hàng" : (item.Stock || 0) < 10 ? "Gần hết hàng" : "Còn hàng"}
                     </span>
                   </div>
                 </div>

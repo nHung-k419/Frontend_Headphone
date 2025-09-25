@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 // import { GoPlus, CiEdit, LuTrash2, CiSearch, FaFilter, FaRegCalendar, CiPercent, FaDollarSign, FaTag, HiMiniUsers } from 'lucide-react';
 import { GoPlus } from "react-icons/go";
 import { CiEdit } from "react-icons/ci";
@@ -10,131 +10,151 @@ import { CiPercent } from "react-icons/ci";
 import { FaDollarSign } from "react-icons/fa";
 import { FaTag } from "react-icons/fa6";
 import { HiMiniUsers } from "react-icons/hi2";
-import Modal from '../../components/ModalAdmin/Modal';
+import Modal from "../../components/ModalAdmin/Modal";
+import { CreateVoucher,getAllVouchers } from "../../services/Admin/Voucher";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import Loading from "../../components/Loading";
+import { Toaster, toast } from "sonner";
 const Voucher = () => {
   const [vouchers, setVouchers] = useState([
     {
       id: 1,
-      code: 'SUMMER2024',
-      name: 'Khuyến mãi mùa hè',
-      type: 'CiPercenFaTage',
+      code: "SUMMER2024",
+      name: "Khuyến mãi mùa hè",
+      type: "percentage",
       value: 20,
       minOrderValue: 500000,
       maxDiscount: 100000,
-      usageLimit: 100,
+      totalUsageLimit: 100,
       usedCount: 25,
-      startDate: '2024-06-01',
-      endDate: '2024-08-31',
-      status: 'active',
-      description: 'Giảm giá 20% cho đơn hàng mùa hè'
+      startDate: "2024-06-01",
+      endDate: "2024-08-31",
+      status: "active",
+      description: "Giảm giá 20% cho đơn hàng mùa hè",
     },
     {
       id: 2,
-      code: 'WELCOME50',
-      name: 'Chào mừng khách hàng mới',
-      type: 'fixed',
+      code: "WELCOME50",
+      name: "Chào mừng khách hàng mới",
+      type: "fixed",
       value: 50000,
       minOrderValue: 200000,
       maxDiscount: 50000,
-      usageLimit: 500,
+      totalUsageLimit: 500,
       usedCount: 120,
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-      status: 'active',
-      description: 'Giảm 50k cho khách hàng mới'
+      startDate: "2024-01-01",
+      endDate: "2024-12-31",
+      status: "active",
+      description: "Giảm 50k cho khách hàng mới",
     },
     {
       id: 3,
-      code: 'FLASH30',
-      name: 'Flash Sale',
-      type: 'CiPercenFaTage',
+      code: "FLASH30",
+      name: "Flash Sale",
+      type: "percentage",
       value: 30,
       minOrderValue: 1000000,
       maxDiscount: 200000,
-      usageLimit: 50,
+      totalUsageLimit: 50,
       usedCount: 50,
-      startDate: '2024-07-15',
-      endDate: '2024-07-20',
-      status: 'expired',
-      description: 'Flash sale giảm 30%'
-    }
+      startDate: "2024-07-15",
+      endDate: "2024-07-20",
+      status: "expired",
+      description: "Flash sale giảm 30%",
+    },
   ]);
+const {data} = useQuery({
+  queryKey: ["getAllVouchers"],
+  queryFn: getAllVouchers
+})
+console.log(data);
 
+  const mutationCreateVoucher = useMutation({
+    mutationKey: ["createVoucher"],
+    mutationFn: (data) => CreateVoucher(data),
+    onSuccess: (data) => {
+      setIsLoading(false);
+      resetForm();
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.message ? error.response.data.message : "Lỗi khi tạo voucher");
+      setIsLoading(false);
+      resetForm();
+
+    }
+  });
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
   const [CiEditingVoucher, setCiEditingVoucher] = useState(null);
-  const [CiSearchTerm, setCiSearchTerm] = useState('');
-  const [FaFilterStatus, setFaFilterStatus] = useState('all');
+  const [CiSearchTerm, setCiSearchTerm] = useState("");
+  const [FaFilterStatus, setFaFilterStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 5;
 
   const [formData, setFormData] = useState({
-    code: '',
-    name: '',
-    type: 'CiPercenFaTage',
-    value: '',
-    minOrderValue: '',
-    maxDiscount: '',
-    usageLimit: '',
-    startDate: '',
-    endDate: '',
-    description: ''
+    code: "",
+    discountType: "percentage",
+    title: "",
+    discountValue: "",
+    minOrderValue: "",
+    maxDiscount: "",
+    totalUsageLimit: "",
+    startDate: "",
+    expiresAt: "",
+    description: "",
   });
 
   // FaFilter và CiSearch vouchers
-  const FaFilteredVouchers = vouchers.filter(voucher => {
-    const matchesCiSearch = voucher.name.toLowerCase().includes(CiSearchTerm.toLowerCase()) ||
-                         voucher.code.toLowerCase().includes(CiSearchTerm.toLowerCase());
-    const matchesFaFilter = FaFilterStatus === 'all' || voucher.status === FaFilterStatus;
+  const FaFilteredVouchers = data?.filter((voucher) => {
+    const matchesCiSearch =
+      voucher.name?.toLowerCase().includes(CiSearchTerm?.toLowerCase()) || voucher.code?.toLowerCase().includes(CiSearchTerm?.toLowerCase());
+    const matchesFaFilter = FaFilterStatus === "all" || voucher.status === FaFilterStatus;
     return matchesCiSearch && matchesFaFilter;
   });
 
   // Pagination
-  const totalPages = Math.ceil(FaFilteredVouchers.length / itemsPerPage);
+  const totalPages = Math.ceil(FaFilteredVouchers?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentVouchers = FaFilteredVouchers.slice(startIndex, startIndex + itemsPerPage);
+  const currentVouchers = FaFilteredVouchers?.slice(startIndex, startIndex + itemsPerPage);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = () => {
     if (CiEditingVoucher) {
       // Update voucher
-      setVouchers(prev => prev.map(voucher => 
-        voucher.id === CiEditingVoucher.id 
-          ? { ...voucher, ...formData, id: CiEditingVoucher.id, status: 'active', usedCount: voucher.usedCount }
-          : voucher
-      ));
+      setVouchers((prev) =>
+        prev.map((voucher) =>
+          voucher.id === CiEditingVoucher.id
+            ? { ...voucher, ...formData, id: CiEditingVoucher.id, status: "active", usedCount: voucher.usedCount }
+            : voucher
+        )
+      );
     } else {
       // Add new voucher
-      const newVoucher = {
-        ...formData,
-        id: Date.now(),
-        usedCount: 0,
-        status: 'active'
-      };
-      setVouchers(prev => [...prev, newVoucher]);
+      setIsLoading(true);
+      mutationCreateVoucher.mutate(formData);
     }
-    
-    resetForm();
   };
+  console.log(formData);
 
   const resetForm = () => {
     setFormData({
-      code: '',
-      name: '',
-      type: 'CiPercenFaTage',
-      value: '',
-      minOrderValue: '',
-      maxDiscount: '',
-      usageLimit: '',
-      startDate: '',
-      endDate: '',
-      description: ''
+      code: "",
+      discountType: "percentage",
+      title: "",
+      minOrderValue: "",
+      maxDiscount: "",
+      totalUsageLimit: "",
+      startDate: "",
+      expiresAt: "",
+      description: "",
     });
     setTypeModal(false);
     setCiEditingVoucher(null);
@@ -144,47 +164,54 @@ const Voucher = () => {
     setCiEditingVoucher(voucher);
     setFormData({
       code: voucher.code,
-      name: voucher.name,
-      type: voucher.type,
-      value: voucher.value.toString(),
-      minOrderValue: voucher.minOrderValue.toString(),
-      maxDiscount: voucher.maxDiscount.toString(),
-      usageLimit: voucher.usageLimit.toString(),
+      discountType: voucher.type,
+      title: voucher.title,
+      minOrderValue: voucher.minOrderValue,
+      maxDiscount: voucher.maxDiscount,
+      totalUsageLimit: voucher.totalUsageLimit,
       startDate: voucher.startDate,
-      endDate: voucher.endDate,
-      description: voucher.description
+      expiresAt: voucher.endDate,
+      description: voucher.description,
     });
     setTypeModal({ type: "UpdateVoucher", modal: true });
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa voucher này?')) {
-      setVouchers(prev => prev.filter(voucher => voucher.id !== id));
+    if (window.confirm("Bạn có chắc chắn muốn xóa voucher này?")) {
+      setVouchers((prev) => prev.filter((voucher) => voucher.id !== id));
     }
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'expired': return 'bg-red-100 text-red-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case true:
+        return "bg-green-100 text-green-800";
+      case false:
+        return "bg-red-100 text-red-800";
+      // case false:
+      //   return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'active': return 'Hoạt động';
-      case 'expired': return 'Hết hạn';
-      case 'inactive': return 'Không hoạt động';
-      default: return 'Không xác định';
+      case true:
+        return "Hoạt động";
+      case false:
+        return "Hết hạn";
+      // case false:
+      //   return "Không hoạt động";
+      default:
+        return "Không xác định";
     }
   };
 
@@ -199,7 +226,7 @@ const Voucher = () => {
               <p className="text-gray-600 mt-1">Quản lý các mã giảm giá và khuyến mãi</p>
             </div>
             <button
-              onClick={() => setTypeModal({ type: 'add', modal: true })}
+              onClick={() => setTypeModal({ type: "add", modal: true })}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors"
             >
               <GoPlus size={20} />
@@ -223,9 +250,7 @@ const Voucher = () => {
                 <HiMiniUsers className="text-green-600" size={24} />
                 <div>
                   <p className="text-sm text-gray-600">Đang hoạt động</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {vouchers.filter(v => v.status === 'active').length}
-                  </p>
+                  <p className="text-2xl font-bold text-green-600">{vouchers.filter((v) => v.status === "active").length}</p>
                 </div>
               </div>
             </div>
@@ -234,9 +259,7 @@ const Voucher = () => {
                 <FaRegCalendar className="text-yellow-600" size={24} />
                 <div>
                   <p className="text-sm text-gray-600">Hết hạn</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {vouchers.filter(v => v.status === 'expired').length}
-                  </p>
+                  <p className="text-2xl font-bold text-yellow-600">{vouchers.filter((v) => v.status === "expired").length}</p>
                 </div>
               </div>
             </div>
@@ -245,9 +268,7 @@ const Voucher = () => {
                 <FaDollarSign className="text-purple-600" size={24} />
                 <div>
                   <p className="text-sm text-gray-600">Tổng lượt sử dụng</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {vouchers.reduce((total, v) => total + v.usedCount, 0)}
-                  </p>
+                  <p className="text-2xl font-bold text-purple-600">{vouchers.reduce((total, v) => total + v.usedCount, 0)}</p>
                 </div>
               </div>
             </div>
@@ -291,31 +312,17 @@ const Voucher = () => {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Voucher
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Loại & Giá trị
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Điều kiện
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sử dụng
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Thời gian
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Trạng thái
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Thao tác
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Voucher</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại & Giá trị</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điều kiện</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sử dụng</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {currentVouchers.map((voucher) => (
+                {currentVouchers?.map((voucher) => (
                   <tr key={voucher.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div>
@@ -327,15 +334,15 @@ const Voucher = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {voucher.type === 'CiPercenFaTage' ? (
+                        {voucher.discountType === "percentage" ? (
                           <>
                             <CiPercent size={16} className="text-blue-500" />
-                            <span className="font-medium text-blue-600">{voucher.value}%</span>
+                            <span className="font-medium text-blue-600">{voucher.discountValue}%</span>
                           </>
                         ) : (
                           <>
                             <FaDollarSign size={16} className="text-green-500" />
-                            <span className="font-medium text-green-600">{formatCurrency(voucher.value)}</span>
+                            <span className="font-medium text-green-600">{formatCurrency(voucher.discountValue)}</span>
                           </>
                         )}
                       </div>
@@ -346,22 +353,24 @@ const Voucher = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm">
-                        <div className="font-medium">{voucher.usedCount}/{voucher.usageLimit}</div>
+                        <div className="font-medium">
+                          {voucher.usedCount}/{voucher.totalUsageLimit}
+                        </div>
                         <div className="w-20 bg-gray-200 rounded-full h-2 mt-1">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{width: `${(voucher.usedCount / voucher.usageLimit) * 100}%`}}
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{ width: `${(voucher.usedCount / voucher.totalUsageLimit) * 100}%` }}
                           ></div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
-                      <div>{new Date(voucher.startDate).toLocaleDateString('vi-VN')}</div>
-                      <div>{new Date(voucher.endDate).toLocaleDateString('vi-VN')}</div>
+                      <div>{new Date(voucher.startDate).toLocaleDateString("vi-VN")}</div>
+                      <div>{new Date(voucher.expiresAt).toLocaleDateString("vi-VN")}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(voucher.status)}`}>
-                        {getStatusText(voucher.status)}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(voucher.isActive)}`}>
+                        {getStatusText(voucher.isActive)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -393,32 +402,30 @@ const Voucher = () => {
             <div className="px-6 py-4 border-t border-gray-200">
               <div className="flex justify-between items-center">
                 <div className="text-sm text-gray-600">
-                  Hiển thị {startIndex + 1} đến {Math.min(startIndex + itemsPerPage, FaFilteredVouchers.length)} 
+                  Hiển thị {startIndex + 1} đến {Math.min(startIndex + itemsPerPage, FaFilteredVouchers.length)}
                   trong tổng số {FaFilteredVouchers.length} voucher
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                     className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >
                     Trước
                   </button>
-                  {Array.from({length: totalPages}, (_, i) => i + 1).map(page => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`px-3 py-1 border rounded ${
-                        currentPage === page 
-                          ? 'bg-blue-600 text-white border-blue-600' 
-                          : 'border-gray-300 hover:bg-gray-50'
+                        currentPage === page ? "bg-blue-600 text-white border-blue-600" : "border-gray-300 hover:bg-gray-50"
                       }`}
                     >
                       {page}
                     </button>
                   ))}
                   <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
                     className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
                   >
@@ -433,20 +440,20 @@ const Voucher = () => {
 
       {/* Modal */}
       {typeModal.modal && (
-        <Modal typeModal={typeModal} setTypeModal={setTypeModal} className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <Modal
+          typeModal={typeModal}
+          setTypeModal={setTypeModal}
+          className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50 p-4"
+        >
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {CiEditingVoucher ? 'Chỉnh sửa Voucher' : 'Thêm Voucher Mới'}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900">{CiEditingVoucher ? "Chỉnh sửa Voucher" : "Thêm Voucher Mới"}</h3>
             </div>
-            
+
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mã Voucher *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mã Voucher *</label>
                   <input
                     type="text"
                     name="code"
@@ -457,56 +464,50 @@ const Voucher = () => {
                     required
                   />
                 </div>
-                
-                <div>
+
+                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tên Voucher *
+                    Tiêu đề *
                   </label>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="title"
+                    value={formData.title}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Tên hiển thị của voucher"
                     required
                   />
-                </div>
-                
+                </div> 
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Loại Giảm Giá *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Loại Giảm Giá *</label>
                   <select
-                    name="type"
+                    name="discountType"
                     value={formData.type}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="CiPercenFaTage">Giảm theo phần trăm (%)</option>
+                    <option value="percentage">Giảm theo phần trăm (%)</option>
                     <option value="fixed">Giảm số tiền cố định (VNĐ)</option>
                   </select>
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giá Trị Giảm *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Giá Trị Giảm *</label>
                   <input
                     type="number"
-                    name="value"
+                    name="discountValue"
                     value={formData.value}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder={formData.type === 'CiPercenFaTage' ? '10' : '50000'}
+                    placeholder={formData.type === "percentage" ? "10" : "50000"}
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giá Trị Đơn Hàng Tối Thiểu
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Giá Trị Đơn Hàng Tối Thiểu</label>
                   <input
                     type="number"
                     name="minOrderValue"
@@ -516,11 +517,9 @@ const Voucher = () => {
                     placeholder="500000"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giảm Giá Tối Đa
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Giảm Giá Tối Đa</label>
                   <input
                     type="number"
                     name="maxDiscount"
@@ -530,25 +529,21 @@ const Voucher = () => {
                     placeholder="100000"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Giới Hạn Sử Dụng
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Giới Hạn Sử Dụng</label>
                   <input
                     type="number"
-                    name="usageLimit"
-                    value={formData.usageLimit}
+                    name="totalUsageLimit"
+                    value={formData.totalUsageLimit}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="100"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ngày Bắt Đầu *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ngày Bắt Đầu *</label>
                   <input
                     type="date"
                     name="startDate"
@@ -558,25 +553,21 @@ const Voucher = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ngày Kết Thúc *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ngày Kết Thúc *</label>
                   <input
                     type="date"
-                    name="endDate"
+                    name="expiresAt"
                     value={formData.endDate}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
-                
+
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mô Tả
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mô Tả</label>
                   <textarea
                     name="description"
                     value={formData.description}
@@ -587,20 +578,20 @@ const Voucher = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
-                <button
-                  onClick={resetForm}
-                  className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
+                <button onClick={resetForm} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
                   Hủy
                 </button>
-                <button
-                  onClick={handleSubmit}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  {CiEditingVoucher ? 'Cập nhật' : 'Thêm mới'}
-                </button>
+                {!isLoading ? (
+                  <button onClick={handleSubmit} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+                    {CiEditingVoucher ? "Cập nhật" : "Thêm mới"}
+                  </button>
+                ) : (
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+                    <Loading />
+                  </button>
+                )}
               </div>
             </div>
           </div>

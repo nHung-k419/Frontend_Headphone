@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   IoChevronDown, 
   IoChevronUp, 
@@ -17,6 +18,65 @@ const FAQPage = () => {
       ...prev,
       [index]: !prev[index]
     }));
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+        duration: 0.6
+      }
+    }
+  };
+
+  const headerVariants = {
+    hidden: { opacity: 0, y: -50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+        duration: 0.8
+      }
+    }
+  };
+
+  const sidebarVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+        delay: 0.4
+      }
+    }
   };
 
   const faqData = [
@@ -81,95 +141,222 @@ const FAQPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 mt-20">
       {/* Header */}
-      <div className="bg-white shadow-xl border-b border-gray-100">
+      <motion.div 
+        className="bg-white shadow-xl border-b border-gray-100"
+        variants={headerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
+            <motion.div 
+              className="flex items-center justify-center mb-6"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 200,
+                damping: 15,
+                delay: 0.2
+              }}
+            >
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-full">
                 <IoHelpCircle className="w-10 h-10 text-white" />
               </div>
-            </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            </motion.div>
+            
+            <motion.h1 
+              className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+            >
               Câu Hỏi Thường Gặp
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            </motion.h1>
+            
+            <motion.p 
+              className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+            >
               Tìm câu trả lời nhanh chóng cho những thắc mắc phổ biến nhất. 
               Chúng tôi luôn sẵn sàng hỗ trợ bạn!
-            </p>
+            </motion.p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-3 gap-12">
           {/* FAQ Section */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="mb-8">
+          <motion.div 
+            className="lg:col-span-2 space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+          >
+            <motion.div 
+              className="mb-8"
+              variants={itemVariants}
+            >
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Danh sách câu hỏi</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"></div>
-            </div>
+              <motion.div 
+                className="w-24 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
+                initial={{ width: 0 }}
+                whileInView={{ width: 96 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8, duration: 0.8 }}
+              />
+            </motion.div>
             
             {faqData.map((item, index) => (
-              <div 
+              <motion.div 
                 key={index} 
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 overflow-hidden"
+                variants={itemVariants}
+                whileHover={{ 
+                  y: -5,
+                  scale: 1.02,
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                <button
+                <motion.button
                   onClick={() => toggleItem(index)}
                   className="w-full px-8 py-6 text-left flex items-center justify-between focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-300"
+                  whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.05)" }}
                 >
                   <h3 className="text-lg font-semibold text-gray-800 pr-4 group-hover:text-blue-600 transition-colors duration-300">
                     {item.question}
                   </h3>
-                  <div className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full p-2">
+                  <motion.div 
+                    className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full p-2"
+                    animate={{ rotate: openItems[index] ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    whileHover={{ scale: 1.1 }}
+                  >
                     {openItems[index] ? (
-                      <IoChevronUp className="w-5 h-5 text-white transform transition-transform duration-300" />
+                      <IoChevronUp className="w-5 h-5 text-white" />
                     ) : (
-                      <IoChevronDown className="w-5 h-5 text-white transform transition-transform duration-300" />
+                      <IoChevronDown className="w-5 h-5 text-white" />
                     )}
-                  </div>
-                </button>
+                  </motion.div>
+                </motion.button>
                 
-                <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  openItems[index] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                }`}>
-                  <div className="px-8 pb-6">
-                    <div className="h-px bg-gradient-to-r from-blue-200 via-purple-200 to-indigo-200 mb-6"></div>
-                    <p className="text-gray-600 leading-relaxed text-base">
-                      {item.answer}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <AnimatePresence>
+                  {openItems[index] && (
+                    <motion.div
+                      initial={{ 
+                        height: 0, 
+                        opacity: 0,
+                        y: -10
+                      }}
+                      animate={{ 
+                        height: "auto", 
+                        opacity: 1,
+                        y: 0
+                      }}
+                      exit={{ 
+                        height: 0, 
+                        opacity: 0,
+                        y: -10
+                      }}
+                      transition={{ 
+                        duration: 0.4,
+                        ease: "easeInOut"
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-8 pb-6">
+                        <motion.div 
+                          className="h-px bg-gradient-to-r from-blue-200 via-purple-200 to-indigo-200 mb-6"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ delay: 0.1, duration: 0.5 }}
+                          style={{ originX: 0 }}
+                        />
+                        <motion.p 
+                          className="text-gray-600 leading-relaxed text-base"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2, duration: 0.5 }}
+                        >
+                          {item.answer}
+                        </motion.p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Contact Sidebar */}
-          <div className="lg:col-span-1">
+          <motion.div 
+            className="lg:col-span-1"
+            variants={sidebarVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <div className="sticky top-8 space-y-8">
               {/* Contact Info Card */}
-              <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="text-center mb-8">
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <motion.div 
+                className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+                whileHover={{ y: -5 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <motion.div 
+                  className="text-center mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <motion.div 
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center"
+                    whileHover={{ 
+                      scale: 1.1,
+                      rotate: 360
+                    }}
+                    transition={{ duration: 0.6 }}
+                  >
                     <IoCall className="w-8 h-8 text-white" />
-                  </div>
+                  </motion.div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">
                     Cần Hỗ Trợ Thêm?
                   </h2>
                   <p className="text-gray-600">
                     Đội ngũ chăm sóc khách hàng luôn sẵn sàng giúp bạn
                   </p>
-                </div>
+                </motion.div>
                 
                 <div className="space-y-6">
                   {contactInfo.map((contact, index) => {
                     const IconComponent = contact.icon;
                     return (
-                      <div key={index} className="group cursor-pointer">
+                      <motion.div 
+                        key={index} 
+                        className="group cursor-pointer"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 + index * 0.1 }}
+                        whileHover={{ x: 5 }}
+                      >
                         <div className="flex items-center space-x-4 p-5 rounded-xl bg-gray-50 group-hover:bg-gradient-to-r group-hover:from-blue-50 group-hover:to-indigo-50 transition-all duration-300 border border-transparent group-hover:border-blue-200">
-                          <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-r ${contact.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                          <motion.div 
+                            className={`flex-shrink-0 w-12 h-12 bg-gradient-to-r ${contact.color} rounded-full flex items-center justify-center`}
+                            whileHover={{ 
+                              scale: 1.1,
+                              rotate: 360
+                            }}
+                            transition={{ duration: 0.6 }}
+                          >
                             <IconComponent className="w-6 h-6 text-white" />
-                          </div>
+                          </motion.div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors duration-300">
                               {contact.title}
@@ -182,52 +369,100 @@ const FAQPage = () => {
                             </p>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
-              </div>
+              </motion.div>
 
               {/* CTA Card */}
-              <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 text-white text-center relative overflow-hidden">
+              <motion.div 
+                className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 text-white text-center relative overflow-hidden"
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 15,
+                  delay: 0.6
+                }}
+                whileHover={{ 
+                  y: -5,
+                  scale: 1.02
+                }}
+              >
                 <div className="absolute inset-0 bg-black opacity-10"></div>
+                
+                {/* Animated background elements */}
+                <motion.div 
+                  className="absolute -top-6 -right-6 w-24 h-24 bg-white opacity-10 rounded-full"
+                  animate={{ 
+                    rotate: 360,
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{ 
+                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                />
+                <motion.div 
+                  className="absolute -bottom-4 -left-4 w-16 h-16 bg-white opacity-10 rounded-full"
+                  animate={{ 
+                    rotate: -360,
+                    scale: [1, 0.8, 1]
+                  }}
+                  transition={{ 
+                    rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                />
+
                 <div className="relative z-10">
-                  <h3 className="font-bold text-xl mb-3">Vẫn chưa tìm thấy câu trả lời?</h3>
-                  <p className="text-blue-100 mb-6 leading-relaxed">
+                  <motion.h3 
+                    className="font-bold text-xl mb-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 }}
+                  >
+                    Vẫn chưa tìm thấy câu trả lời?
+                  </motion.h3>
+                  <motion.p 
+                    className="text-blue-100 mb-6 leading-relaxed"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1.0 }}
+                  >
                     Liên hệ trực tiếp với chúng tôi để được hỗ trợ tận tình và nhanh chóng nhất
-                  </p>
-                  <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                  </motion.p>
+                  <motion.button 
+                    className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 hover:shadow-lg transition-all duration-300"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ 
+                      delay: 1.2,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15
+                    }}
+                    whileHover={{ 
+                      scale: 1.05, 
+                      y: -2,
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     Liên Hệ Ngay
-                  </button>
+                  </motion.button>
                 </div>
-                {/* Decorative elements */}
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-white opacity-10 rounded-full"></div>
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-white opacity-10 rounded-full"></div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-
-      {/* Footer */}
-      {/* <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-              <IoHelpCircle className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Company Name</h3>
-            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-              Chúng tôi cam kết mang đến dịch vụ tốt nhất và hỗ trợ khách hàng 24/7
-            </p>
-            <div className="border-t border-gray-800 pt-6">
-              <p className="text-gray-500 text-sm">
-                © 2025 Company Name. Tất cả quyền được bảo lưu.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer> */}
     </div>
   );
 };

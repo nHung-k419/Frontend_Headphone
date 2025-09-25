@@ -207,7 +207,7 @@ const Users = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                Account Management
+                Quản lý tài khoản
               </h1>
               <p className="text-gray-600 mt-2">Manage user accounts, roles, and permissions</p>
             </div>
@@ -238,7 +238,7 @@ const Users = () => {
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border border-white/20 group hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Total Accounts</p>
+                <p className="text-gray-500 text-sm font-medium">Tổng tài khoản</p>
                 <h3 className="text-2xl font-bold text-gray-900">{accounts?.result.length}</h3>
                 <p className="text-xs text-gray-400 mt-1">All registered users</p>
               </div>
@@ -251,7 +251,7 @@ const Users = () => {
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border border-white/20 group hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Active Users</p>
+                <p className="text-gray-500 text-sm font-medium">Hoạt động</p>
                 <h3 className="text-2xl font-bold text-green-600">{accounts?.result.map((acc) => acc).length}</h3>
                 <p className="text-xs text-gray-400 mt-1">Currently active</p>
               </div>
@@ -277,7 +277,7 @@ const Users = () => {
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-6 border border-white/20 group hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm font-medium">Pending</p>
+                <p className="text-gray-500 text-sm font-medium">Đang chờ</p>
                 <h3 className="text-2xl font-bold text-yellow-600">{accounts?.result.filter((acc) => acc.status === "pending").length}</h3>
                 <p className="text-xs text-gray-400 mt-1">Awaiting approval</p>
               </div>
@@ -469,7 +469,7 @@ const Users = () => {
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl overflow-hidden">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">Account Directory</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Danh sách tài khoản</h2>
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <input

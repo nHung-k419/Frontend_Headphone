@@ -22,6 +22,7 @@ const ProductVariants = () => {
     type: "",
     modal: false,
   });
+  const [valueSearch, setValueSearch] = useState("");
   const [value, setValue] = useState({
     Color: "",
     Size: "",
@@ -105,6 +106,9 @@ const ProductVariants = () => {
       },
     ],
   });
+console.log(result[0]?.data?.getAllProductVariants);
+
+  const filterVariants = result[0]?.data?.getAllProductVariants?.filter((item) => item?.Id_Products.Name.toLowerCase().includes(valueSearch.toLowerCase()));
 
   // useEffect(() => {
   //   setValue({
@@ -160,7 +164,7 @@ const ProductVariants = () => {
      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       {/* Header with modern styling */}
       <div className="mb-8">
-        <div className="bg-white rounded-2xl shadow-xl p-6">
+        <div className="rounded-2xl">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
@@ -263,8 +267,26 @@ const ProductVariants = () => {
 
       {/* Modern Table */}
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Danh sách sản phẩm biến thể</h2>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search Variants..."
+                onChange={(e) => setValueSearch(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              />
+              <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+              <button className="px-3 py-1 bg-white rounded-md text-sm font-medium text-gray-700 shadow-sm">All</button>
+              <button className="px-3 py-1 text-sm font-medium text-gray-500">Active</button>
+              <button className="px-3 py-1 text-sm font-medium text-gray-500">Featured</button>
+            </div>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -295,7 +317,7 @@ const ProductVariants = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {result[0]?.data?.getAllProductVariants?.map((item, index) => (
+              {filterVariants?.map((item, index) => (
                 <tr
                   key={item._id}
                   className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 group"
