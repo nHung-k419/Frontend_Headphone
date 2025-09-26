@@ -21,6 +21,8 @@ const Cart = () => {
     queryFn: () => GetCartItemsByUser(idUser),
     enabled: !!idUser,
   });
+  console.log(data?.resultCartItems);
+  
   // useEffect(() => {
   //   if(data?.resultCartItems){
   //     localStorage.setItem("cart", JSON.stringify(data.resultCartItems));
@@ -182,7 +184,7 @@ const Cart = () => {
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500">Size:</span>
                                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm font-medium text-gray-700">
-                                  M
+                                  {item.Size}
                                 </span>
                               </div>
                             </div>

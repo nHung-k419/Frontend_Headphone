@@ -11,7 +11,6 @@ import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/rea
 import { GetAllProducts } from "../../services/Client/Product";
 import { GetProductVariants, getDetailProduct } from "../../services/Client/Detail";
 import { motion, AnimatePresence } from "framer-motion";
-import { AddCart } from "../../redux/features/CartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AddProductCart } from "../../services/Client/Cart";
 import Cookies from "js-cookie";
@@ -20,8 +19,12 @@ import ProductDetailSkeleton from "../../components/Skeleton/DetailSkeleton";
 import ProductSeller from "../../components/ProductSeller";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 import ListQuestions from "../../components/ListQuestions";
+import { AddCart } from "../../redux/features/CartSlice";
 
 const Detail = () => {
+  const CartItems = useSelector((state) => state.cart);
+  console.log(CartItems);
+  
   const btnRefs = useRef([]);
   const QueryClient = useQueryClient();
   const user = localStorage.getItem("User");
@@ -45,6 +48,7 @@ const Detail = () => {
     Price: 0,
     Size: "",
     Image: "",
+    _id: "",
   });
 
   const handleCallStatus = (item, index) => {
@@ -93,6 +97,9 @@ const Detail = () => {
       toast.warning("Vui lòng chọn màu và size!");
     } else {
       toast.success("Đã thêm vào giỏ hàng!");
+      console.log(dataProduct);
+      
+      dispatch(AddCart(dataProduct));
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
   };
@@ -112,13 +119,14 @@ const Detail = () => {
 
   // handle change image based on color
   const handleChangeColor = (item) => {
+    
     setActiveVariant((prev) => ({
       ...prev,
       Image: item.Image.path,
       id_color: item._id,
       isActiveColor: item._id === activeVariant.id_color ? !activeVariant.isActiveColor : true,
     }));
-    setDataProduct((prev) => ({ ...prev, Id_ProductVariants: item._id, Color: item.Color, Image: item.Image.path, Price: item.Price }));
+    setDataProduct((prev) => ({ ...prev, Id_ProductVariants: item._id, Color: item.Color, Image: item.Image.path, Price: item.Price, _id : item.Id_Products }));
     setStock(item.Stock);
   };
 

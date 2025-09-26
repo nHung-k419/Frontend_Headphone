@@ -69,8 +69,11 @@ const cartSlice = createSlice({
   reducers: {
     AddCart: (state, action) => {
       const product = action.payload;
-      const productId = product?.maxVariant?._id;
-      const exist = state.CartItem.find((item) => item.maxVariant?._id === productId || item.Id_ProductVariants?._id === productId);
+      // console.log(action.payload);
+      const Color = product.Color;
+      
+      const productId = product?._id;  
+      const exist = state.CartItem.find((item) => item?._id === productId || item.Id_ProductVariants?.Id_Products?._id === productId && item?.maxVariant?.Color === Color && item?.Id_ProductVariants?.Color === Color);
       if (exist) {
         exist.quantity += 1;
       } else {

@@ -137,6 +137,7 @@ const cartItems = useSelector((state) => state.cart.CartItem);
       }));
     }
   }, [dataFavourite]);
+console.log(heart);
 
   const handleAddFavourite = (product) => {
     if (!idUser) {
@@ -490,7 +491,7 @@ const cartItems = useSelector((state) => state.cart.CartItem);
                           onClick={() => handleAddFavourite(product)}
                         >
                           <span className={`group-hover:text-teal-600 overflow-hidden `}>
-                            {dataFavourite?.result?.some((item) => item.Id_Product === product._id) ? (
+                            {heart?.productId?.some((item) => item === product._id) ? (
                               <FaHeart className={`text-red-600`} size={18} />
                             ) : (
                               <FaRegHeart className={`text-teal-600`} size={18} />

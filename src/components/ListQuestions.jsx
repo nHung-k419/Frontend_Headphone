@@ -198,8 +198,8 @@ const QuestionItem = React.memo(
         <div className="p-5">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              {qa.avatar ? (
-                <img src={qa.avatar} alt={qa.author} className="w-10 h-10 rounded-full object-cover" />
+              {qa.userId ? (
+                <img src={qa.userId.Image.path} alt={qa.author} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <IoPersonCircle className="w-10 h-10 text-gray-400" />
               )}
@@ -209,9 +209,9 @@ const QuestionItem = React.memo(
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium text-gray-800">{qa.userId.Name}</span>
                 <span className="text-gray-400">•</span>
-                <span className="text-sm text-gray-500 flex items-center gap-1">
+                <span className="text-xs text-gray-500 flex items-center gap-1">
                   <IoTimeOutline className="w-4 h-4" />
-                  {qa.timestamp}
+                  {dayjs(qa?.createdAt).fromNow().replace("trước", "").trim()}
                 </span>
               </div>
 
@@ -539,19 +539,16 @@ const ListQuestions = () => {
           </div>
         </div>
 
-        {idUser ? (
-          <motion.button
+       <motion.button
             onClick={() => setIsModalOpen(true)}
-            className="px-6 py-2.5 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors flex items-center gap-2"
+            className={`px-6 py-2.5 rounded-lg bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors flex items-center gap-2 ${!idUser ? "cursor-not-allowed" : ""}`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            disabled={!idUser}
           >
             <IoHelpCircle className="w-4 h-4" />
             Đặt câu hỏi
           </motion.button>
-        ) : (
-          <button className="px-6 py-2.5 rounded-lg bg-gray-400 text-white text-sm cursor-not-allowed">Vui lòng đăng nhập</button>
-        )}
       </div>
 
       {/* Question Summary */}
