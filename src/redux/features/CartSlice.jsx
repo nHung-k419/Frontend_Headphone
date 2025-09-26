@@ -55,7 +55,7 @@ const initialState = {
 export const fetchCart = createAsyncThunk("cart/fetchCart", async (idUser) => {
   // console.log("idUser", idUser);
 
-  const res = await axios.post(`https://backend-headphone.onrender.com/api/GetCart/${idUser}`, {
+  const res = await axios.post(`http://localhost:3000/api/GetCart/${idUser}`, {
     withCredentials: true,
   });
   // console.log(res.data.resultCartItems);
@@ -69,26 +69,24 @@ const cartSlice = createSlice({
   reducers: {
     AddCart: (state, action) => {
       const product = action.payload;
-      // console.log(action.payload);
-      const Color = product.Color;
-      
-      const productId = product?._id;  
-      const exist = state.CartItem.find((item) => item?._id === productId || item.Id_ProductVariants?.Id_Products?._id === productId && item?.maxVariant?.Color === Color && item?.Id_ProductVariants?.Color === Color);
+      const productId = product?.maxVariant?._id || product.Id_ProductVariants;
+      const Color = product?.maxVariant?.Color || product.Color;
+      const exist = state.CartItem.find(
+        (item) => item.maxVariant?._id === productId || item.Id_ProductVariants?._id === productId && (item.Color === Color || item.maxVariant?.Color === Color)
+      );
       if (exist) {
         exist.quantity += 1;
       } else {
         state.CartItem.push({
           ...product,
           quantity: 1,
+          Color,
         });
       }
     },
     removeFromCart: (state, action) => {
       const productId = action.payload;
-      console.log(productId);
-
-      state.CartItem = state.CartItem.filter((item) => item.maxVariant?._id !== productId && item.Id_ProductVariants?._id !== productId);
-      // console.log("Cart sau khi xóa:", abc);
+      state.CartItem = state.CartItem.filter((item) => item.maxVariant?._id !== productId && item.Id_ProductVariants?._id !== productId && item.Id_ProductVariants !== productId);
     },
     clearCart: (state) => {
       state.CartItem = [];

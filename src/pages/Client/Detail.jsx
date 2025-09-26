@@ -22,9 +22,6 @@ import ListQuestions from "../../components/ListQuestions";
 import { AddCart } from "../../redux/features/CartSlice";
 
 const Detail = () => {
-  const CartItems = useSelector((state) => state.cart);
-  console.log(CartItems);
-  
   const btnRefs = useRef([]);
   const QueryClient = useQueryClient();
   const user = localStorage.getItem("User");
@@ -81,6 +78,10 @@ const Detail = () => {
   // handle call detail product
   const mutationDetail = useMutation({
     mutationFn: getDetailProduct,
+    onSuccess: (data) => {
+      console.log(data);
+      
+    },
   });
 
   const { data, isPending, isLoading } = useQuery({
@@ -97,8 +98,6 @@ const Detail = () => {
       toast.warning("Vui lòng chọn màu và size!");
     } else {
       toast.success("Đã thêm vào giỏ hàng!");
-      console.log(dataProduct);
-      
       dispatch(AddCart(dataProduct));
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }

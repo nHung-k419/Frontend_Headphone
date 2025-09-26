@@ -21,7 +21,6 @@ const Cart = () => {
     queryFn: () => GetCartItemsByUser(idUser),
     enabled: !!idUser,
   });
-  console.log(data?.resultCartItems);
   
   // useEffect(() => {
   //   if(data?.resultCartItems){
