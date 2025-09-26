@@ -55,7 +55,7 @@ const initialState = {
 export const fetchCart = createAsyncThunk("cart/fetchCart", async (idUser) => {
   // console.log("idUser", idUser);
 
-  const res = await axios.post(`http://localhost:3000/api/GetCart/${idUser}`, {
+  const res = await axios.post(`https://backend-headphone.onrender.com/api/GetCart/${idUser}`, {
     withCredentials: true,
   });
   // console.log(res.data.resultCartItems);

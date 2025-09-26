@@ -30,8 +30,8 @@ const Product = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const keyWord = location.state?.keyWord;
-const cartItems = useSelector((state) => state.cart.CartItem);
-// console.log(cartItems);
+  const cartItems = useSelector((state) => state.cart.CartItem);
+  // console.log(cartItems);
 
   const [checkVisible, setCheckVisible] = useState({
     Categories: true,
@@ -118,14 +118,10 @@ const cartItems = useSelector((state) => state.cart.CartItem);
     mutationKey: ["favourite"],
     mutationFn: FavouriteProduct,
     onSuccess: (data) => {
-      // console.log(data);
-
       if (data.message === "Product added to favourite successfully") {
         queryclient.invalidateQueries(["getfavourite"]);
-        toast.success("Đã thêm vào danh sách yêu thích!");
       } else if (data.message === "Product deleted from favourite successfully") {
         queryclient.invalidateQueries(["getfavourite"]);
-        toast.warning("Đã xóa khỏi danh sách yêu thích!");
       }
     },
   });
@@ -137,7 +133,7 @@ const cartItems = useSelector((state) => state.cart.CartItem);
       }));
     }
   }, [dataFavourite]);
-console.log(heart);
+  // console.log(heart);
 
   const handleAddFavourite = (product) => {
     if (!idUser) {
@@ -150,16 +146,11 @@ console.log(heart);
           : [...prev.productId, product?._id],
       }));
       mutationFavourite.mutate({ idUser: idUser, idProduct: product?._id });
-
-      // setTimeout(() => {
-      //   if (heart.productId.includes(product?._id)) {
-      //     toast.warning("Đã xóa khỏi danh sách yêu thích!");
-      //     setHeart((prev) => ({ ...prev, productId: prev.productId.filter((item) => item !== product?._id) }));
-      //   } else {
-      //     toast.success("Đã thêm vào danh sách yeu thich!");
-      //     setHeart((prev) => ({ ...prev, productId: [...prev.productId, product?._id] }));
-      //   }
-      // }, 200);
+      if (heart.productId.includes(product?._id)) {
+        toast.warning("Đã xóa khỏi danh sách yêu thích!");
+      } else {
+        toast.success("Đã thêm vào danh sách yeu thich!");
+      }
     }
   };
   // console.log(heart);
