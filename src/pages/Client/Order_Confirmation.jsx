@@ -173,7 +173,7 @@ console.log(AddressInfo);
       // console.log(data?.resultCreate);
       if (data?.resultCreate?.PaymentMethod === "COD") {
         // console.log(data?.resultCreate?.PaymentMethod);
-
+setIsLoading(false);
         toast.success("Đặt hàng thành công!!");
         navigate("/OrderItems");
       } else {
