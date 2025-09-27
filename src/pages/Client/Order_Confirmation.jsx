@@ -20,7 +20,10 @@ import { GrLocation } from "react-icons/gr";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { AnimatePresence } from "framer-motion";
+import { clearCart } from "../../redux/features/CartSlice";
+import { useDispatch } from "react-redux";
 const Order_Confirmation = () => {
+  const dispatch = useDispatch();
   const TabRef = useRef([]);
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
   const [valueCode, setValueCode] = useState({ codeDistricts: "", codeCommunate: "" });
@@ -173,8 +176,9 @@ console.log(AddressInfo);
       // console.log(data?.resultCreate);
       if (data?.resultCreate?.PaymentMethod === "COD") {
         // console.log(data?.resultCreate?.PaymentMethod);
-
+        setIsLoading(false);
         toast.success("Đặt hàng thành công!!");
+        dispatch(clearCart());
         navigate("/OrderItems");
       } else {
         mutationPayment.mutate(data?.resultCreate);
@@ -189,8 +193,9 @@ console.log(AddressInfo);
       // console.log(data?.Message?.order_url);
       setTimeout(() => {
         setIsLoading(false);
+        // dispatch(clearCart());
         window.location.href = data?.Message?.order_url;
-        console.log(data?.Message?.order_url);
+        // console.log(data?.Message?.order_url);
       }, 3000);
       // setIsLoading(false);
     },
@@ -220,6 +225,7 @@ console.log(AddressInfo);
   };
 
   const wrapperRef = useRef();
+console.log(isLoading);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -65,7 +65,7 @@ const ReplyItem = ({
               </>
             )}
             <span className="text-gray-400">•</span>
-            <span className="text-xs text-gray-500">{dayjs(reply?.createdAt).fromNow().replace("trước", "").trim()}</span>
+            <span className="text-xs text-gray-500">{dayjs(reply?.createdAt).fromNow().replace("trước", "trước").trim()}</span>
           </div>
 
           <p className="text-gray-600 text-sm leading-relaxed mb-3">{reply.content}</p>
@@ -180,7 +180,7 @@ const QuestionItem = React.memo(
     onNestedReplyTextChange,
     onNestedReplySubmit,
   }) => {
-    // console.log('dataReply',qa);
+    console.log('dataReply',flatReplies);
     // console.log('dataReply',dataReply);
     // const abc = dataReply?.data?.map((reply) => reply);
     // console.log(abc);
@@ -199,7 +199,7 @@ const QuestionItem = React.memo(
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               {qa.userId ? (
-                <img src={qa.userId.Image.path} alt={qa.author} className="w-10 h-10 rounded-full object-cover" />
+                <img src={qa?.userId?.Image?.path} alt={qa?.author} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <IoPersonCircle className="w-10 h-10 text-gray-400" />
               )}

@@ -22,6 +22,7 @@ import { FaHeart, FaRegEye } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa6";
 import { AddProductCart } from "../../services/Client/Cart";
 import { Toaster, toast } from "sonner";
+import NotFound from "../../components/NotFound";
 // import "./embla.css";
 const Product = () => {
   const queryclient = useQueryClient();
@@ -153,7 +154,6 @@ const Product = () => {
       }
     }
   };
-  // console.log(heart);
 
   useEffect(() => {
     if (keyWord) {
@@ -216,7 +216,6 @@ const Product = () => {
     queryFn: () => GetProductFilter({ data: checkActive, page: currentPage, limit: 6, keyWord: KeySearch, type: valueSelect.type }),
     keepPreviousData: true,
   });
-  // console.log(dataFilterProduct);
 
   const handleNextcurrentPage = () => {
     if (currentPage < dataFilterProduct?.totalPages) {
@@ -459,7 +458,7 @@ const Product = () => {
                       <SkeletonProductCard key={index} />
                     ))}
                 </>
-              ) : (
+              ) : dataFilterProduct?.products?.length > 0 ? (
                 <>
                   {dataFilterProduct?.products?.map((product, index) => (
                     <div
@@ -534,6 +533,7 @@ const Product = () => {
                           <motion.button
                             whileTap={{ scale: 0.85 }}
                             onClick={() => handleAddToCart(product)}
+                            disabled={product?.maxVariant?.Stock <= 0}
                             className={`flex items-center justify-center w-10 h-10 hover:border-teal-600 rounded-full cursor-pointer transition-colors duration-300 border-2 group border-gray-300 active:border-teal-600
         ${added.productId.includes(product._id) ? "bg-green-500 text-white" : "bg-white text-black"}`}
                           >
@@ -545,11 +545,11 @@ const Product = () => {
                           </motion.button>
                         </div>
                         <div className="ml-3 mt-1 flex items-center justify-between">
-                          <div className="flex items-center justify-center bg-green-50 w-25 rounded-full">
+                          <div className={`flex items-center justify-center ${product?.maxVariant?.Stock == 0 ? "bg-red-50" : "bg-green-50 "} w-25 rounded-full`}>
                             <span
-                              className={`h-2 w-2 rounded-full ${product?.StockQuantity <= 0 ? "bg-red-600" : "bg-green-600"} mt-0.5`}
+                              className={`h-2 w-2 rounded-full ${product?.maxVariant?.Stock <= 0 ? "bg-red-600" : "bg-green-600"} mt-0.5`}
                             ></span>
-                            <span className={`text-xs  p-1.5 ${product?.StockQuantity <= 0 ? "text-red-600" : "text-green-600"}`}>
+                            <span className={`text-xs  p-1.5 ${product?.maxVariant?.Stock <= 0 ? "text-red-600" : "text-green-600"}`}>
                               {product?.maxVariant?.Stock <= 0 ? "Hết hàng" : "Còn hàng"}
                             </span>
                           </div>
@@ -561,32 +561,42 @@ const Product = () => {
                     </div>
                   ))}
                 </>
+              ) : (
+                <>
+                  <div></div>
+                  <div>
+                    <NotFound />
+                  </div>
+                  <div></div>
+                </>
               )}
             </motion.div>
           </AnimatePresence>
 
           <div className="w-full mt-5 mb-5">
-            <div className="flex items-center justify-end lg:mr-0 mr-7 space-x-3">
-              <button
-                onClick={() => handlePrevcurrentPage()}
-                className="text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out"
-              >
-                <span>
-                  <GrPrevious />
+            {dataFilterProduct?.products?.length > 0 && (
+              <div className="flex items-center justify-end lg:mr-0 mr-7 space-x-3">
+                <button
+                  onClick={() => handlePrevcurrentPage()}
+                  className="text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out"
+                >
+                  <span>
+                    <GrPrevious />
+                  </span>
+                </button>
+                <span className="text-sm font-semibold">
+                  Trang {currentPage} / {dataFilterProduct?.totalPages}
                 </span>
-              </button>
-              <span className="text-sm font-semibold">
-                Trang {currentPage} / {dataFilterProduct?.totalPages}
-              </span>
-              <button
-                onClick={() => handleNextcurrentPage()}
-                className={`text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out`}
-              >
-                <span>
-                  <GrNext />
-                </span>
-              </button>
-            </div>
+                <button
+                  onClick={() => handleNextcurrentPage()}
+                  className={`text-sm active:scale-85 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer shadow-md hover:bg-gray-600 hover:text-white transform duration-200 ease-in-out`}
+                >
+                  <span>
+                    <GrNext />
+                  </span>
+                </button>
+              </div>
+            )}
             {/* <div className="flex items-center justify-end w-full space-x-2">
               {pages.map((page, index) => (
                 <button
