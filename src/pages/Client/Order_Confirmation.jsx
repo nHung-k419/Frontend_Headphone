@@ -173,17 +173,14 @@ console.log(AddressInfo);
     mutationKey: ["order"],
     mutationFn: createProductOrder,
     onSuccess: (data) => {
-      // console.log(data?.resultCreate);
+      dispatch(clearCart());
       if (data?.resultCreate?.PaymentMethod === "COD") {
-        // console.log(data?.resultCreate?.PaymentMethod);
         setIsLoading(false);
         toast.success("Đặt hàng thành công!!");
-        dispatch(clearCart());
         navigate("/OrderItems");
       } else {
         mutationPayment.mutate(data?.resultCreate);
       }
-      // window.location.href = data?.Message?.order_url;
     },
   });
   const mutationPayment = useMutation({

@@ -199,11 +199,7 @@ const QuestionItem = React.memo(
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               {qa.userId ? (
-<<<<<<< HEAD
                 <img src={qa?.userId?.Image?.path} alt={qa?.author} className="w-10 h-10 rounded-full object-cover" />
-=======
-                <img src={qa?.userId?.Image?.path} alt={qa.author} className="w-10 h-10 rounded-full object-cover" />
->>>>>>> b49792fa37399e103050465b082e90ce84f4d2f5
               ) : (
                 <IoPersonCircle className="w-10 h-10 text-gray-400" />
               )}
