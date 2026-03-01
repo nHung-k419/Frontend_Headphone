@@ -1,8 +1,8 @@
 import axios from "axios";
-
+import { API_URL } from "../../utils/apiUrl";
 const sendImageComment = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/sendImageComment`, data, {
+    const response = await axios.post(`${API_URL}/sendImageComment`, data, {
       withCredentials: true,
     });
     return response.data;
@@ -13,7 +13,7 @@ const sendImageComment = async (data) => {
 
 const getReviewsById = async (idProduct) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/getReviewsById/${idProduct}`, {
+    const response = await axios.get(`${API_URL}/getReviewsById/${idProduct}`, {
       withCredentials: true,
     });
     return response.data;

@@ -1,8 +1,8 @@
 import axios from "axios";
-
+import { API_URL } from "../../utils/apiUrl";
  const GetAllVoucher = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/api/GetAllVoucher", { withCredentials: true });
+        const response = await axios.get(`${API_URL}/GetAllVoucher`, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.log(error);
@@ -10,7 +10,7 @@ import axios from "axios";
 };
 const CreateVoucher = async (data) => {
     try {
-        const response = await axios.post("http://localhost:3000/api/CreateVoucher", data, { withCredentials: true });
+        const response = await axios.post(`${API_URL}/CreateVoucher`, data, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.log(error);
@@ -19,7 +19,7 @@ const CreateVoucher = async (data) => {
 };
 const getAllVouchers = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/api/getAllVouchers", { withCredentials: true });
+        const response = await axios.get(`${API_URL}/getAllVouchers`, { withCredentials: true });
         return response.data;
     } catch (error) {
         console.log(error);

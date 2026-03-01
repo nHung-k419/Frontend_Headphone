@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../../utils/apiUrl";
 const getProductOrder = async (idUser) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/GetOrder/${idUser}`, { withCredentials: true });
+    const response = await axios.get(`${API_URL}/GetOrder/${idUser}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     throw error;
@@ -10,7 +11,7 @@ const getProductOrder = async (idUser) => {
 };
 const createProductOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/CreateOrder`, data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/CreateOrder`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -19,7 +20,7 @@ const createProductOrder = async (data) => {
 };
 const PaymentProductOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/OrderPaymentZalo`, data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/OrderPaymentZalo`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     throw error;
@@ -31,7 +32,7 @@ const getOrderItems = async ({ Id_User, status }) => {
   console.log(data);
   
   try {
-    const response = await axios.post(`http://localhost:3000/api/GetOrderItems/${Id_User}`, data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/GetOrderItems/${Id_User}`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -40,7 +41,7 @@ const getOrderItems = async ({ Id_User, status }) => {
 
 const getAddressProvices = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getProvinces`);
+    const response = await fetch(`${API_URL}/getProvinces`);
     if (!response.ok) throw new Error("Failed to fetch provinces");
 
     const data = await response.json();
@@ -53,7 +54,7 @@ const getAddressProvices = async () => {
 };
 const getAddressDistricts = async ({ code }) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getDistricts/${code}`);
+    const response = await fetch(`${API_URL}/getDistricts/${code}`);
     if (!response.ok) throw new Error("Failed to fetch districts");
 
     const data = await response.json();
@@ -66,7 +67,7 @@ const getAddressDistricts = async ({ code }) => {
 
 const getAddressCommune = async ({ code }) => {
   try {
-    const response = await fetch(`http://localhost:3000/api/getWards/${code}`);
+    const response = await fetch(`${API_URL}/getWards/${code}`);
     if (!response.ok) throw new Error("Failed to fetch communes");
 
     const data = await response.json();
@@ -79,7 +80,7 @@ const getAddressCommune = async ({ code }) => {
 
 const getInfoAddressOrder = async (Id_User) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/GetAddressOrder/${Id_User}`, { withCredentials: true });
+    const response = await axios.get(`${API_URL}/GetAddressOrder/${Id_User}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -88,7 +89,7 @@ const getInfoAddressOrder = async (Id_User) => {
 
 const requestCancleOrder = async (data) => {
   try {
-    const response = await axios.post(`http://localhost:3000/api/requestCancle`, data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/requestCancle`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     // console.log(error);

@@ -1,8 +1,8 @@
 import axios from "axios";
-
+import { API_URL } from "../../utils/apiUrl";
 const RegisterAuth = async (data) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/Register", data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/Register`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -11,7 +11,7 @@ const RegisterAuth = async (data) => {
 };
 const loginAuth = async (data) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/Login", data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/Login`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -20,7 +20,7 @@ const loginAuth = async (data) => {
 };
 const LogoutAuth = async (data) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/Logout", data, { withCredentials: true });
+    const response = await axios.post(`${API_URL}/Logout`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -29,7 +29,7 @@ const LogoutAuth = async (data) => {
 };
 const getProfileUser = async (id) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/getProfileUser/${id}`, { withCredentials: true });
+    const response = await axios.get(`${API_URL}/getProfileUser/${id}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -38,7 +38,7 @@ const getProfileUser = async (id) => {
 };
 const updateProfile = async ({ id, data }) => {
   try {
-    const response = await axios.put(`http://localhost:3000/api/updateProfile/${id}`, data, { withCredentials: true });
+    const response = await axios.put(`${API_URL}/updateProfile/${id}`, data, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);

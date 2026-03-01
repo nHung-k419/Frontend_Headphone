@@ -1,8 +1,8 @@
 import axios from "axios";
-
+import { API_URL } from "../../utils/apiUrl";
 const checkVoucher = async (data) => {
     try {
-        const response = await axios.post(`http://localhost:3000/api/checkVoucher`, data, { withCredentials: true });
+        const response = await axios.post(`${API_URL}/checkVoucher`, data, { withCredentials: true });
         return response.data;
     } catch (error) {
         // console.log(error);

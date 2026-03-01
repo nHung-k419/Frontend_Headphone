@@ -338,7 +338,7 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: 10, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                className="absolute top-full lg:w-82 w-64 right-0 lg:ml-0 rounded-sm bg-[#FAF9F6] border border-[#E5E2D9] shadow-2xl z-50 overflow-hidden"
+                className="absolute top-full lg:w-87 w-64 right-0 lg:ml-0 rounded-sm bg-[#FAF9F6] border border-[#E5E2D9] shadow-2xl z-50 overflow-hidden"
               >
                 <div className="px-4 py-3 bg-white border-b border-[#F0EEE6]">
                   <p className="text-[9px] uppercase tracking-[0.2em] text-[#8C8C8C] mb-1">Tài khoản</p>
