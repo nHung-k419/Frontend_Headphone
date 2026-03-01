@@ -13,15 +13,17 @@ import { checkVoucher } from "../../services/Client/Voucher";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 import WaveLoader from "../../components/AnimateDotLoading";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import ModalOrder from "../../components/ModalOrder/ModalOrder";
 import { GrLocation } from "react-icons/gr";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { clearCart } from "../../redux/features/CartSlice";
 import { useDispatch } from "react-redux";
+import { IoChevronForward, IoTicketOutline, IoWalletOutline, IoLocationOutline } from "react-icons/io5";
+
 const Order_Confirmation = () => {
   const dispatch = useDispatch();
   const TabRef = useRef([]);
@@ -33,15 +35,14 @@ const Order_Confirmation = () => {
     Commune: "",
   });
   const navigate = useNavigate();
-   const user = localStorage.getItem("User");
-  const { id: idUser,Email } = user ? JSON?.parse(user) : "";
+  const user = localStorage.getItem("User");
+  const { id: idUser, Email } = user ? JSON?.parse(user) : "";
   const [value, setValue] = useState({
     Fullname: "",
     Phone: "",
     Address: "",
     PaymentMethod: "",
   });
-  // console.log(Email);
 
   const [isActive, setIsActive] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +55,7 @@ const Order_Confirmation = () => {
   const [newVoucherTotal, setNewTotalVoucher] = useState(null);
   const [open, setOpen] = useState(false);
   const [errorVoucher, setErrorVoucher] = useState(null);
+
   const handleCheckIsActive = (Name) => {
     setIsActive((prev) => ({ ...prev, Name }));
     setValue((prev) => ({ ...prev, PaymentMethod: Name }));
@@ -64,35 +66,35 @@ const Order_Confirmation = () => {
     const { name, value } = e.target;
     setValue((prev) => ({ ...prev, [name]: value }));
   };
+
   useEffect(() => {
-    setValue((prev) => ({ ...prev, Address: valueInputAddress?.Provinces + valueInputAddress?.Districts + valueInputAddress?.Commune }));
+    setValue((prev) => ({
+      ...prev,
+      Address: valueInputAddress?.Provinces + valueInputAddress?.Districts + valueInputAddress?.Commune,
+    }));
   }, [currentTab, valueInputAddress]);
+
   const { data, isPending } = useQuery({
     queryKey: ["order", idUser],
     queryFn: () => getProductOrder(idUser),
   });
-  // console.log(data);
 
   const { data: dataProvinces } = useQuery({
     queryKey: ["address"],
     queryFn: () => getAddressProvices(),
   });
-  // console.log(dataProvinces);
 
   const { data: dataDistricts } = useQuery({
     queryKey: ["Districts", valueCode.codeDistricts],
     queryFn: () => getAddressDistricts({ code: valueCode?.codeDistricts }),
   });
-  // console.log(dataDistricts);
 
   const { data: dataCommune } = useQuery({
     queryKey: ["Communate", valueCode.codeCommunate],
     queryFn: () => getAddressCommune({ code: valueCode?.codeCommunate }),
   });
-  // console.log(dataCommune?.wards);
 
   const handleGetValueAddress = ({ provinces, code, value }) => {
-    
     if (provinces === "Provinces") {
       setValueInputAddress((prev) => ({ ...prev, Provinces: value }));
       setValueCode((prev) => ({ ...prev, codeDistricts: code }));
@@ -107,14 +109,12 @@ const Order_Confirmation = () => {
     }
   };
 
-
-  // get Info Address user
   const { data: AddressInfo } = useQuery({
     queryKey: ["infoAddress", idUser],
     queryFn: () => getInfoAddressOrder(idUser),
   });
-console.log(AddressInfo);
-
+ console.log(AddressInfo);
+ 
   useEffect(() => {
     setValue((prev) => ({
       ...prev,
@@ -123,15 +123,12 @@ console.log(AddressInfo);
       Address: AddressInfo?.findAdressOrder?.Address,
     }));
   }, [idUser, AddressInfo]);
-  // console.log(AddressInfo?.findAdressOrder);
-  // console.log(value);
 
   const handleClickTab = (index) => {
     if (currentTab === 2) {
       setCurrentTab(index);
       return;
     }
-
     if (index === 1 && selectedProvince) {
       setCurrentTab(1);
     } else if (index === 2 && selectedDistrict) {
@@ -144,7 +141,10 @@ console.log(AddressInfo);
   useEffect(() => {
     const actives = currentTab !== 0 ? TabRef.current[currentTab] : TabRef.current[0];
     if (actives) {
-      setLineStyle({ left: actives.offsetLeft ? actives?.offsetLeft : 0, width: actives.offsetWidth ? actives?.offsetWidth : 137 });
+      setLineStyle({
+        left: actives.offsetLeft ? actives?.offsetLeft : 0,
+        width: actives.offsetWidth ? actives?.offsetWidth : 137,
+      });
     }
   }, [currentTab, isFocus]);
 
@@ -165,6 +165,7 @@ console.log(AddressInfo);
       setErrorVoucher(error?.response?.data?.message);
     },
   });
+
   const handleApplyVoucher = () => {
     mutationCheckVoucher.mutate({ code: codeVoucher, orderTotal: total, idUser: idUser });
   };
@@ -183,28 +184,24 @@ console.log(AddressInfo);
       }
     },
   });
+
   const mutationPayment = useMutation({
     mutationKey: ["payment"],
     mutationFn: PaymentProductOrder,
     onSuccess: (data) => {
-      // console.log(data?.Message?.order_url);
       setTimeout(() => {
         setIsLoading(false);
-        // dispatch(clearCart());
         window.location.href = data?.Message?.order_url;
-        // console.log(data?.Message?.order_url);
       }, 3000);
-      // setIsLoading(false);
     },
   });
 
   const handlePostOrder = (e) => {
-    console.log(newVoucherTotal);
-        
     if (value.Fullname && value.Phone && value.Address && value.PaymentMethod && !isLoading) {
       setIsLoading(true);
       const dataOrder = {
         ...value,
+        Address: valueInputAddress.Provinces + " - " + valueInputAddress.Districts + " - " + valueInputAddress.Commune,
         Id_Cart: data?.resultOrder[0]?.Id_Cart,
         voucherCode: newVoucherTotal?.code,
         TotalAmount: newVoucherTotal ? newVoucherTotal?.discountedTotal : total,
@@ -212,17 +209,12 @@ console.log(AddressInfo);
         Email,
       };
       mutationOrder.mutate(dataOrder);
-      // setTimeout(() => {
-      //   setIsLoading(false);
-      //   mutationOrder.mutate(dataOrder);
-      // }, 3000);
     } else {
       toast.warning("Vui lòng nhập đầy đủ thông tin và phương thức thanh toán!");
     }
   };
 
   const wrapperRef = useRef();
-console.log(isLoading);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -230,17 +222,17 @@ console.log(isLoading);
         setIsFocus(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   const handleOffModal = () => {
     setValueInputAddress({ Provinces: "", Districts: "", Commune: "" });
     setTypeModal({ type: "", modal: false });
   };
-  // console.log(value);
+
   useEffect(() => {
     setErrorVoucher("");
     if (typeModal.modal) {
@@ -248,525 +240,305 @@ console.log(isLoading);
     } else {
       document.body.style.overflow = "auto";
     }
-
     return () => {
-      document.body.style.overflow = "auto"; // reset khi unmount
+      document.body.style.overflow = "auto";
     };
   }, [typeModal.modal]);
+
   return (
-    <section className="mt-30 max-w-6xl mx-auto ">
-      {/* modal adddress  */}
+    <div className="min-h-screen bg-[#FAF9F6] pt-24 pb-20 px-4 md:px-8 font-sans selection:bg-emerald-100 text-[#2D2D2D]">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header - Boutique Style */}
+        <div className="border-b border-[#E5E2D9] pb-6">
+          <h1 className="text-3xl font-light tracking-tight">Thanh toán</h1>
+          <nav className="flex items-center gap-2 mt-2 text-[10px] uppercase tracking-widest text-[#8C8C8C]">
+            <Link to="/cart" className="hover:text-emerald-700 transition-colors">Giỏ hàng</Link>
+            <IoChevronForward size={10} />
+            <span className="text-[#2D2D2D]">Xác nhận</span>
+          </nav>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-10">
+            {/* Shipping Address Section */}
+            <div className="bg-white border-l-2 border-emerald-600 p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-emerald-700">
+                  <IoLocationOutline size={20} />
+                  <h2 className="text-xs font-bold uppercase tracking-[0.2em]">Địa chỉ nhận hàng</h2>
+                </div>
+                <button
+                  onClick={() => setTypeModal({ type: "ModalAddress", modal: true })}
+                  className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors underline underline-offset-4"
+                >
+                  Thay đổi
+                </button>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-3">
+                  <p className="font-bold">
+                    {value.Fullname || AddressInfo?.findAdressOrder?.Fullname || "Chưa có thông tin"}
+                  </p>
+                  <span className="text-[#8C8C8C] font-light">|</span>
+                  <p className="text-[#8C8C8C] tracking-wide">
+                    (+84) {value.Phone || AddressInfo?.findAdressOrder?.Phone || "Chưa có thông tin"}
+                  </p>
+                </div>
+                <p className="text-[#555] leading-relaxed max-w-xl">
+                  {value.Address || AddressInfo?.findAdressOrder?.Address || "Chưa có địa chỉ giao hàng"}
+                </p>
+              </div>
+            </div>
+
+            {/* Products Section */}
+            <div className="space-y-6">
+              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[#8C8C8C] pl-1">Sản phẩm</h2>
+              <div className="border-t border-[#E5E2D9]">
+                {isPending ? (
+                  <div className="p-4 space-y-4">
+                    <Skeleton height={80} count={2} />
+                  </div>
+                ) : (
+                  data?.resultOrder?.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-6 border-b border-[#F0EEE6] group">
+                      <div className="flex items-center gap-6">
+                        <div className="w-20 h-20 bg-[#F0EEE6] p-2 flex-shrink-0">
+                          <img src={item?.Image} className="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-500" alt="" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-sm font-medium text-[#2D2D2D] max-w-[200px] sm:max-w-xs truncate">
+                            {item?.Id_ProductVariants?.Id_Products?.Name}
+                          </h3>
+                          <div className="flex gap-4 text-[10px] text-[#8C8C8C] uppercase tracking-widest">
+                            <span>Màu: {item?.Color || "N/A"}</span>
+                            <span>Size: {item?.Size || "N/A"}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="text-[10px] text-[#8C8C8C] uppercase tracking-[0.15em]">Số lượng: {item?.Quantity}</p>
+                        <p className="text-sm font-light tracking-wider">
+                          {(item?.Price * item?.Quantity).toLocaleString("vi-VN")}₫
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Payment & Voucher Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+              {/* Payment Method */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[#8C8C8C]">
+                  <IoWalletOutline size={18} />
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest">Thanh toán</h2>
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={() => setOpen(!open)}
+                    className="w-full text-left py-3.5 px-4 bg-white border border-[#E5E2D9] rounded-sm text-xs flex justify-between items-center group hover:border-emerald-600 transition-colors"
+                  >
+                    <span className={isActive?.Name ? "text-[#2D2D2D]" : "text-[#8C8C8C]"}>
+                      {isActive?.Name === "COD" ? "Thanh toán khi nhận hàng (COD)" : isActive?.Name === "Zalopay" ? "Ví điện tử Zalopay" : "Lựa chọn phương thức"}
+                    </span>
+                    <IoChevronForward className={`transform transition-transform ${open ? 'rotate-90' : ''} text-[#8C8C8C]`} />
+                  </button>
+                  <AnimatePresence>
+                    {open && (
+                      <motion.ul
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute z-20 w-full mt-2 bg-white border border-[#E5E2D9] rounded-sm shadow-xl overflow-hidden"
+                      >
+                        <li onClick={() => handleCheckIsActive("COD")} className="py-3 px-4 text-xs hover:bg-[#FAF9F6] cursor-pointer border-b border-[#F0EEE6] transition-colors">
+                          Thanh toán khi nhận hàng (COD)
+                        </li>
+                        <li onClick={() => handleCheckIsActive("Zalopay")} className="py-3 px-4 text-xs hover:bg-[#FAF9F6] cursor-pointer flex items-center justify-between transition-colors">
+                          <span>Ví Zalopay</span>
+                          <img src="https://image.rocketpun.ch/company/77401/zalopay_logo_1580282434.png" className="h-4" alt="Zalopay" />
+                        </li>
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Voucher */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-[#8C8C8C]">
+                  <IoTicketOutline size={18} />
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest">Ưu đãi</h2>
+                </div>
+                <button
+                  onClick={() => setTypeModal({ type: "Voucher", modal: true })}
+                  className="w-full py-3.5 px-4 bg-[#F0EEE6] text-[#2D2D2D] text-xs font-medium uppercase tracking-[0.2em] hover:bg-[#E5E2D9] transition-colors rounded-sm flex items-center justify-center gap-2"
+                >
+                  {newVoucherTotal ? `Voucher: ${newVoucherTotal.code}` : "Chọn mã giảm giá"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24">
+            <div className="bg-[#F0EEE6] p-8 space-y-8 rounded-sm">
+              <h2 className="text-sm font-light uppercase tracking-[0.3em] text-[#2D2D2D] border-b border-[#E5E2D9] pb-4">Đơn hàng</h2>
+
+              <div className="space-y-4 text-xs">
+                <div className="flex justify-between text-[#8C8C8C]">
+                  <span className="uppercase tracking-widest text-[9px]">Tổng tiền hàng</span>
+                  <span className="tracking-wider">{total?.toLocaleString("vi-VN")}₫</span>
+                </div>
+                <div className="flex justify-between text-[#8C8C8C]">
+                  <span className="uppercase tracking-widest text-[9px]">Giao hàng</span>
+                  <span className="text-emerald-700 italic">50.000₫</span>
+                </div>
+                {newVoucherTotal && (
+                  <div className="flex justify-between text-emerald-600 font-medium">
+                    <span className="uppercase tracking-widest text-[9px]">Giảm giá voucher</span>
+                    <span className="tracking-wider">-{newVoucherTotal?.discount?.toLocaleString("vi-VN")}₫</span>
+                  </div>
+                )}
+
+                <div className="border-t border-[#E5E2D9] pt-6 mt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[11px] uppercase tracking-[0.2em] font-medium">Tổng cộng</span>
+                    <span className="text-2xl font-light tracking-tighter text-[#2D2D2D]">
+                      {(newVoucherTotal ? newVoucherTotal?.discountedTotal + 50000 : total + 50000)?.toLocaleString("vi-VN")}₫
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-6">
+                  <button
+                    disabled={isLoading}
+                    onClick={(e) => handlePostOrder(e)}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 flex items-center justify-center transition-all duration-500 shadow-sm relative group overflow-hidden"
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-[0.4em] relative z-10">
+                      {isLoading ? "Đang xử lý..." : "Xác nhận đặt hàng"}
+                    </span>
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-700"></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 px-4 py-3 border-l-2 border-[#E5E2D9] text-[10px] text-[#8C8C8C] leading-relaxed italic">
+              * Quý khách vui lòng kiểm tra kỹ thông tin trước khi đặt hàng. Sản phẩm cao cấp hỗ trợ đổi trả trong 7 ngày.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Address Selection Modal Content (Portion of it for context) */}
       <AnimatePresence>
         {typeModal.type === "ModalAddress" && typeModal.modal && (
           <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
-            <div
-              ref={wrapperRef}
-              className="lg:w-[500px] w-full grid place-items-center h-fit bg-white rounded-2xl p-6 shadow-lg lg:space-y-5 md:space-y-5 space-y-3"
-            >
-              <h1>Thông tin nhận hàng</h1>
-              <div className="flex space-x-2.5 mt-5 w-full">
-                <div className="w-1/2">
-                  <label className="text-sm">Họ và tên</label>
-                  <div className="mt-1">
-                    <input
-                      onChange={(e) => handleGetvalue(e)}
-                      name="Fullname"
-                      required
-                      type="text"
-                      className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-                      placeholder="Tên..."
-                    />
-                  </div>
+            <div ref={wrapperRef} className="w-full max-w-xl bg-white p-8 rounded-sm space-y-6 shadow-2xl">
+              <h1 className="text-xl font-light border-b border-[#F0EEE6] pb-4">Thông tin nhận hàng</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase tracking-widest text-[#8C8C8C]">Họ và tên</label>
+                  <input
+                    onChange={handleGetvalue}
+                    name="Fullname"
+                    value={value.Fullname}
+                    placeholder="Nguyễn Văn A"
+                    className="w-full border-b border-[#E5E2D9] h-10 focus:outline-none focus:border-emerald-600 text-sm transition-colors"
+                  />
                 </div>
-                <div className="w-1/2">
-                  <label className="text-sm">Số điện thoại</label>
-                  <div className="mt-1">
-                    <input
-                      required
-                      onChange={(e) => handleGetvalue(e)}
-                      name="Phone"
-                      type="text"
-                      className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-                      placeholder="Điện thoại..."
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase tracking-widest text-[#8C8C8C]">Số điện thoại</label>
+                  <input
+                    onChange={handleGetvalue}
+                    name="Phone"
+                    value={value.Phone}
+                    placeholder="09xxx"
+                    className="w-full border-b border-[#E5E2D9] h-10 focus:outline-none focus:border-emerald-600 text-sm transition-colors"
+                  />
                 </div>
               </div>
-              <div className="w-full ">
-                <label className="text-sm">Phường - Xã - Thành phố</label>
+
+              <div className="space-y-2">
+                <label className="text-[10px] uppercase tracking-widest text-[#8C8C8C]">Địa chỉ chi tiết</label>
                 <input
-                  type="text"
-                  name="Address"
-                  placeholder="Phường - Xã - Thành phố"
-                  onFocus={() => setIsFocus(true) || setCurrentTab(0)}
-                  value={
-                    valueInputAddress?.Provinces || valueInputAddress?.Districts || (valueInputAddress?.Commune && !isFocus)
-                      ? `${valueInputAddress.Provinces} - ${valueInputAddress.Districts} - ${valueInputAddress.Commune}`
-                      : ""
-                  }
-                  // onChange={(e) => handleGetvalueAddress(e.target.value)}
-                  className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-1"
-                ></input>
+                  onFocus={() => setIsFocus(true)}
+                  value={valueInputAddress.Provinces + " - " + valueInputAddress.Districts + " - " + valueInputAddress.Commune}
+                  placeholder="Chọn Phường/Xã, Quận/Huyện, Tỉnh/Thành phố"
+                  readOnly
+                  className="w-full border-b border-[#E5E2D9] h-10 focus:outline-none text-sm cursor-pointer"
+                />
+
                 {isFocus && (
-                  <div className="mt-1 w-full h-50 border-1 border-gray-300 focus:outline-none rounded-sm relative overflow-hidden">
-                    <div className="flex space-x-5 justify-around h-10 items-center">
-                      {["Tỉnh/Thành phố", "Quận/Huyện", "Phường/Xã"].map((item, index) => (
-                        <div
-                          onClick={() => handleClickTab(index)}
-                          ref={(el) => (TabRef.current[index] = el)}
-                          key={index}
-                          className={`text-sm w-full cursor-pointer flex justify-center ${currentTab === index ? "text-red-500" : ""} `}
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 border border-[#E5E2D9] mt-2 space-y-4 max-h-60 overflow-y-auto bg-[#FAF9F6]">
+                    <div className="flex gap-4 border-b border-[#E5E2D9] text-[9px] uppercase tracking-widest pb-2">
+                      <button onClick={() => setCurrentTab(0)} className={currentTab === 0 ? 'text-emerald-700 font-bold' : ''}>Tỉnh/TP</button>
+                      <button onClick={() => setCurrentTab(1)} className={currentTab === 1 ? 'text-emerald-700 font-bold' : ''}>Quận/Huyện</button>
+                      <button onClick={() => setCurrentTab(2)} className={currentTab === 2 ? 'text-emerald-700 font-bold' : ''}>Phường/Xã</button>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {(currentTab === 0 ? dataProvinces : currentTab === 1 ? dataDistricts : dataCommune)?.map((item, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleGetValueAddress({
+                            provinces: currentTab === 0 ? "Provinces" : currentTab === 1 ? "Districts" : "Commune",
+                            code: item.code,
+                            value: item.name_with_type
+                          })}
+                          className="text-left py-1 text-xs hover:text-emerald-700 transition-colors"
                         >
-                          {item}
-                        </div>
+                          {item.name}
+                        </button>
                       ))}
                     </div>
-                    <div className="relative">
-                      <hr className="w-full h-0.5 text-gray-300 relative" />
-                      <span
-                        style={{
-                          left: `${lineStyle.left}px`,
-                          width: `${lineStyle.width}px`,
-                        }}
-                        className={`absolute top-0  h-0.5 bg-red-500 transform transition-all duration-500 ease-in-out`}
-                      ></span>
-                    </div>
-                    {currentTab === 0 ? (
-                      <div className="h-full w-full overflow-y-auto flex flex-col select-none">
-                        {dataProvinces?.map((item, index) => (
-                          <span
-                            key={index}
-                            onClick={(e) => handleGetValueAddress({ provinces: "Provinces", code: item.code, value: item.name_with_type })}
-                            className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
-                          >
-                            {item.name}
-                          </span>
-                        ))}
-                      </div>
-                    ) : currentTab === 1 ? (
-                      <div className="h-full w-full overflow-y-auto flex flex-col select-none">
-                        {dataDistricts?.map((item, index) => (
-                          <span
-                            key={index}
-                            onClick={() => handleGetValueAddress({ provinces: "Districts", code: item.code, value: item.name_with_type })}
-                            className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
-                          >
-                            {item.name}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      currentTab === 2 && (
-                        <div className="h-full w-full overflow-y-auto flex flex-col select-none ">
-                          {dataCommune?.map((item, index) => (
-                            <span
-                              key={index}
-                              onClick={(e) => handleGetValueAddress({ provinces: "Communate", code: item.code, value: item.name_with_type })}
-                              className="p-2 text-sm hover:bg-gray-100 cursor-pointer"
-                            >
-                              {item.name}
-                            </span>
-                          ))}
-                        </div>
-                      )
-                    )}
-                  </div>
+                  </motion.div>
                 )}
               </div>
-              <div className="flex items-center justify-end space-x-5">
-                <button
-                  onClick={() => handleOffModal()}
-                  className="w-30 h-9 rounded-md cursor-pointer hover:bg-gray-200 text-sm text-gray-600"
-                >
-                  Hủy
-                </button>
-                <button
-                  onClick={() => setTypeModal({ type: "", modal: false })}
-                  className="w-30 h-9 rounded-md cursor-pointer bg-gray-800 hover:bg-gray-700 text-sm text-white"
-                >
-                  Hoàn thành
-                </button>
+
+              <div className="flex justify-end gap-4 pt-4">
+                <button onClick={handleOffModal} className="text-[10px] uppercase tracking-widest text-[#8C8C8C] hover:text-[#2D2D2D]">Hủy</button>
+                <button onClick={() => setTypeModal({ ...typeModal, modal: false })} className="bg-[#2D2D2D] text-white px-8 py-2 text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-colors">Lưu</button>
+              </div>
+            </div>
+          </ModalOrder>
+        )}
+
+        {/* Voucher Modal Content (Simplified) */}
+        {typeModal.type === "Voucher" && typeModal.modal && (
+          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
+            <div className="w-full max-w-lg bg-white p-8 rounded-sm space-y-8 shadow-2xl">
+              <h2 className="text-xl font-light tracking-tight border-b border-[#F0EEE6] pb-4">Soundora Voucher</h2>
+              <div className="flex gap-2">
+                <input
+                  onChange={(e) => setCodeVoucher(e.target.value)}
+                  placeholder="Nhập mã ưu đãi"
+                  className="flex-1 border border-[#E5E2D9] px-4 py-2 text-xs focus:ring-1 focus:ring-emerald-600 focus:outline-none"
+                />
+                <button onClick={handleApplyVoucher} className="bg-[#2D2D2D] text-white px-6 py-2 text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-colors">Áp dụng</button>
+              </div>
+              {errorVoucher && <p className="text-red-500 text-[10px] mt-1">{errorVoucher}</p>}
+
+              <div className="flex justify-center py-10 opacity-30 italic text-xs">
+                Tính năng chọn từ danh sách đang được cập nhật...
+              </div>
+
+              <div className="flex justify-end">
+                <button onClick={() => setTypeModal({ modal: false })} className="text-[10px] uppercase tracking-widest font-bold">Đóng</button>
               </div>
             </div>
           </ModalOrder>
         )}
       </AnimatePresence>
-      {/* end modal address  */}
-      <div className="w-full h-fit bg-gray-50 mb-7 pb-5">
-        <div className="flex items-center p-5 text-lg space-x-2">
-          <span className="text-red-500">
-            <GrLocation />
-          </span>
-          <p className="font-bold">Địa chỉ nhận hàng</p>
-        </div>
-        <div className="ml-6 flex items-center space-x-5">
-          <h3 className="font-bold">
-            {value.Fullname ? value.Fullname : (AddressInfo?.findAdressOrder?.Fullname ? AddressInfo?.findAdressOrder?.Fullname : value ? value.Fullname : "Chưa có thông tin")}
-            <span>
-              (+84) {value.Phone? value.Phone : (AddressInfo?.findAdressOrder?.Phone ? AddressInfo?.findAdressOrder?.Phone : value ? value.Phone : "Chưa có thông tin")}
-            </span>{" "}
-          </h3>
-          <p>
-            {valueInputAddress.Provinces && valueInputAddress.Districts && valueInputAddress.Commune ? `${valueInputAddress.Provinces}, ${valueInputAddress.Districts}, ${valueInputAddress.Commune}` : (AddressInfo?.findAdressOrder?.Address
-              ? AddressInfo?.findAdressOrder?.Address.replace(/(Thành phố|Tỉnh)/g, " - $1")
-                  ?.replace(/(Quận|Huyện)/g, " - $1")
-                  ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
-                  ?.replace(/^ - /, "")
-              : value
-              ? value.Address?.replace(/(Thành phố|Tỉnh)/g, " - $1")
-                  ?.replace(/(Quận|Huyện)/g, " - $1")
-                  ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
-                  ?.replace(/^ - /, "")
-              : "Chưa có thông tin")}
-          </p>
-          <span className="flex items-center justify-center border-1 border-red-500 text-[10px] p-1 text-red-500">Mặc Định</span>
-          <button onClick={() => setTypeModal({ type: "ModalAddress", modal: true })} className="cursor-pointer ml-5 text-blue-800">
-            Thay đổi
-          </button>
-        </div>
-      </div>
-      <div className="w-full h-fit bg-gray-50 p-3 overflow-hidden">
-        <div className="flex justify-between">
-          <h1 className="font-bold ml-4">Sản phẩm</h1>
-          <div className="flex items-center lg:space-x-15 space-x-3">
-            <h3 className="text-gray-400 lg:w-20">Đơn giá</h3>
-            <h3 className="text-gray-400 lg:w-20">Số lượng</h3>
-            <h3 className="text-gray-400 lg:w-20">Thành tiền</h3>
-            {/* <h3 className="text-gray-400 lg:w-20">Tổng</h3> */}
-          </div>
-        </div>
-        <div className=" mt-10 h-full ">
-          {isPending ? (
-            <>
-              <Skeleton height={120} />
-              <Skeleton height={20} className="mt-2" />
-              <Skeleton width={100} height={20} />
-            </>
-          ) : (
-            data?.resultOrder?.map((item) => (
-              <div className="flex items-center justify-between mt-10">
-                <div className="flex items-center space-x-3">
-                  <img className="h-15 w-15 object-contain" src={item?.Image} alt="" />
-                  <span className="md:w-60 w-20 truncate">{item?.Id_ProductVariants?.Id_Products?.Name} </span>
-                </div>
-                <div className="flex items-center lg:space-x-15 space-x-3">
-                  <span className="lg:w-20">{item?.Price?.toLocaleString("vi-VN")}</span>
-                  <span className="lg:w-20">{item?.Quantity}</span>
-                  <span className="lg:w-20">{(item?.Price * item?.Quantity).toLocaleString("vi-VN")}</span>
-                </div>
-                {/* <span className="lg:w-20">{(item?.Id_Product?.Price * item?.Quantity).toLocaleString("vi-VN")}</span> */}
-              </div>
-            ))
-          )}
-          {/* <div className="mt-10 flex items-center justify-between">
-            <h1 className="font-bold">Tổng</h1>
-            <span className="font-bold">{total?.toLocaleString("vi-VN")}</span>
-          </div> */}
-        </div>
-      </div>
-      <div className="w-full h-fit bg-gray-50 mt-7">
-        <div className="flex justify-between items-center p-3 w-full">
-          <h1 className="md:block hidden">Phương thức thanh toán</h1>
-          <div className="relative">
-            <button
-              onClick={() => setOpen(!open)}
-              className="w-70 text-left py-2 px-3 bg-white border rounded flex justify-center items-center"
-            >
-              {isActive?.Name ? isActive?.Name : "Lựa chọn phương thức thanh toán"}
-            </button>
-            <ul
-              className={`absolute left-0 w-full mt-2 bg-white border rounded shadow transform transition-all duration-200 ${
-                open ? "opacity-100 h-21 visible" : "opacity-0 h-0 invisible"
-              }`}
-            >
-              <li onClick={() => handleCheckIsActive("COD")} className="py-2 px-3 hover:bg-gray-100 cursor-pointer">
-                Thanh toán khi nhận hàng
-              </li>
-              <li onClick={() => handleCheckIsActive("Zalopay")} className="py-2 px-3 hover:bg-gray-100 cursor-pointer">
-                Thanh toán với Zalopay
-              </li>
-            </ul>
-          </div>
-        </div>
-        <hr className="mt-5 w-full border-0.5 border-gray-300" />
-        <AnimatePresence>
-          {typeModal.type === "Voucher" && typeModal.modal && (
-            <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal}>
-              <div className="bg-white rounded-lg w-full max-w-lg shadow-lg">
-                {/* Header */}
-                <div className="border-b-2 border-gray-200 px-6 py-4 text-xl font-semibold ">Chọn Soundora Voucher</div>
 
-                {/* Tabs */}
-                <div>
-                  <div className="flex items-center px-6 space-x-2 pt-3 bg-gray-100 pb-3">
-                    <label className="text-gray-400">Mã voucher</label>
-                    <input
-                      onChange={(e) => setCodeVoucher(e.target.value)}
-                      type="text"
-                      placeholder="Nhập mã voucher"
-                      className="flex-1 border px-3 py-2.5 rounded text-sm"
-                    />
-                    <button
-                      onClick={() => handleApplyVoucher()}
-                      className="bg-teal-500 text-white px-4 py-2.5 rounded text-sm cursor-pointer hover:bg-teal-600"
-                    >
-                      ÁP DỤNG
-                    </button>
-                  </div>
-                  {errorVoucher && <p className="text-red-500 text-sm mt-2 pl-6">{errorVoucher}</p>}
-                </div>
-
-                {/* Voucher Section */}
-                <div className="p-4 max-h-[400px] overflow-y-auto">
-                  <p className="font-medium mb-2">Mã Miễn Phí Vận Chuyển</p>
-
-                  {[...Array(2)].map((_, index) => (
-                    <div key={index} className="flex border-1 border-gray-200 rounded overflow-hidden mb-4 shadow-sm">
-                      {/* Left - Icon */}
-                      <div className="bg-teal-400 text-white text-center p-4 w-28 flex flex-col justify-center items-center text-sm font-bold">
-                        <span>FREE</span>
-                        <span>SHIP</span>
-                        <span className="text-xs font-normal">TOÀN NGÀNH HÀNG</span>
-                      </div>
-
-                      {/* Right - Info */}
-                      <div className="flex-1 px-4 py-2 relative">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Giảm tối đa ₫{index === 0 ? "20k" : "30k"}</p>
-                        <p className="text-sm text-gray-500">Đơn tối thiểu ₫{index === 0 ? "30k" : "45k"}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          HSD: 15.08.2025 <span className="text-blue-500 underline cursor-pointer">Điều Kiện</span>
-                        </p>
-
-                        {/* Radio + Badge */}
-                        <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
-                          <span className="text-red-500 text-xs">x10</span>
-                          <input type="radio" name="voucher" disabled={true} className="cursor-no-drop" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Warning */}
-                  <div className="bg-yellow-100 text-sm text-orange-600 p-2 rounded">
-                    ⚠️ Vui lòng mua hàng trên ứng dụng Soundora để sử dụng ưu đãi.
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-end px-6 py-3 border-t-1 border-gray-300 space-x-2">
-                  <button
-                    onClick={() => setTypeModal({ type: "Voucher", modal: false })}
-                    className="px-10 cursor-pointer py-2 rounded border text-gray-600 hover:bg-gray-100"
-                  >
-                    TRỞ LẠI
-                  </button>
-                  <button
-                    onClick={() => setTypeModal({ type: "Voucher", modal: false })}
-                    className="px-15 cursor-pointer hover:bg-red-600 py-2 rounded bg-red-500 text-white"
-                  >
-                    OK
-                  </button>
-                </div>
-              </div>
-            </ModalOrder>
-          )}
-        </AnimatePresence>
-        <div className="flex justify-between p-3">
-          <div className="md:block hidden">
-            <h3>Soundora Voucher</h3>
-          </div>
-          <div className="flex flex-col space-y-5">
-            <div>
-              <button
-                onClick={() => setTypeModal({ type: "Voucher", modal: true })}
-                className="text-teal-500 hover:text-teal-600 cursor-pointer"
-              >
-                Chọn voucher
-              </button>
-            </div>
-            {/* <div className="relative">
-              <input
-                type="text"
-                className="w-70 border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm pl-20"
-                placeholder="Nhập mã voucher"
-              />
-              <label className="text-md font-bold absolute left-3 top-2">Voucher</label>
-            </div> */}
-            <div className="flex justify-between space-x-30">
-              <h4 className="text-gray-600">Tổng tiền hàng :</h4>
-              <span>{total?.toLocaleString("vi-VN")}đ</span>
-            </div>
-            <div className="flex justify-between space-x-30">
-              <h4 className="text-gray-600">Tổng tiền phí vận chuyển :</h4>
-              <span>50.000đ</span>
-            </div>
-            <div className="flex justify-between space-x-30">
-              <h4 className="text-gray-600">Giảm giá từ voucher :</h4>
-              <span>{newVoucherTotal?.discount?.toLocaleString("vi-VN")}</span>
-            </div>
-            <div className="flex justify-between space-x-30">
-              <h4 className="text-gray-600">Tổng thanh toán :</h4>
-              <span className="text-2xl text-red-500">
-                {newVoucherTotal ? newVoucherTotal?.discountedTotal?.toLocaleString("vi-VN") : total?.toLocaleString("vi-VN")}đ
-              </span>
-            </div>
-            {newVoucherTotal && <div className="flex items-center justify-between">
-              <span className="text-md ">Tiết kiệm được :</span>
-              <span className="text-red-500">{newVoucherTotal?.discount?.toLocaleString("vi-VN")}đ</span>
-            </div>}
-          </div>
-        </div>
-        <div className="flex justify-end p-3">
-          <div
-            onClick={(e) => handlePostOrder(e)}
-            className="w-60 h-11 flex justify-center border-1 border-gray-300 bg-gray-700 hover:bg-black transform duration-300 ease-in-out text-white cursor-pointer"
-          >
-            <button disabled={isLoading} className="w-full cursor-pointer ">
-              {isLoading ? (
-                <div className="flex justify-center items-center space-x-2">
-                  <Loading />
-                </div>
-              ) : (
-                "Xác nhận đặt hàng"
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+      <Toaster position="bottom-right" richColors />
+    </div>
   );
 };
 
 export default Order_Confirmation;
-
-{
-  /* <form className="w-full h-155 border-1 border-gray-300 p-3 lg:ml-5">
-  <h1 className="text-lg font-semibold">Thông tin Nhận hàng</h1>
-  <div className="flex space-x-2.5 mt-5">
-    <div className="w-1/2">
-      <label className="text-sm">Họ và tên</label>
-      <div className="mt-1">
-        <input
-          onChange={(e) => handleGetvalue(e)}
-          name="Fullname"
-          required
-          type="text"
-          className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-          placeholder="Tên..."
-        />
-      </div>
-    </div>
-    <div className="w-1/2">
-      <label className="text-sm">Số điện thoại</label>
-      <div className="mt-1">
-        <input
-          required
-          onChange={(e) => handleGetvalue(e)}
-          name="Phone"
-          type="text"
-          className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-          placeholder="Điện thoại..."
-        />
-      </div>
-    </div>
-  </div>
-  <div className="w-full">
-    <label className="text-sm">Phường - Xã - Thành phố</label>
-    <div className="mt-1">
-      <input
-        required
-        onChange={(e) => handleGetvalue(e)}
-        name="Address"
-        type="text"
-        className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-        placeholder="Phường - Xã - Thành phố..."
-      />
-    </div>
-  </div>
-  <div className="flex space-x-2.5 mt-5">
-    <div className="w-1/2">
-      <label className="text-sm">Giới tính</label>
-      <select
-        required
-        onChange={(e) => handleGetvalue(e)}
-        name="Sex"
-        id=""
-        className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-1"
-      >
-        <option value="Nam">Nam</option>
-        <option value="Nữ">Nữ</option>
-      </select>
-    </div>
-    <div className="w-1/2">
-      <label className="text-sm">Số điện thoại</label>
-      <div className="mt-1">
-        <input
-          required
-          onChange={(e) => handleGetvalue(e)}
-          name="Phone"
-          type="text"
-          className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm"
-          placeholder="Điện thoại..."
-        />
-      </div>
-    </div>
-  </div>
-  <div className="mt-5">
-    <label htmlFor="" className="text-sm">
-      CMND/CCCD
-    </label>
-    <input
-      required
-      onChange={(e) => handleGetvalue(e)}
-      type="text"
-      name="CCCD"
-      className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-1"
-    />
-  </div>
-  <div className="mt-5 w-full h-full">
-    <h3 className="text-lg font-semibold">Phương thức thanh toán</h3>
-    <div className="flex space-x-2.5 mt-5">
-      <div
-        onClick={() => handleCheckIsActive("COD")}
-        className={`w-1/2 border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm cursor-pointer flex items-center justify-center ${
-          isActive.Name === "COD" ? "bg-gray-400 text-white" : ""
-        }`}
-      >
-        <p className="font-medium lg:text-md md:text-md text-sm">Thanh toán khi nhận hàng</p>
-      </div>
-      <div
-        onClick={() => handleCheckIsActive("Zalopay")}
-        className={`w-1/2 border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm cursor-pointer flex items-center  ${
-          isActive.Name === "Zalopay" ? "bg-gray-400 text-white" : ""
-        }`}
-      >
-        <img
-          className="w-7 h-7"
-          src="https://cdn.prod.website-files.com/5fb85f262823b4390bcfe076/66965d8419182b6ff385a01f_zalopay_logo_preview.webp"
-          alt=""
-        />
-        <span className="font-medium lg:text-md md:text-md text-sm">Thanh toán với ZaloPay</span>{" "}
-      </div>
-    </div>
-    <li className="mt-4">
-      Điều khoản Sử dụng, Chính sách Bảo mật của Khách hàng, cùng với các quy tác của nhà điều hành tour & quy định (xem danh sách để biết
-      thêm chi tiết).
-    </li>
-    <div
-      onClick={(e) => handlePostOrder(e)}
-      className="w-full h-11 flex items-center justify-center rounded-md mt-5 border-1 border-gray-300 bg-gray-700 hover:bg-black transform duration-300 ease-in-out text-white cursor-pointer"
-    >
-      <button disabled={isLoading} className="w-full cursor-pointer ">
-        {isLoading ? (
-          <div className="flex justify-center items-center space-x-2">
-            <span>Vui lòng chờ trong giây lát</span>
-            <WaveLoader />
-          </div>
-        ) : (
-          "Xác nhận đặt hàng"
-        )}
-      </button>
-    </div>
-  </div>
-</form>; */
-}

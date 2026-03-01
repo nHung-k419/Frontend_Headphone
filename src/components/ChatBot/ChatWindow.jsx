@@ -20,7 +20,7 @@ const ChatWindow = ({ onClose }) => {
   ]);
   const [input, setInput] = useState("");
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
   }, [messages, scrollDown]);
   useEffect(() => {
     const scrollElement = scrollContainerRef.current;
@@ -33,7 +33,7 @@ const ChatWindow = ({ onClose }) => {
     scrollElement.addEventListener("scroll", handleScroll);
     return () => {
       scrollElement.removeEventListener("scroll", handleScroll);
-    };
+    };  
   }, []);
   const { mutate } = useMutation({
     mutationKey: ["sendchatbotait"],
@@ -51,7 +51,7 @@ const ChatWindow = ({ onClose }) => {
     setMessages([...messages, { from: "user", text: input }]);
     mutate({ question: input });
     setInput("");
-    setIsLoading(true);
+    setIsLoading(true);       
   };
   // console.log(isLoading);
 

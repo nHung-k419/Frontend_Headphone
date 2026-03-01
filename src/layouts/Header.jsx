@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BsCart3, BsStar, BsStarFill, BsVolumeUp, BsLightning, BsShield, BsTruck, BsPlay, BsArrowRight } from "react-icons/bs";
 import { FiArrowRight } from "react-icons/fi";
 import { HiSpeakerWave, HiShieldCheck } from "react-icons/hi2";
+import { Link } from "react-router-dom";
 // import Logitech_G_Pro from "../assets/Logitech_G_Pro.png";
 import logitechImg from "../assets/Logitech_G_Pro_X.png";
 const Header = () => {
@@ -10,270 +11,198 @@ const Header = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        duration: 0.8,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.3 }
     },
   };
 
   const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const floatAnimation = {
-    y: [-10, 10, -10],
-    transition: {
-      duration: 4,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
-  };
-
-  // Hiệu ứng gợn sóng cho background - chỉ xuất hiện khi chuyển trang
-  const rippleVariants = {
-    initial: { scale: 1, opacity: 0 },
-    animate: {
-      scale: [1, 2, 3],
-      opacity: [0.6, 0.3, 0],
-      transition: {
-        duration: 3,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const rippleVariants2 = {
-    initial: { scale: 1, opacity: 0 },
-    animate: {
-      scale: [1, 2.5, 4],
-      opacity: [0.4, 0.2, 0],
-      transition: {
-        duration: 3.5,
-        ease: "easeOut",
-        delay: 0.5,
-      },
-    },
-  };
-
-  const rippleVariants3 = {
-    initial: { scale: 1, opacity: 0 },
-    animate: {
-      scale: [1, 1.8, 2.8],
-      opacity: [0.5, 0.25, 0],
-      transition: {
-        duration: 4,
-        ease: "easeOut",
-        delay: 1,
-      },
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
     },
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-teal-500 via-teal-600 to-cyan-600 text-white overflow-hidden relative">
-      {/* Background Decorative Elements với hiệu ứng gợn sóng */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }} className="absolute inset-0">
-        {/* Gợn sóng 1 */}
-        <motion.div
-          className="absolute top-1/4 left-1/3 w-96 h-96 bg-teal-200/20 rounded-full"
-          variants={rippleVariants}
-          animate="animate"
+    <section className="min-h-screen bg-[#0A0A0B] text-white overflow-hidden relative flex items-center">
+      {/* Optimized Background Layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+        <motion.div 
+          animate={{ 
+            x: [0, 30, 0],
+            y: [0, 20, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[100px] will-change-transform" 
         />
-        
-        {/* Gợn sóng 2 */}
-        <motion.div
-          className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-cyan-200/15 rounded-full"
-          variants={rippleVariants2}
-          animate="animate"
+        <motion.div 
+          animate={{ 
+            x: [0, -30, 0],
+            y: [0, -20, 0]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-[5%] -right-[5%] w-[35%] h-[35%] bg-blue-600/10 rounded-full blur-[80px] will-change-transform" 
         />
-        
-        {/* Gợn sóng 3 */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-72 h-72 bg-teal-300/10 rounded-full"
-          variants={rippleVariants3}
-          animate="animate"
-        />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.08] mix-blend-overlay" />
+      </div>
 
-        {/* Các elements background cũ được giữ nguyên */}
-        <motion.div
-          className="absolute top-20 left-10 w-32 h-32 bg-teal-200/30 rounded-full blur-xl"
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-          transition={{ duration: 20, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-48 h-48 bg-cyan-200/30 rounded-full blur-xl"
-          animate={{ scale: [1.2, 1, 1.2], rotate: [360, 180, 0] }}
-          transition={{ duration: 25, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/4 w-24 h-24 bg-teal-300/20 rounded-full blur-lg"
-          animate={{ x: [0, 100, 0], y: [0, -50, 0] }}
-          transition={{ duration: 15, repeat: Infinity }}
-        />
-      </motion.div>
-
-      <motion.div className="container mx-auto px-4 py-16 relative z-5" variants={containerVariants} initial="hidden" animate="visible">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Content */}
-          <motion.div variants={itemVariants} className="space-y-8">
-            {/* Badge */}
-            {/* <motion.div 
-              className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-200 rounded-full px-4 py-2 text-teal-700"
-              whileHover={{ scale: 1.05 }}
-            >
-              <BsLightning className="w-4 h-4" />
-              <span className="text-sm font-medium">Công Nghệ Mới Nhất</span>
-            </motion.div> */}
-
-            {/* Main Title */}
-            <motion.div className="space-y-10 mt-20">
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                <span className="text-white">"Soundora </span>
-                {/* <br /> */}
-                <span className="text-white">– Trải nghiệm không giới hạn"</span>
+      <motion.div 
+        className="container mx-auto px-6 relative z-10" 
+        variants={containerVariants} 
+        initial="hidden" 
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+          {/* Content side remains same layout, optimized transitions */}
+          <div className="space-y-12">
+            <motion.div variants={itemVariants} className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                </span>
+                <span className="text-xs font-bold tracking-widest text-teal-400 uppercase italic">Next-Gen Audio</span>
+              </div>
+              
+              <h1 className="text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight">
+                <span className="block text-white">REDEFINE</span>
+                <span className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">YOUR SOUND.</span>
               </h1>
-              <p className="text-md text-white max-w-lg">
-                🎧 "Thưởng thức âm nhạc mỗi ngày với mẫu tai nghe mới đầy phong cách và thoải mái." Thể hiện cá tính, truyền cảm hứng, tái
-                hiện âm thanh sống động.
+              
+              <p className="text-lg text-gray-400 max-w-lg leading-relaxed font-light">
+                Trải nghiệm kỷ nguyên âm thanh mới cùng <span className="text-white font-medium">Soundora Series X</span>. 
+                Thiết kế tinh giản, hiệu năng bứt phá.
               </p>
             </motion.div>
 
-            {/* Features */}
-            <motion.div className="grid grid-cols-3 gap-6" variants={itemVariants}>
-              {[
-                { icon: HiSpeakerWave, label: "Hi-Fi Audio", desc: "Âm thanh siêu nét" },
-                { icon: HiShieldCheck, label: "Bảo Hành", desc: "2 năm chính hãng" },
-                { icon: BsTruck, label: "Miễn Phí", desc: "Giao hàng 24h" },
-              ].map((feature, index) => (
-                <motion.div
-                  key={index}
-                  className="text-center p-4 rounded-2xl bg-white/90 backdrop-blur-sm border border-white/20"
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <feature.icon className="w-8 h-8 text-teal-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-gray-900 text-sm">{feature.label}</h3>
-                  <p className="text-xs text-gray-600">{feature.desc}</p>
-                </motion.div>
-              ))}
+            {/* Rest of the content with minor animation tweaks */}
+            <motion.div variants={itemVariants} className="flex flex-wrap gap-5">
+              <Link to="/Product">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative px-10 py-5 bg-white text-black font-bold rounded-2xl overflow-hidden will-change-transform"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative z-10 group-hover:text-white transition-colors flex items-center gap-3">
+                  SỞ HỮU NGAY <FiArrowRight className="w-5 h-5" />
+                </span>
+              </motion.button>
+              </Link>
+
+              <Link
+               to="/Product"
+                className="px-10 py-5 border border-white/10 rounded-2xl font-bold backdrop-blur-sm hover:bg-white/5 transition-all flex items-center gap-3"
+              >
+                XEM CHI TIẾT <BsPlay className="w-6 h-6" />
+              </Link>
             </motion.div>
 
-            {/* Price & CTA */}
-            <motion.div className="space-y-6" variants={itemVariants}>
-              {/* <div className="flex items-center gap-4">
-                <span className="text-4xl font-bold text-teal-600">2.990.000₫</span>
-                <span className="text-2xl text-gray-400 line-through">3.490.000₫</span>
-                <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">-15%</span>
-              </div> */}
-
-              {/* <div className="flex items-center gap-2 mb-4">
-                <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <BsStarFill key={i} className="w-5 h-5" />
-                  ))}
+            <motion.div variants={itemVariants} className="flex items-center gap-8 pt-6 border-t border-white/5">
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <img 
+                    key={i} 
+                    className="w-10 h-10 rounded-full border-2 border-[#0A0A0B] bg-gray-800" 
+                    src={`https://i.pravatar.cc/100?u=${i}`} 
+                    alt="user" 
+                  />
+                ))}
+                <div className="w-10 h-10 rounded-full border-2 border-[#0A0A0B] bg-teal-500 flex items-center justify-center text-[10px] font-bold">
+                  +2K
                 </div>
-                <span className="text-gray-600">(1,245 đánh giá)</span>
-              </div> */}
+              </div>
+              <div className="text-sm">
+                <div className="flex text-teal-400 text-xs mb-1">
+                  {[...Array(5)].map((_, i) => <BsStarFill key={i} />)}
+                </div>
+                <p className="text-gray-500 font-medium">Người dùng tin tưởng</p>
+              </div>
+            </motion.div>
+          </div>
 
-              <div className="flex gap-4">
-                <motion.button
-                  className="bg-white text-black px-8 py-4 rounded-2xl font-semibold flex items-center gap-2"
-                  whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(20, 184, 166, 0.3)" }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <BsCart3 className="w-5 h-5" />
-                  Mua Ngay
-                </motion.button>
+          {/* Right Side: Visual (Optimized) */}
+          <motion.div 
+            variants={itemVariants}
+            className="relative h-[500px] lg:h-[700px] flex items-center justify-center will-change-transform"
+          >
+            {/* Abstract Orb Background - Simplified Animation */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                className="w-[110%] h-[110%] border border-white/5 rounded-full flex items-center justify-center will-change-transform"
+              >
+                <div className="w-2 h-2 bg-teal-500 rounded-full absolute top-0 shadow-[0_0_10px_rgba(20,184,166,0.5)]" />
+                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full absolute bottom-0 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+              </motion.div>
+              <div className="w-[85%] h-[85%] border border-white/5 rounded-full" />
+            </div>
 
-                <motion.button
-                  className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-teal-600 transition-colors flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <FiArrowRight className="w-5 h-5" />
-                  <span>Khám phá ngay</span>
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
+            {/* Main Image with static glow instead of heavy drop-shadow */}
+            <motion.div
+              animate={{ y: [-12, 12, -12] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-10 w-full max-w-md will-change-transform"
+            >
+              {/* Static Glow underneath (cheaper than dynamic drop-shadow) */}
+              <div className="absolute inset-10 bg-teal-500/10 blur-[60px] rounded-full z-10" />
+              <img 
+                src={logitechImg} 
+                alt="Logitech G Pro X" 
+                className="w-full transform -rotate-12 select-none pointer-events-none" 
+              />
+              
+              {/* Floating Stat Cards (Optimized positions and blurs) */}
+              <motion.div 
+                animate={{ y: [-6, 6, -6] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-20 -right-6 px-5 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl will-change-transform"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-teal-500/10 rounded-lg">
+                    <BsLightning className="w-4 h-4 text-teal-400" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-gray-500 uppercase font-black tracking-widest">Latency</p>
+                    <p className="text-base font-bold text-white">1.2ms</p>
+                  </div>
+                </div>
+              </motion.div>
 
-          {/* Right Content - Product Image */}
-          <motion.div className="relative flex items-center justify-center " variants={itemVariants}>
-            <motion.div className="relative z-5 w-80 select-none" animate={floatAnimation} >
-              <img src={logitechImg} alt="" />
+              <motion.div 
+                animate={{ y: [6, -6, 6] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-4 -left-12 px-5 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl will-change-transform"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <HiSpeakerWave className="w-4 h-4 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-gray-500 uppercase font-black tracking-widest">Drivers</p>
+                    <p className="text-lg font-bold text-white">Pro-G 50</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
-            <motion.div
-              className="absolute top-10 right-10 bg-white rounded-2xl p-4 shadow-lg"
-              animate={{
-                y: [-20, 20, -20],
-                rotate: [0, 5, 0, -5, 0],
-              }}
-              transition={{ duration: 6, repeat: Infinity }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">Đang kết nối...</span>
-              </div>
-            </motion.div>
-            <motion.div
-              className="absolute top-80 right-[-40px] bg-white rounded-2xl p-4 shadow-lg"
-              animate={{
-                y: [-30, 30, -30],
-                x : [-5, 5, -5],
-                rotate: [0, 7, 0, -7, 0],
-              }}
-              transition={{ duration: 6, repeat: Infinity }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 flex justify-center items-center bg-green-400 rounded-full "> <HiSpeakerWave/></div>
-                <span className="text-sm font-medium text-gray-700">Âm thanh sống động</span>
-              </div>
-            </motion.div>
-            <motion.div
-              className="absolute bottom-20 left-10 bg-white rounded-2xl p-4 shadow-lg"
-              animate={{
-                y: [20, -20, 20],
-                rotate: [0, -3, 0, 3, 0],
-              }}
-              transition={{ duration: 8, repeat: Infinity, delay: 1 }}
-            >
-              <div className="text-center">
-                <div className="text-2xl font-bold text-teal-600">40h</div>
-                <div className="text-sm text-gray-600">Pin</div>
-              </div>
-            </motion.div>
-            {/* Glow Effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-radial from-teal-200/40 via-transparent to-transparent rounded-full"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
+
+            {/* Central Glow (Simplified) */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-teal-400/20 rounded-full blur-[80px] -z-10" />
           </motion.div>
         </div>
-
-        {/* Bottom Stats */}
-        {/* <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-15 pt-16 border-t border-teal-200" variants={itemVariants}>
-          {[
-            { step: "01", title: "Chọn Sản Phẩm", desc: "Duyệt hàng ngàn sản phẩm chất lượng." },
-            { step: "02", title: "Thanh Toán", desc: "Bảo mật, nhanh chóng, nhiều phương thức." },
-            { step: "03", title: "Vận Chuyển", desc: "Giao hàng tận nơi, an toàn, đúng hẹn." },
-            { step: "04", title: "Hậu Mãi", desc: "Hỗ trợ đổi trả, bảo hành 24/7." },
-          ].map((item, index) => (
-            <motion.div key={index} className="text-center" whileHover={{ scale: 1.05 }}>
-              <div className="text-4xl font-bold text-yellow-300">{item.step}</div>
-              <h3 className="text-lg text-white mt-2">{item.title}</h3>
-              <p className="text-white">{item.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div> */}
+      </motion.div>
+      
+      {/* Scroll Indicator (Simplified) */}
+      <motion.div 
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-20 pointer-events-none"
+      >
+        <div className="w-[1px] h-10 bg-white" />
+        <span className="text-[7px] uppercase tracking-[0.4em] font-black">Scroll</span>
       </motion.div>
     </section>
   );

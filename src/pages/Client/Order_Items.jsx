@@ -2,7 +2,7 @@ import { PiInvoice } from "react-icons/pi";
 import { MdCheck } from "react-icons/md";
 import { GoPackage } from "react-icons/go";
 import { MdOutlineStarPurple500 } from "react-icons/md";
-import { IoCloseSharp } from "react-icons/io5";
+import { IoCloseSharp, IoChevronForward, IoBagHandleOutline, IoTimeOutline, IoWalletOutline, IoLocationOutline, IoTrashOutline } from "react-icons/io5";
 import { RiArrowLeftRightLine } from "react-icons/ri";
 import { FaRegEye } from "react-icons/fa6";
 import { useEffect, useRef, useState } from "react";
@@ -13,26 +13,26 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Link } from "react-router-dom";
 import ModalOrder from "../../components/ModalOrder/ModalOrder";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { CiLocationOn } from "react-icons/ci";
 import { requestCancleOrder } from "../../services/Client/Order";
 import Loading from "../../components/Loading";
 import { Toaster, toast } from "sonner";
 import Cart404empty from "../../components/Cart404";
+
 const Order_Items = () => {
   const scrollRef = useRef(null);
   const btnRefs = useRef([]);
   const [currentTab, setCurrentTab] = useState(0);
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
-  const [status, setStatus] = useState({
-    status: "Đơn hàng",
-  });
+  const [status, setStatus] = useState({ status: "Đơn hàng" });
   const [isLoading, setIsLoading] = useState(false);
   const [viewMore, setViewMore] = useState([]);
   const [detailOrder, setDeitalOrder] = useState({});
   const [cancleIdOrder, setCancleIdOrder] = useState(null);
-   const user = localStorage.getItem("User");
+  const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
+
   const {
     data,
     isPending,
@@ -40,25 +40,23 @@ const Order_Items = () => {
   } = useQuery({
     queryKey: ["order-items", idUser, status.status],
     queryFn: () => getOrderItems({ Id_User: idUser, status }),
-    
   });
-  const [valueCancle, setValueCancle] = useState({
-    reason: "",
-    note: "",
-  });
+
+  const [valueCancle, setValueCancle] = useState({ reason: "", note: "" });
 
   const handleGetvalueReson = (e) => {
     const { name, value } = e.target;
     setValueCancle((prev) => ({ ...prev, [name]: value }));
   };
+
   const mutationCancle = useMutation({
     mutationKey: ["cancle-order"],
     mutationFn: (data) => requestCancleOrder(data),
-    onSuccess: (data) => {
+    onSuccess: () => {
       setTimeout(() => {
         setTypeModal({ type: "", modal: false });
         setIsLoading(false);
-        toast.success("Yêu cầu huỷ đơn hàng thành công, vui lòng chờ xác nhận");
+        toast.success("Yêu cầu hủy đơn hàng thành công, vui lòng chờ xác nhận");
       }, 2000);
     },
     onError: (error) => {
@@ -66,7 +64,7 @@ const Order_Items = () => {
         setTimeout(() => {
           setTypeModal({ type: "", modal: false });
           setIsLoading(false);
-          toast.error("Bạn đã gửi yêu cầu hủy đơn hàng trước đó rồi , vui lòng chờ xác nhận !");
+          toast.error("Bạn đã gửi yêu cầu hủy đơn hàng trước đó rồi, vui lòng chờ xác nhận!");
         }, 2000);
       }
     },
@@ -74,7 +72,7 @@ const Order_Items = () => {
 
   const handleSenReqCancleOrder = (orderId) => {
     if (!valueCancle.reason) {
-      return toast.warning("Vui lòng chọn lý do huỷ đơn hàng");
+      return toast.warning("Vui lòng chọn lý do hủy đơn hàng");
     }
     setIsLoading(true);
     const data = {
@@ -91,13 +89,13 @@ const Order_Items = () => {
   };
 
   const handleReqCancle = (orderId) => {
-    setTypeModal({ type: "reqCancle", modal: true });
     setCancleIdOrder(orderId);
+    setTypeModal({ type: "reqCancle", modal: true });
   };
 
   const handleCallStatus = (item, index) => {
     setCurrentTab(index);
-    setStatus((prev) => ({ ...prev, status: item }));
+    setStatus({ status: item });
     const nextEl = btnRefs.current[index];
     if (nextEl) {
       nextEl.scrollIntoView({
@@ -109,197 +107,328 @@ const Order_Items = () => {
   };
 
   const handleSeendeitalOrder = (order) => {
+    setDeitalOrder({ order });
     setTypeModal({ type: "detailOrder", modal: true });
-    setDeitalOrder((prev) => ({ ...prev, order }));
   };
+
   const wrapperRef = useRef(null);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        // console.log("wrapperRef.current", wrapperRef.current);
-
         setTypeModal({ type: "", modal: false });
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
   useEffect(() => {
     if (typeModal.modal) {
-      document.body.style.overflow = "hidden"; // khoá scroll
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""; // mở lại scroll
+      document.body.style.overflow = "";
     }
-
-    // Cleanup khi component unmount
     return () => {
       document.body.style.overflow = "";
     };
   }, [typeModal.modal]);
 
+  const StatusBadge = ({ status }) => {
+    const config = {
+      "Đã giao": "bg-emerald-50 text-emerald-700",
+      "Chờ xác nhận": "bg-amber-50 text-amber-700",
+      "Chờ giao hàng": "bg-blue-50 text-blue-700",
+      "Đã hủy": "bg-red-50 text-red-700",
+      "Yêu cầu hủy": "bg-gray-100 text-gray-700",
+    };
+    return (
+      <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full ${config[status] || "bg-gray-50 text-gray-600"}`}>
+        {status}
+      </span>
+    );
+  };
+
   return (
-    <section className="lg:max-w-7xl mx-auto lg:w-full h-full mt-20 w-[380px] ">
-      <div>
-        <AnimatePresence>
-          {typeModal.type === "detailOrder" && (
-            <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
-              <div className="max-w-5xl mx-auto p-6 bg-white lg:rounded-2xl md:h-[690px] sm:h-[790px] ">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Chi tiết đơn hàng</h2>
+    <div className="min-h-screen bg-[#FAF9F6] pt-28 pb-20 px-4 md:px-8 font-sans selection:bg-emerald-100 text-[#2D2D2D]">
+      <div className="max-w-6xl mx-auto space-y-10">
+        {/* Boutique Header */}
+        <div className="border-b border-[#E5E2D9] pb-8">
+          <h1 className="text-3xl font-light tracking-tight">Đơn hàng của bạn</h1>
+          <p className="text-[#8C8C8C] text-[10px] tracking-[0.2em] mt-2 uppercase flex items-center gap-2">
+            <span className="w-1 h-1 bg-emerald-600 rounded-full"></span>
+            Lịch sử mua hàng & Theo dõi vận chuyển
+          </p>
+        </div>
 
-                {/* Thông tin đơn hàng */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="flex flex-col space-y-2">
-                    <h3 className="text-lg font-medium text-gray-700 mb-2">Thông tin đơn hàng</h3>
-                    <p>
-                      <span className="font-medium">Mã đơn:</span> #{detailOrder.order.orderInfo._id}
-                    </p>
-                    <p>
-                      <span className="font-medium">Ngày đặt:</span> {new Date(detailOrder.order.orderInfo.CreateAt).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <span className="font-medium">Trạng thái:</span>
-                      <span
-                        className={`ml-1 px-2 py-1 rounded-full text-sm font-semibold
-              ${
-                detailOrder.order.orderInfo.Status === "Đã giao"
-                  ? "bg-green-100 text-green-700"
-                  : detailOrder.order.orderInfo.Status === "Chờ xác nhận"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-                      >
-                        {detailOrder.order.orderInfo.Status}
-                      </span>
-                    </p>
-                  </div>
+        {/* Navigation Tabs - Boutique Minimalist */}
+        <div className="flex border-b border-[#F0EEE6] overflow-x-auto hide-scrollbar sticky top-20 bg-[#FAF9F6]/95 backdrop-blur-sm z-10 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {["Đơn hàng", "Chờ xác nhận", "Chờ giao hàng", "Đã giao", "Đã hủy"].map((item, index) => (
+            <button
+              key={index}
+              ref={(el) => (btnRefs.current[index] = el)}
+              onClick={() => handleCallStatus(item, index)}
+              className={`pb-4 px-6 text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 relative whitespace-nowrap
+                ${currentTab === index ? "text-emerald-700" : "text-[#8C8C8C] hover:text-[#2D2D2D]"}`}
+            >
+              {item}
+              {currentTab === index && (
+                <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-700" />
+              )}
+            </button>
+          ))}
+        </div>
 
-                  {/* Địa chỉ giao hàng */}
-                  <div className="flex flex-col space-y-2">
-                    <h3 className="text-lg font-medium text-gray-700 mb-2">Địa chỉ nhận hàng</h3>
-                    <p className="flex space-x-1">
-                      <span className="font-medium">Tên:</span> {detailOrder.order.orderInfo.Fullname}
-                      <span className="ml-2 mr-2">(84)</span>
-                      <span className="text-gray-500">{detailOrder.order.orderInfo.Phone.slice(1).replace(/(\d{3})(?=\d)/g, "$1 ")}</span>
-                    </p>
-                    {/* <p>
-                    <span className="font-medium">SĐT:</span> {detailOrder.order.orderInfo.Phone}
-                  </p> */}
-                    <p>
-                      <span className="font-medium">Địa chỉ:</span>{" "}
-                      {detailOrder.order.orderInfo.Address.replace(/(Thành phố|Tỉnh)/g, " - $1")
-                        ?.replace(/(Quận|Huyện|Thị xã)/g, " - $1")
-                        ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
-                        ?.replace(/^ - /, "")}
-                    </p>
-                  </div>
+        {/* Order List Area */}
+        <div className="space-y-8">
+          {!isLoadingOrderItems && !data?.allOrderItems ? (
+            <Cart404empty type={"orderItems"} />
+          ) : isPending ? (
+            <div className="space-y-6">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-white p-6 shadow-sm border border-[#F0EEE6]">
+                  <Skeleton height={20} width={150} className="mb-4" />
+                  <Skeleton count={3} />
                 </div>
+              ))}
+            </div>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {data?.allOrderItems?.map((orderBlock) => (
+                <motion.div
+                  layout
+                  key={orderBlock.orderInfo._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white border-l border-r border-t border-b border-[#E5E2D9] shadow-sm hover:shadow-md transition-shadow group overflow-hidden"
+                >
+                  {/* Order Summary Row */}
+                  <div className="bg-[#FAF9F6] px-6 py-5 flex flex-wrap items-center justify-between gap-6 border-b border-[#E5E2D9]">
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-[#8C8C8C] uppercase tracking-widest font-bold">Mã định danh</p>
+                      <p className="text-sm font-medium">#{orderBlock.orderInfo._id.slice(-8).toUpperCase()}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-[#8C8C8C] uppercase tracking-widest font-bold">Ngày thực hiện</p>
+                      <p className="text-sm font-light tracking-wide">
+                        {new Date(orderBlock.orderInfo.CreateAt).toLocaleDateString("vi-VN")}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-[#8C8C8C] uppercase tracking-widest font-bold">Tổng thanh toán</p>
+                      <p className="text-sm font-semibold text-emerald-700 tracking-wider">
+                        {orderBlock.orderInfo.TotalAmount.toLocaleString("vi-VN")}₫
+                      </p>
+                    </div>
+                    <div>
+                      <StatusBadge status={orderBlock.orderInfo.Status} />
+                    </div>
+                  </div>
 
-                {/* Danh sách sản phẩm */}
-                <div className="mb-6 h-[260px] overflow-hidden overflow-y-auto hide-scrollbar">
-                  <h3 className="text-lg font-medium text-gray-700 mb-2">Sản phẩm</h3>
-                  <div className="">
-                    {detailOrder.order.items.map((item) => (
-                      <div>
-                        <div key={item._id} className="flex items-center py-4 gap-4">
-                          <img src={item.Image} alt={item.Name} className="w-16 h-16 rounded object-cover" />
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-800">{item.Name}</p>
-                            <p className="text-sm text-gray-500">Số lượng: {item.Quantity}</p>
-                            <p className="text-sm text-gray-500">Màu sắc: {item.Color}</p>
-                            <p className="text-sm text-gray-500">Size: {item.Size}</p>
+                  {/* Actions Bar */}
+                  <div className="px-6 py-3 bg-white flex justify-end gap-4 border-b border-[#F0EEE6]">
+                    <button
+                      onClick={() => handleSeendeitalOrder(orderBlock)}
+                      className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#8C8C8C] hover:text-emerald-700 transition-colors flex items-center gap-2"
+                    >
+                      <FaRegEye size={12} /> Chi tiết
+                    </button>
+                    {orderBlock.orderInfo?.Status === "Chờ xác nhận" && (
+                      <button
+                        onClick={() => handleReqCancle(orderBlock.orderInfo._id)}
+                        className="text-[9px] uppercase tracking-[0.2em] font-bold text-red-400 hover:text-red-700 transition-colors flex items-center gap-2"
+                      >
+                        <IoTrashOutline size={12} /> Hủy đơn
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Product List Content */}
+                  <div className={`p-6 transition-all duration-500 ${orderBlock?.items.length > 2 && !viewMore?.includes(orderBlock.orderInfo._id) ? "max-h-80 overflow-hidden relative" : "h-auto"}`}>
+                    <div className="space-y-6">
+                      {orderBlock?.items.map((item, idx) => (
+                        <div key={idx} className="flex gap-6 group/item">
+                          <div className="w-16 h-16 bg-[#F0EEE6] flex-shrink-0">
+                            <img src={item.Image} alt="" className="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover/item:scale-105 transition-transform" />
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold text-gray-800">{item.Price.toLocaleString("vi-VN")}₫</p>
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <h3 className="text-xs font-medium text-[#2D2D2D] truncate hover:text-emerald-700 transition-colors cursor-pointer">
+                              {item?.Id_ProductVariants?.Id_Products?.Name}
+                            </h3>
+                            <p className="text-[9px] text-[#8C8C8C] uppercase tracking-widest space-x-3">
+                              <span>Màu: {item.Color}</span>
+                              <span>•</span>
+                              <span>Size: {item.Size}</span>
+                            </p>
+                            <div className="flex justify-between items-baseline pt-1">
+                              <span className="text-[10px] text-[#8C8C8C]">Số lượng: {item.Quantity}</span>
+                              <span className="text-xs font-light tracking-wide">{item.Price.toLocaleString("vi-VN")}₫</span>
+                            </div>
                           </div>
                         </div>
-                        <hr className="border-t-1 border-gray-300 w-full" />
+                      ))}
+                    </div>
+
+                    {/* Gradient Overlay for collapsed state */}
+                    {orderBlock?.items.length > 2 && !viewMore?.includes(orderBlock.orderInfo._id) && (
+                      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-white/0 flex items-end justify-center pb-4">
+                        <button
+                          onClick={() => handleViewMore(orderBlock.orderInfo._id)}
+                          className="px-4 py-1.5 bg-white border border-[#E5E2D9] text-[9px] uppercase tracking-widest font-bold hover:bg-[#FAF9F6] transition-colors"
+                        >
+                          Xem thêm {orderBlock.items.length - 2} sản phẩm
+                        </button>
                       </div>
-                    ))}
+                    )}
+                  </div>
+
+                  {/* Footer Action if Fully Visible */}
+                  {viewMore?.includes(orderBlock.orderInfo._id) && (
+                    <div className="px-6 pb-6 flex justify-center">
+                      <button
+                        onClick={() => handleViewMore(orderBlock.orderInfo._id)}
+                        className="text-[9px] uppercase tracking-widest font-bold text-[#8C8C8C] hover:text-[#2D2D2D]"
+                      >
+                        Thu gọn
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Interaction Message */}
+                  {orderBlock.orderInfo.Status === "Đã giao" && (
+                    <div className="mx-6 mb-6 p-3 bg-emerald-50 border border-emerald-100 flex items-center justify-between text-[10px] text-emerald-700">
+                      <div className="flex items-center gap-2">
+                        <MdOutlineStarPurple500 size={14} />
+                        <span className="font-medium">Vui lòng đánh giá trải nghiệm sản phẩm để giúp chúng tôi hoàn thiện hơn!</span>
+                      </div>
+                      <Link to={`/Products/Detail/${orderBlock?.items[0]?.Id_ProductVariants?.Id_Products?._id}`} className="font-bold uppercase tracking-widest hover:underline">
+                        Đánh giá ngay
+                      </Link>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
+      </div>
+
+      {/* Detail Modal Overhaul */}
+      <AnimatePresence>
+        {typeModal.type === "detailOrder" && (
+          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
+            <div className="w-full max-w-2xl bg-white p-8 rounded-sm space-y-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+              <div className="border-b border-[#F0EEE6] pb-4 flex justify-between items-center">
+                <h2 className="text-xl font-light tracking-tight">Chi tiết đơn hàng</h2>
+                <StatusBadge status={detailOrder.order.orderInfo.Status} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+                <div className="space-y-4">
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8C8C8C]">Thông tin chung</h3>
+                  <div className="space-y-1.5">
+                    <p><span className="text-[#8C8C8C]">Mã đơn:</span> #{detailOrder.order.orderInfo._id}</p>
+                    <p><span className="text-[#8C8C8C]">Ngày đặt:</span> {new Date(detailOrder.order.orderInfo.CreateAt).toLocaleString()}</p>
+                    <p><span className="text-[#8C8C8C]">Thanh toán:</span> {detailOrder.order.orderInfo.PaymentMethod === "COD" ? "Tiền mặt" : "Zalopay"}</p>
                   </div>
                 </div>
-
-                {/* Tổng tiền */}
-                <div className="text-right border-t pt-4">
-                  <p className="text-lg font-semibold text-gray-800">
-                    Tổng tiền: {detailOrder.order?.orderInfo?.TotalAmount.toLocaleString("vi-VN")}₫
-                  </p>
-                </div>
-
-                <div className="flex lg:justify-end justify-center items-center space-x-2 mt-5">
-                  <button
-                    onClick={() => setTypeModal({ modal: false })}
-                    className="lg:w-35 w-1/2 h-11 rounded-md border-1 border-gray-400  cursor-pointer hover:bg-black hover:text-white transform duration-300 ease-in-out"
-                  >
-                    <span>Đóng</span>
-                  </button>
-                  <button className="lg:w-35 w-1/2 h-11 rounded-md border-1 border-teal-500 cursor-pointer hover:bg-teal-500 hover:text-white transform duration-300 ease-in-out">
-                    <span>Mua lại</span>
-                  </button>
+                <div className="space-y-4">
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8C8C8C]">Nơi nhận hàng</h3>
+                  <div className="space-y-1.5">
+                    <p className="font-bold">{detailOrder.order.orderInfo.Fullname}</p>
+                    <p className="text-[#8C8C8C]">(+84) {detailOrder.order.orderInfo.Phone}</p>
+                    <p className="leading-relaxed text-[#555]">{detailOrder.order.orderInfo.Address}</p>
+                  </div>
                 </div>
               </div>
-            </ModalOrder>
-          )}
-        </AnimatePresence>
-      </div>
-      <AnimatePresence>
-        {typeModal.type === "reqCancle" && (
-          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
-            <div className="max-w-2xl w-140 mx-auto mt-12 bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-              <h1 className="text-2xl font-bold text-gray-800 mb-6">🛑 Yêu cầu hủy đơn hàng</h1>
 
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-1">Mã đơn hàng</label>
-                <input
-                  type="text"
-                  value={"#" + cancleIdOrder}
-                  readOnly
-                  className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block font-medium mb-1">Lý do hủy đơn</label>
-                <select
-                  // value={reason}
-                  name="reason"
-                  onChange={(e) => handleGetvalueReson(e)}
-                  className="w-full border px-3 py-2 rounded-lg"
-                >
-                  <option value="">-- Chọn lý do --</option>
-                  <option value="Tôi dổi ý">Tôi đổi ý</option>
-                  <option value="Tìm sản phẩm tốt hơn">Tìm sản phẩm tốt hơn</option>
-                  <option value="Thời gian giao hàng lâu">Thời gian giao hàng lâu</option>
-                  <option value="Lý do khác">Lý do khác</option>
-                </select>
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#8C8C8C]">Danh mục sản phẩm</h3>
+                <div className="border-t border-[#F0EEE6] divide-y divide-[#F0EEE6]">
+                  {detailOrder.order.items.map((item, idx) => (
+                    <div key={idx} className="py-4 flex items-center gap-6">
+                      <div className="w-16 h-16 bg-[#F0EEE6] p-1">
+                        <img src={item.Image} className="w-full h-full object-contain mix-blend-multiply" alt="" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{item.Name}</p>
+                        <p className="text-[9px] text-[#8C8C8C] uppercase tracking-widest mt-0.5">
+                          {item.Color} • {item.Size} • SL: {item.Quantity}
+                        </p>
+                      </div>
+                      <p className="text-xs font-light tracking-wide">{item.Price.toLocaleString("vi-VN")}₫</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="mb-6">
-                <label className="block text-gray-700 font-medium mb-1">
-                  <label className="block font-medium mb-1">Ghi chú thêm (tuỳ chọn)</label>
-                </label>
-                <textarea
-                  name="note"
-                  onChange={(e) => handleGetvalueReson(e)}
-                  rows="5"
-                  placeholder="Ví dụ: Tôi đặt nhầm sản phẩm, đổi ý sau khi đặt hàng..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-400 focus:outline-none resize-none"
-                ></textarea>
+              <div className="border-t border-[#F0EEE6] pt-6 flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Tổng giá trị đơn hàng</span>
+                <span className="text-xl font-light text-emerald-700 tracking-wider">
+                  {detailOrder.order.orderInfo.TotalAmount.toLocaleString("vi-VN")}₫
+                </span>
               </div>
 
-              <div className="flex items-center justify-end space-x-2">
+              <div className="flex justify-end pt-4">
                 <button
                   onClick={() => setTypeModal({ modal: false })}
-                  type="button"
-                  className="w-25 cursor-pointer bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 "
+                  className="bg-[#2D2D2D] text-white px-10 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-600 transition-colors"
                 >
-                  Đóng
+                  Đóng cửa sổ
                 </button>
+              </div>
+            </div>
+          </ModalOrder>
+        )}
+
+        {/* Cancel Modal Overhaul */}
+        {typeModal.type === "reqCancle" && (
+          <ModalOrder typeModal={typeModal} setTypeModal={setTypeModal} wrapperRef={wrapperRef}>
+            <div className="w-full max-w-lg bg-white p-8 rounded-sm space-y-6 shadow-2xl">
+              <div className="flex items-center gap-3 text-red-600 border-b border-[#F0EEE6] pb-4">
+                <IoTrashOutline size={20} />
+                <h2 className="text-xl font-light tracking-tight">Yêu cầu hủy đơn hàng</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-[#8C8C8C]">Mã đơn hàng</label>
+                  <p className="text-xs font-mono font-medium">#{cancleIdOrder}</p>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase tracking-widest text-[#8C8C8C]">Lý do hủy đơn</label>
+                  <select
+                    name="reason"
+                    onChange={handleGetvalueReson}
+                    className="w-full border-b border-[#E5E2D9] py-2 text-xs focus:outline-none focus:border-emerald-600 bg-transparent"
+                  >
+                    <option value="">-- Chọn lý do --</option>
+                    <option value="Tôi đổi ý">Tôi đổi ý</option>
+                    <option value="Tìm sản phẩm tốt hơn">Tìm sản phẩm tốt hơn</option>
+                    <option value="Thời gian giao hàng lâu">Thời gian giao hàng lâu</option>
+                    <option value="Lý do khác">Lý do khác</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1 relative pt-2">
+                  <label className="text-[9px] uppercase tracking-widest text-[#8C8C8C]">Ghi chú (tùy chọn)</label>
+                  <textarea
+                    name="note"
+                    onChange={handleGetvalueReson}
+                    rows="3"
+                    className="w-full border border-[#E5E2D9] p-3 text-xs focus:outline-none focus:border-emerald-600 mt-2 bg-[#FAF9F6] resize-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <button onClick={() => setTypeModal({ modal: false })} className="text-[10px] uppercase font-bold tracking-widest text-[#8C8C8C] px-4">Hủy bỏ</button>
                 <button
                   onClick={() => handleSenReqCancleOrder(cancleIdOrder)}
-                  type="button"
-                  className="lg:w-full w-35 cursor-pointer bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
+                  className="bg-red-600 text-white px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-red-700 transition-colors shadow-lg shadow-red-100 flex items-center justify-center min-w-[120px]"
                 >
                   {isLoading ? <Loading /> : "Gửi yêu cầu"}
                 </button>
@@ -308,225 +437,9 @@ const Order_Items = () => {
           </ModalOrder>
         )}
       </AnimatePresence>
-      <div>
-        {/* {isPending  ? <>
-                      <Skeleton height={120} />
-                      <Skeleton height={20} className="mt-2" />
-                      <Skeleton width={100} height={20} />
-                    </> : "đã load"} */}
-        <h1 className="mb-10 font-semibold text-xl">Đơn hàng của bạn</h1>
-        <div className="flex items-center  ">
-          <div ref={scrollRef} className="lg:space-x-5 w-full overflow-x-auto scroll-smooth whitespace-nowrap  py-2">
-            {["Đơn hàng", "Chờ xác nhận", "Chờ giao hàng", "Đã giao", "Đã hủy"].map((item, index) => (
-              <button
-                ref={(el) => (btnRefs.current[index] = el)}
-                onClick={() => handleCallStatus(item, index)}
-                key={index}
-                className={`min-w-31 h-10 rounded-md text-black cursor-pointer transform duration-200 ease-in-out ${
-                  currentTab === index ? "bg-teal-500 text-white" : ""
-                }`}
-              >
-                <span>{item}</span>
-              </button>
-            ))}
-            {/* <button className="w-35 h-8 rounded-md text-black cursor-pointer">
-              <span>Đã thanh toán</span>
-            </button>
-            <button className="w-35 h-8 rounded-md text-black cursor-pointer">
-              <span>Đã hủy</span>
-            </button> */}
-          </div>
-        </div>
-        {!isLoadingOrderItems && !data?.allOrderItems ? (
-          <Cart404empty type={"orderItems"} />
-        ) : isPending ? (
-          Array(1)
-            .fill(0)
-            .map((_, idx) => (
-              <div key={idx} className="h-130 w-full shadow-md mt-5 rounded-xl p-5">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-5">
-                  <div>
-                    <Skeleton width={100} height={16} />
-                    <Skeleton width={200} height={20} />
-                  </div>
-                  <Skeleton width={120} height={40} />
-                </div>
 
-                {/* Thông tin đơn */}
-                <div className="flex flex-wrap lg:space-x-20 space-x-7 text-md">
-                  <Skeleton width={100} height={16} />
-                  <Skeleton width={120} height={16} />
-                  <Skeleton width={250} height={16} />
-                </div>
-
-                {/* Thanh đánh giá */}
-                <div className="w-full h-10 rounded-xl bg-yellow-50 mt-5 p-3 flex items-center justify-between">
-                  <Skeleton width={250} height={16} />
-                  <Skeleton width={20} height={20} />
-                </div>
-
-                {/* Danh sách sản phẩm trong đơn */}
-                {Array(2)
-                  .fill(0)
-                  .map((_, i) => (
-                    <div key={i} className="mt-5 pb-5">
-                      <Skeleton width={150} height={20} />
-                      <div className="flex mt-3">
-                        <Skeleton width={100} height={100} />
-                        <div className="ml-3 flex flex-col space-y-2">
-                          <Skeleton width={200} height={20} />
-                          <Skeleton width={300} height={14} />
-                          <div className="flex space-x-4">
-                            <Skeleton width={100} height={20} />
-                            <Skeleton width={100} height={20} />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            ))
-        ) : (
-          <>
-            {data?.allOrderItems?.map((orderBlock) => (
-              <div>
-                <div className={`w-full shadow-md mt-5 rounded-xl mb-10`}>
-                  <div
-                    className={`max-w-6xl mx-auto pt-5 transform duration-300 ease-in-out ${
-                      orderBlock?.items.length > 3 && !viewMore?.includes(orderBlock.orderInfo._id)
-                        ? "max-h-150 overflow-hidden"
-                        : orderBlock?.items.length > 3 && viewMore?.includes(orderBlock.orderInfo._id)
-                        ? "max-h-[1000px]"
-                        : "h-auto"
-                    } `}
-                  >
-                    <div className="flex justify-between items-center mb-5">
-                      <div className="lg:w-full md:w-full w-25 truncate">
-                        <h2 className="text-gray-400">Mã đơn hàng:</h2>
-                        <span className="font-semibold ">#{orderBlock.orderInfo._id}</span>
-                      </div>
-                      <div className="space-x-3 flex">
-                        {orderBlock.orderInfo?.Status === "Chờ xác nhận" && (
-                          <button
-                            className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group"
-                            onClick={() => handleReqCancle(orderBlock.orderInfo._id)}
-                          >
-                            <span className="relative z-5 group-hover:text-white text-black transition duration-600 ">Yêu cầu hủy</span>
-                            <span
-                              className={`absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out`}
-                            ></span>
-                          </button>
-                        )}
-                        <button
-                          className="w-30 h-10 rounded-lg border-1 border-gray-300 cursor-pointer relative overflow-hidden group"
-                          onClick={() => handleSeendeitalOrder(orderBlock)}
-                        >
-                          <span className="relative z-5 group-hover:text-white text-black transition duration-600 ">Xem chi tiết</span>
-                          <span
-                            className={`absolute left-0 top-0 w-full h-full bg-gradient-to-r from-teal-400 to-teal-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out`}
-                          ></span>
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex justify-center items-center lg:space-x-20 space-x-7 text-md">
-                        <div>
-                          <h2 className="text-gray-400">Ngày đặt:</h2>
-                          {/* <span className="font-semibold">{new Date(orderBlock.orderInfo.CreateAt).toLocaleDateString("vi-VN")}</span> */}
-                        </div>
-                        <div>
-                          <h2 className="text-gray-400">Tổng tiền:</h2>
-                          {/* <span className="font-semibold">
-                      {orderBlock.orderInfo.TotalAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
-                    </span> */}
-                        </div>
-                        <div>
-                          <h2 className="text-gray-400">Địa chỉ:</h2>
-                          {/* <span className="font-semibold">
-                      {orderBlock?.orderInfo?.Address?.replace(/(Thành phố|Tỉnh)/g, " - $1")
-                        ?.replace(/(Quận|Huyện)/g, " - $1")
-                        ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
-                        ?.replace(/^ - /, "")}
-                    </span> */}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center lg:space-x-20 space-x-7 text-md">
-                      <span className="font-semibold">{new Date(orderBlock.orderInfo.CreateAt).toLocaleDateString("vi-VN")}</span>
-                      <span className="font-semibold">
-                        {orderBlock.orderInfo.TotalAmount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
-                      </span>
-                      <span className="font-semibold line-clamp-1">
-                        {orderBlock?.orderInfo?.Address?.replace(/(Thành phố|Tỉnh)/g, " - $1")
-                          ?.replace(/(Quận|Huyện|Thị xã)/g, " - $1")
-                          ?.replace(/(Phường|Xã|Thị trấn)/g, " - $1")
-                          ?.replace(/^ - /, "")}
-                      </span>
-                    </div>
-                    {/* <h1 className="text-2xl font-semibold">Oder Tracking</h1> */}
-                    <hr className="text-gray-300 w-full mt-5 " />
-                    {orderBlock.orderInfo.Status === "Đã giao" && (
-                      <div className="w-full flex items-center justify-between h-fit rounded-xl bg-yellow-50 mt-5 p-1 text-yellow-500">
-                        <Link
-                          to={`/Products/Detail/${orderBlock?.items[0]?.Id_ProductVariants?.Id_Products?._id}`}
-                          className="flex items-center space-x-2 "
-                        >
-                          <span>
-                            <MdOutlineStarPurple500 />
-                          </span>
-                          <p>Vui lòng đánh giá trải nghiệm sản phẩm sau khi nhận hàng!</p>
-                        </Link>
-                        <span className="cursor-pointer">
-                          <IoCloseSharp />
-                        </span>
-                      </div>
-                    )}
-                    {orderBlock?.items.map((item) => (
-                      <div className="mt-5 pb-5">
-                        {/* <h1 className="text-md font-semibold">Delivered May 10</h1> */}
-                        <div className="flex mt-3">
-                          <img className="w-25 h-25 object-contain" src={item.Image ? item.Image : item.Id_Product.ImageUrl.path} alt="" />
-                          <div className="ml-3">
-                            <h2 className="font-semibold">{item?.Id_ProductVariants?.Id_Products?.Name}</h2>
-                            <p className="text-gray-400 ">Hỗ trợ đổi trả 100%</p>
-                            {/* <div>
-                            <p className="font-bold">Màu sắc : <span className="font-normal">{item?.Id_ProductVariants?.Color}</span></p>
-                            <p className="font-bold">Size : <span className="font-normal">{item?.Id_ProductVariants?.Size}</span></p>
-                          </div> */}
-                            <div className="flex space-x-5 items-center text-blue-700  mt-3">
-                              <span className="flex items-center space-x-1 cursor-pointer font-medium">
-                                <RiArrowLeftRightLine />
-                                <span>Mua lại</span>
-                              </span>
-                              <span className="text-[13px]">|</span>
-                              <span className="flex items-center space-x-1 cursor-pointer font-medium">
-                                <FaRegEye />
-                                <span>Xem sản phẩm</span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {orderBlock?.items.length > 3 && (
-                    <div className="flex justify-center pb-4">
-                      <button
-                        onClick={() => handleViewMore(orderBlock.orderInfo._id)}
-                        className="font-semibold cursor-pointer hover:text-red-500 transform duration-200 ease-in-out"
-                      >
-                        {viewMore?.includes(orderBlock.orderInfo._id) ? "Thu gọn" : "Xem thêm"}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </>
-        )}
-      </div>
-    </section>
+      <Toaster position="bottom-right" richColors />
+    </div>
   );
 };
 

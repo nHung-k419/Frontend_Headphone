@@ -7,7 +7,7 @@ import {
   FaLayerGroup, FaBoxOpen, FaShoppingCart, FaStar, 
   FaUserFriends, FaBoxes, FaTrademark, FaWarehouse ,FaBox
 } from "react-icons/fa";
-
+import { MdPayment } from "react-icons/md";
 const SidebarAdmin = () => {
   const [active, setActive] = useState(null);
  const [open, setOpen] = useState(true);
@@ -22,6 +22,8 @@ const SidebarAdmin = () => {
     { name: "Thương hiệu", link: "/Admin/Brand", icon: <FaTrademark /> },
     { name: "Quản lý kho", link: "/Admin/Stock", icon: <FaWarehouse /> },
     { name: "Quản lý Vouchers", link: "/Admin/Voucher", icon: <FaBox /> },
+    { name: "Lịch sử giao dịch", link: "/Admin/Logs", icon: <MdPayment /> },
+
   ];
 
   return (

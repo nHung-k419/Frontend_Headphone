@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import socket from "../../Socket";
 import ModalComment from "../ModalComment/ModalComment";
-import { FaStar, FaRegStar, FaCamera } from "react-icons/fa";
+import { FaStar, FaRegStar, FaCamera, FaTimes, FaThumbsUp, FaReply } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { getDetailProduct } from "../../services/Client/Detail";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -17,6 +17,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { PiCursorClickFill } from "react-icons/pi";
 import ReactStars from "react-rating-stars-component";
 import ReviewItemSkeleton from "../Skeleton/ReviewsSkeleton";
+import { motion, AnimatePresence } from "framer-motion";
+
 const CommentSidebar = ({ isOpen, onClose }) => {
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -25,31 +27,32 @@ const CommentSidebar = ({ isOpen, onClose }) => {
   const [typeModal, setTypeModal] = useState({ type: "", modal: false });
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
-  const [value, setValue] = useState({
-    content: "",
-  });
+  const [value, setValue] = useState({ content: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState([]);
   const [images, setImages] = useState([]);
   const [cacheReview, setCacheReview] = useState({});
+
   dayjs.extend(relativeTime);
   dayjs.locale("vi");
+
   const handleGetvalue = (e) => {
     const { name, value } = e.target;
     setValue((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleGetImage = (e) => {
     const files = Array.from(e.target.files);
     setFileUrl(files);
     const urls = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...urls]);
   };
+
   const mutationImage = useMutation({
     mutationKey: ["sendImageComment"],
     mutationFn: (formData) => sendImageComment(formData),
     onSuccess: (data) => {
       setIsLoading(false);
-      // console.log("success", data);
       const dataContent = {
         Content: value.content,
         Rating: rating,
@@ -69,7 +72,7 @@ const CommentSidebar = ({ isOpen, onClose }) => {
     queryKey: ["getReviewsById", id],
     queryFn: () => getReviewsById(id),
   });
-  // console.log(dataReviews?.result);
+
   const handleDeleteImage = (image, index) => {
     setImages((prev) => prev.filter((item) => item !== image));
     setFileUrl((prev) => prev.filter((item) => item !== fileUrl[index]));
@@ -83,7 +86,7 @@ const CommentSidebar = ({ isOpen, onClose }) => {
         formData.append("Images", img);
       });
       mutationImage.mutate(formData);
-    } else {
+    } else if (value.content !== "") {
       const dataContent = {
         Content: value.content,
         Rating: rating,
@@ -91,18 +94,39 @@ const CommentSidebar = ({ isOpen, onClose }) => {
         Id_Product: id,
         Id_User: idUser,
       };
-      queryClient.invalidateQueries(["getReviewsById", id]);
       socket.emit("sendReview", dataContent);
+      // queryClient.invalidateQueries(["getReviewsById", id]);
       setIsLoading(false);
       setTypeModal({ type: "", modal: false });
+      setValue({ content: "" });
+      setImages([]);
+      setFileUrl([]);
     }
   };
+  useEffect(() => {
+    const handleNewReview = (newReview) => {
+      queryClient.setQueryData(["getReviewsById", id], (oldData) => {
+        if (!oldData) return oldData;
 
-  const {
-    data: dataLikeComment,
-    isLoading: isLoadingLikeComment,
-    refetch,
-  } = useQuery({
+        // tránh bị duplicate
+        const existed = oldData.result.some(
+          (item) => item._id === newReview._id
+        );
+        if (existed) return oldData;
+
+        return {
+          ...oldData,
+          result: [newReview, ...oldData.result],
+        };
+      });
+    };
+
+    socket.on("newReview", handleNewReview);
+
+    return () => socket.off("newReview", handleNewReview);
+  }, [id, queryClient]);
+
+  const { data: dataLikeComment } = useQuery({
     queryKey: ["getLikeComment", idUser],
     queryFn: () => GetLikeComment(idUser),
   });
@@ -111,231 +135,292 @@ const CommentSidebar = ({ isOpen, onClose }) => {
   const handleLike = (id_Review) => {
     socket.emit("likeReview", { userId: idUser, commentId: id_Review });
   };
-  useEffect(() => {
-    socket.on("newLike", (result) => {
-      setLocalLikedCommentIds(result?.CommentId);
-    });
-  }, [localLikedCommentIds]);
 
   useEffect(() => {
-    const handleNewLike = socket.on("newLike", (result) => {
+    const handleNewLike = ({ commentId, likes }) => {
+      queryClient.setQueryData(["getReviewsById", id], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          result: oldData.result.map((item) =>
+            item._id === commentId ? { ...item, Likes: likes } : item
+          ),
+        };
+      });
+    };
+
+    socket.on("newLike", handleNewLike);
+
+    return () => socket.off("newLike", handleNewLike);
+  }, [id, queryClient]);
+
+  useEffect(() => {
+    const handleNewLike = () => {
       queryClient.invalidateQueries(["getLikeComment", idUser]);
-    });
+    };
+    socket.on("newLike", handleNewLike);
     return () => {
       socket.off("newLike", handleNewLike);
     };
-  }, []);
+  }, [idUser, queryClient]);
 
   const [openReply, setOpenReply] = useState({ id_Review: "", isOpen: false });
   const handleReply = (id_Review) => {
-    setOpenReply((prev) => ({ ...prev, id_Review, isOpen: !prev.isOpen }));
+    setOpenReply((prev) => ({
+      id_Review,
+      isOpen: prev.id_Review === id_Review ? !prev.isOpen : true,
+    }));
   };
-
-  useEffect(() => {
-    socket.on("newReview", (resultReview) => {
-      console.log("🆕 Nhận review mới từ server:", resultReview);
-      setCacheReview(resultReview);
-    });
-    return () => {
-      socket.off("newReview");
-    };
-  }, []);
 
   const handleOpenModal = () => {
     setTypeModal({ type: "comment", modal: true });
   };
+
   const { data } = useQuery({
     queryKey: ["getDetailProduct", id],
     queryFn: () => getDetailProduct(id),
   });
 
   return (
-    <div>
-      {typeModal.modal && (
-        <ModalComment typeModal={typeModal} setTypeModal={setTypeModal}>
-          {/* Title */}
-          <h2 className="text-2xl font-bold mb-4 text-gray-900">{data?.result?.Name}</h2>
-
-          {/* Rating */}
-          <div className="mb-4">
-            <p className="font-semibold text-gray-800 mb-1">Đánh giá</p>
-            <div className="flex text-yellow-500 text-xl space-x-1">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <span
-                  key={i}
-                  className="cursor-pointer"
-                  onClick={() => setRating(i)}
-                  onMouseEnter={() => setHoverRating(i)}
-                  onMouseLeave={() => setHoverRating(0)}
-                >
-                  {i <= (hoverRating || rating) ? <FaStar /> : <FaRegStar />}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Upload image */}
-          <div className="mb-4">
-            <p className="text-gray-800 font-medium mb-2">Có thể cho chúng tôi xem các khoảnh khắc của bạn không?</p>
-            <label className="border-2 border-dashed border-gray-300 w-40 h-28 flex flex-col items-center justify-center text-gray-600 rounded cursor-pointer hover:border-gray-400 transition">
-              <FaCamera size={20} />
-              <span className="mt-1 text-sm">Hình ảnh</span>
-              <input onChange={(e) => handleGetImage(e)} type="file" className="hidden" multiple accept="image/*" />
-            </label>
-          </div>
-          <div className="flex">
-            {images.length > 0 && (
-              <div className="mt-2 flex flex-wrap">
-                {images.map((image, index) => (
-                  <div key={index} onClick={() => handleDeleteImage(image, index)} className="mr-2 mb-2">
-                    <img src={image} alt={`Image ${index}`} className="w-15 h-15 object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Comment box */}
-          <div className="mb-4">
-            <label className="block text-gray-800 font-medium mb-1">Viết đánh giá từ 50 ký tự</label>
-            <textarea
-              rows={5}
-              className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:border-blue-500"
-              placeholder="Hãy viết tại đây"
-              onChange={(e) => handleGetvalue(e)}
-              name="content"
-            />
-          </div>
-
-          {/* Submit */}
-          <div className="text-right">
-            <button onClick={() => handleSubmit()} className="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded cursor-pointer">
-              {isLoading ? <Loading /> : "Gửi"}
-            </button>
-          </div>
-        </ModalComment>
-      )}
-      <div className="flex justify-between items-start">
-        <h2 className="text-xl font-bold text-gray-800">{data?.result?.Name}</h2>
-        <button className="text-gray-500 hover:text-gray-700 text-2xl cursor-pointer" onClick={onClose}>
-          &times;
-        </button>
-      </div>
-      <div className="mt-4 flex items-center space-x-3">
-        <div className="bg-blue-600 text-white px-3 py-1 rounded-md font-bold">5</div>
-        {/* <div className="flex text-yellow-500 space-x-1">
-          {Array(5)
-            .fill(0)
-            .map((_, i) => (
-              <span key={i}>★</span>
-            ))}
-        </div> */}
-        {dataReviews?.Product?.Rating !== undefined && (
-          <ReactStars count={5} size={17} value={Number(dataReviews.Product.Rating)} isHalf={true} edit={false} />
-        )}
-        <p className="text-gray-600 text-sm">{dataReviews?.result?.length} đánh giá</p>
-      </div>
-      <p className="text-sm text-gray-500 mt-2">Chúng tôi hướng tới những đánh giá thực tế 100%</p>
-      <button
-        disabled={!user}
-        onClick={(e) => handleOpenModal()}
-        className={`mt-4 px-4 py-2 bg-gray-200 text-gray-600 rounded ${
-          !user ? "opacity-50 cursor-not-allowed" : "hover:bg-black hover:text-white cursor-pointer"
-        } transform duration-300 ease-in-out`}
-      >
-        {user ? "VIẾT ĐÁNH GIÁ" : "Vui lòng đăng nhập"}
-      </button>
-      <div className=" flex items-center justify-center text-red-500 text-lg">
-        {dataReviews?.result?.length <= 0 && "Hiện không có đánh giá nào"}
-      </div>
-      <div className="mt-6 space-y-6">
-        {isLoadingReview ? (
-          Array(3)
-            .fill()
-            .map((_, index) => <ReviewItemSkeleton />)
-        ) : (
-          <>
-            {dataReviews?.result?.map((review, index) => (
-              <div key={index} className="border-b pb-4 md:w-150 w-full ">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={
-                      review?.Id_User?.Avatar ||
-                      "https://tse3.mm.bing.net/th/id/OIP.D-GbAYTGDq2O0bGwwgmw2QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
-                    }
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <h4 className="font-semibold">{review?.Id_User?.Name}</h4>
-                    <p className="text-sm text-gray-500">Đã đánh giá: {new Date(review?.CreateAt).toLocaleDateString("vi-VN")}</p>
-                  </div>
+    <div className="flex flex-col h-full bg-[#FCFBFA] font-sans overflow-hidden border-l border-[#E8E8E8]">
+      {/* Subtle Texture Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+      {/* Scrollable Content Container */}
+      <div className="flex-1 overflow-y-auto px-10 py-12 custom-scrollbar relative z-10">
+        {/* Modal Logic (Minimalist Style) */}
+        <AnimatePresence>
+          {typeModal.modal && (
+            <ModalComment typeModal={typeModal} setTypeModal={setTypeModal}>
+              <div className="space-y-10 py-4">
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-[#1A1817] tracking-tight">
+                    Viết Đánh Giá
+                  </h2>
+                  <div className="w-10 h-[1px] bg-[#649692] mx-auto mt-4 opacity-50" />
+                  <p className="text-[#8C8C8C] text-[10px] mt-4 uppercase tracking-[0.4em] font-medium">{data?.result?.Name}</p>
                 </div>
-                {/* <div className="mt-2 text-yellow-500">
-              {Array(review?.Rating)
-                .fill(0)
-                .map((_, i) => (
-                  <span key={i}>★</span>
-                ))}
-            </div> */}
-                <ReactStars count={5} size={17} value={review?.Rating} isHalf={true} edit={false} />
-                <p className="mt-2 text-gray-700">{review?.Content}</p>
-                {review?.Images?.length > 0 && (
-                  <div className="flex space-x-2 mt-2 cursor-pointer">
-                    {review?.Images.map((img, i) => (
-                      <img key={i} src={img?.url} alt="review" className="w-22 h-25 object-cover" />
+                <div className="space-y-6">
+                  <p className="text-[10px] font-bold text-[#1A1817] text-left uppercase tracking-[0.3em]">Cảm nhận của bạn</p>
+                  <div className="flex justify-left text-[#649692] text-4xl space-x-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <motion.span
+                        key={i}
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="cursor-pointer"
+                        onClick={() => setRating(i)}
+                        onMouseEnter={() => setHoverRating(i)}
+                        onMouseLeave={() => setHoverRating(0)}
+                      >
+                        {i <= (hoverRating || rating) ? <FaStar /> : <FaRegStar className="opacity-10" />}
+                      </motion.span>
                     ))}
                   </div>
-                )}
-                <div className="mt-2 text-sm text-black flex space-x-4">
-                  <p className="font-semibold text-gray-500">{dayjs(review?.createdAt).fromNow().replace("trước", "").trim()}</p>
-                  {/* {dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? <button onClick={() => handleLike(review?._id)} className={`cursor-pointer text-md ${dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id) ? "text-blue-500" : ""}`}>Thích</button> : <button onClick={() => handleLike(review?._id)} className="cursor-pointer text-md">Thích</button>} */}
-                  {/* {const isLike = dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)} */}
-
-                  <button
-                    onClick={() => handleLike(review?._id)}
-                    className={`cursor-pointer text-md font-semibold  ${
-                      localLikedCommentIds == review?._id || dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)
-                        ? "text-blue-500"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    Thích
-                  </button>
-                  <button onClick={() => handleReply(review?._id)} className="cursor-pointer text-md">
-                    <span>Trả lời</span>
-                  </button>
-                  {/* <button className="hover:text-blue-600">KHÔNG HỮU ÍCH</button> */}
                 </div>
-                {openReply.id_Review === review?._id && openReply.isOpen && (
-                  <div className="w-full ">
-                    <input type="text" className="w-full border-1 border-gray-300 h-10 focus:outline-none p-1 rounded-sm mt-3 relative" />
-                    <span className="absolute mt-6 right-[70px] cursor-pointer">
-                      <PiCursorClickFill />
-                    </span>
+
+                <div className="space-y-4">
+                  <div className="flex flex-wrap justify-left gap-4">
+                    <label className="group relative w-20 h-20 flex flex-col items-center justify-center bg-white border border-[#E8E8E8] cursor-pointer hover:border-[#649692] transition-colors duration-500">
+                      <FaCamera className="text-[#8C8C8C] group-hover:text-[#649692] transition-colors" size={20} />
+                      <input onChange={handleGetImage} type="file" className="hidden" multiple accept="image/*" />
+                    </label>
+
+                    {images.map((image, index) => (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        key={index}
+                        onClick={() => handleDeleteImage(image, index)}
+                        className="relative w-20 h-20 group cursor-pointer border border-[#E8E8E8]"
+                      >
+                        <img src={image} alt={`upload-${index}`} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10">
+                          <FaTimes className="text-white scale-75" />
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                )}
-                {/* <div className="ml-10 mt-5 bg-gray-200 p-2 rounded-md">
-              <div className="flex items-center space-x-3">
-              <img src={review?.Id_User?.Avatar || "https://tse2.mm.bing.net/th/id/OIP.yxqRw9Nq9fMHEnf9kHQ9nAHaHu?rs=1&pid=ImgDetMain&o=7&rm=3"} alt="avatar" className="w-10 h-10 rounded-full" />
-              <div>
-                <h4 className="font-semibold">{review?.Id_User?.Name}</h4>
-                <p className="text-sm text-gray-500">Đã đánh giá: {new Date(review?.CreateAt).toLocaleDateString("vi-VN")}</p>
+                </div>
+
+                <div className="space-y-4">
+                  <textarea
+                    rows={4}
+                    className="w-full bg-transparent border-b border-[#E8E8E8] py-4 text-[#1A1817] placeholder-[#C0C0C0] focus:outline-none focus:border-[#649692] transition-all duration-700 resize-none text-sm leading-relaxed"
+                    placeholder="Hãy chia sẻ câu chuyện của bạn ở đây..."
+                    onChange={handleGetvalue}
+                    name="content"
+                  />
+                </div>
+
+                <div className="pt-6">
+                  <button
+                    onClick={handleSubmit}
+                    className="w-full py-4 border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white font-bold text-[10px] uppercase tracking-[0.4em] transition-all duration-400 active:scale-[0.98]"
+                  >
+                    {isLoading ? <Loading /> : "Gửi đi"}
+                  </button>
+                </div>
+              </div>
+            </ModalComment>
+          )}
+        </AnimatePresence>
+
+        {/* Sidebar Header (Atelier Style) */}
+        <div className="flex justify-between items-start mb-20">
+          <div className="space-y-2">
+            <p className="text-[9px] text-[#649692] uppercase tracking-[0.5em] font-bold opacity-60">ESSENTIALS</p>
+            <h2 className="text-4xl font-bold text-[#1A1817] tracking-tight">Đánh Giá</h2>
+          </div>
+          <motion.button
+            whileHover={{ opacity: 0.5 }}
+            className="text-[#1A1A1A] transition-opacity duration-300"
+            onClick={onClose}
+          >
+            <FaTimes size={18} />
+          </motion.button>
+        </div>
+
+        {/* Rating Overview (Minimalist Gallery) */}
+        <div className="mb-20 space-y-12">
+          <div className="flex items-end justify-between border-b border-[#E8E8E8] pb-10">
+            <div className="flex items-baseline gap-6">
+              <span className="text-8xl font-bold text-[#1A1817] leading-none">
+                {dataReviews?.Product?.Rating ? Number(dataReviews.Product.Rating).toFixed(1) : "5.0"}
+              </span>
+              <div className="space-y-2">
+                <ReactStars
+                  count={5}
+                  size={12}
+                  value={dataReviews?.Product?.Rating ? Number(dataReviews.Product.Rating) : 5}
+                  isHalf={true}
+                  edit={false}
+                  activeColor="#649692"
+                />
+                <p className="text-[9px] text-[#8C8C8C] font-bold uppercase tracking-[0.3em]">
+                  {dataReviews?.result?.length || 0} Trải nghiệm
+                </p>
               </div>
             </div>
-              <div className="flex space-x-3 mt-2">
-                <p className="font-bold">Nguyễn Ngọc Hùng</p>
-                <p className="whitespace-pre-wrap w-[370px]">Bạn có thể cho tôi xin trải nghiệm về sản phẩm bạn đã mua được không ?</p>
+            <div className="pb-2">
+              <span className="text-[10px] font-bold text-[#649692] uppercase tracking-[0.2em]">Atelier Quality</span>
+            </div>
+          </div>
+
+          <button
+            disabled={!user}
+            onClick={handleOpenModal}
+            className={`w-full py-5 border border-[#1A1A1A] text-[10px] font-bold uppercase tracking-[0.4em] transition-all duration-400 ${!user
+              ? "opacity-20 cursor-not-allowed"
+              : "hover:bg-[#1A1A1A] hover:text-white"
+              }`}
+          >
+            {user ? "Viết cảm nhận của bạn tại đây!" : "Đăng nhập để chia sẻ"}
+          </button>
+        </div>
+
+        {/* Review List (Clean Journal Entries) */}
+        <div className="space-y-16">
+          <div className="flex items-center gap-6">
+            <h3 className="text-[10px] font-bold text-[#1A1817] uppercase tracking-[0.4em]">BÌNH LUẬN</h3>
+            <div className="flex-1 h-[1px] bg-[#E8E8E8]" />
+          </div>
+
+          <div className="space-y-12">
+            {dataReviews?.result?.length <= 0 && !isLoadingReview && (
+              <div className="py-20 text-center border-t border-b border-[#F0F0F0]">
+                <p className="text-[#8C8C8C] text-[10px] font-medium uppercase tracking-[0.3em]">Hiện chưa có lời nhắn nào.</p>
               </div>
-              <div className="flex items-center space-x-3 text-gray-500">
-                <span className="text-sm font-semibold">4 ngày</span>
-                <button className="cursor-pointer text-sm font-semibold">Thích</button>
-              </div>
-            </div> */}
-              </div>
-            ))}
-          </>
-        )}
+            )}
+
+            {isLoadingReview ? (
+              Array(2).fill().map((_, index) => <ReviewItemSkeleton key={index} />)
+            ) : (
+              dataReviews?.result?.map((review, index) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  key={index}
+                  className="group"
+                >
+                  <div className="flex items-start justify-between mb-8">
+                    <div className="flex items-center gap-6">
+                      <div className="grayscale group-hover:grayscale-0 transition-all duration-700">
+                        <img
+                          src={review?.Id_User?.Image?.path || "https://i.pinimg.com/1200x/b7/5b/29/b75b29441bbd967deda4365441497221.jpg"}
+                          alt="avatar"
+                          className="w-12 h-12 object-cover border border-[#F0F0F0]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-[#1A1817] text-lg tracking-tight">{review?.Id_User?.Name}</h4>
+                        <div className="flex items-center gap-4">
+                          <ReactStars count={5} size={10} value={review?.Rating} edit={false} activeColor="#649692" />
+                          <span className="text-[9px] text-[#8C8C8C] font-semibold uppercase tracking-widest opacity-60">
+                            {dayjs(review?.CreateAt).fromNow()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-[#5C5C5C] leading-relaxed border-l-2 border-[#F4F1EE] pl-6 py-1">
+                    "{review?.Content}"
+                  </p>
+
+                  {review?.Images?.length > 0 && (
+                    <div className="flex gap-4 mt-8 pb-4 overflow-x-auto no-scrollbar grayscale group-hover:grayscale-0 transition-all duration-1000">
+                      {review?.Images.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img?.url}
+                          alt="review"
+                          className="w-24 h-32 object-cover border border-[#F0F0F0] flex-shrink-0 cursor-zoom-in"
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-10 mt-10">
+                    <button
+                      onClick={() => handleLike(review?._id)}
+                      className={`text-[9px] font-bold tracking-[0.3em] transition-colors duration-500 uppercase ${localLikedCommentIds === review?._id || dataLikeComment?.result?.some((item) => item?.CommentId?._id === review?._id)
+                        ? "text-[#649692]"
+                        : "text-[#C0C0C0] hover:text-[#1A1A1A]"
+                        }`}
+                    >
+                      Yêu thích ({review?.Likes || 0})
+                    </button>
+                    <button
+                      onClick={() => handleReply(review?._id)}
+                      className="text-[9px] font-bold text-[#C0C0C0] hover:text-[#1A1A1A] tracking-[0.3em] transition-all duration-500 uppercase"
+                    >
+                      Phản hồi
+                    </button>
+                  </div>
+
+                  {openReply.id_Review === review?._id && openReply.isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-8"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Viết phản hồi..."
+                        className="w-full bg-transparent border-b border-[#E8E8E8] py-3 text-[11px] focus:outline-none focus:border-[#649692] transition-colors duration-500"
+                      />
+                    </motion.div>
+                  )}
+
+                  <div className="h-[1px] w-full bg-[#F0F0F0] mt-16" />
+                </motion.div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

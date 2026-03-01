@@ -11,9 +11,9 @@ const ChatBubble = ({ from, text }) => {
       <div
         className={`max-w-[85%] p-3 rounded-xl text-sm leading-snug shadow whitespace-pre-wrap
         ${from === "user" ? "bg-teal-500 text-white rounded-br-none" : "bg-gray-100 text-gray-900 rounded-bl-none"}`}
-      >
+      >   
         <ReactMarkdown
-          components={{
+          components={{ 
             a: ({ href, children }) => {
               const isImage = href.match(/\.(png|jpg|jpeg|webp|gif)$/i);
               if (isImage) {

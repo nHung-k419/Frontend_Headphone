@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getNotificationById = async (id) => {
   try {
-    const response = await axios.get(`https://backend-headphone.onrender.com/api/getNotificationById/${id}`, { withCredentials: true });
+    const response = await axios.get(`http://localhost:3000/api/getNotificationById/${id}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ const getNotificationById = async (id) => {
 };
 const markAsRead = async (id) => {
   try {
-    const response = await axios.post(`https://backend-headphone.onrender.com/api/markAsRead/${id}`, { withCredentials: true });
+    const response = await axios.post(`http://localhost:3000/api/markAsRead/${id}`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);

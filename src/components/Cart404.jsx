@@ -13,7 +13,7 @@ const Cart404empty = (props) => {
         <Lottie
           animationData={Cart404}
           loop={true}
-          className="w-50 h-50" // 👈 điều chỉnh kích thước tại đây
+          className="w-50 h-50" 
         />
       </div>
       <div className="flex flex-col justify-center items-center">

@@ -80,7 +80,7 @@ const Detail = () => {
     mutationFn: getDetailProduct,
     onSuccess: (data) => {
       console.log(data);
-      
+
     },
   });
 
@@ -108,7 +108,7 @@ const Detail = () => {
     mutationFn: GetProductVariants,
   });
 
-  const handleAddFavorite = () => {};
+  const handleAddFavorite = () => { };
 
   // handle send id to mutationDetail
   useEffect(() => {
@@ -118,14 +118,14 @@ const Detail = () => {
 
   // handle change image based on color
   const handleChangeColor = (item) => {
-    
+
     setActiveVariant((prev) => ({
       ...prev,
       Image: item.Image.path,
       id_color: item._id,
       isActiveColor: item._id === activeVariant.id_color ? !activeVariant.isActiveColor : true,
     }));
-    setDataProduct((prev) => ({ ...prev, Id_ProductVariants: item._id, Color: item.Color, Image: item.Image.path, Price: item.Price, _id : item.Id_Products }));
+    setDataProduct((prev) => ({ ...prev, Id_ProductVariants: item._id, Color: item.Color, Image: item.Image.path, Price: item.Price, _id: item.Id_Products }));
     setStock(item.Stock);
   };
 
@@ -189,26 +189,29 @@ const Detail = () => {
                   <div className="mb-4">
                     <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">{data?.result?.Name}</h1>
 
-                    {dataProduct?.Price > 0 && Stock > 0 && (
-                      <div className="inline-block bg-teal-600 text-white px-4 py-2 rounded-lg">
-                        <span className="text-lg font-bold">{dataProduct?.Price?.toLocaleString("Vi-VN")}₫</span>
+                    <div className="flex justify-between ">
+                      <div>
+                        {dataProduct?.Price > 0 && Stock > 0 && (
+                          <div className="inline-block bg-teal-600 text-white px-4 py-1 rounded-lg">
+                            <span className="text-lg font-bold">{dataProduct?.Price?.toLocaleString("Vi-VN")}₫</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-
-                  {/* Stock Status - Compact */}
-                  <div className="mb-4">
-                    {Stock > 0 ? (
-                      <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-lg text-sm">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                        Còn {Stock} sản phẩm
+                      {/* Stock Status - Compact */}
+                      <div className="mb-4">
+                        {Stock > 0 ? (
+                          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg text-sm">
+                            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                            Còn {Stock} sản phẩm
+                          </div>
+                        ) : Stock === 0 ? (
+                          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-3 py-2 rounded-lg text-sm">
+                            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            Hết hàng
+                          </div>
+                        ) : null}
                       </div>
-                    ) : Stock === 0 ? (
-                      <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-3 py-1 rounded-lg text-sm">
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                        Hết hàng
-                      </div>
-                    ) : null}
+                    </div>
                   </div>
 
                   {/* Warning - Smaller */}
@@ -227,9 +230,8 @@ const Detail = () => {
                         <button
                           key={size}
                           onClick={() => handleChangeSize(size)}
-                          className={`h-10 rounded-md text-sm font-medium transition-colors ${
-                            activeVariant.Size === size ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
-                          }`}
+                          className={`h-10 rounded-md text-sm font-medium transition-colors ${activeVariant.Size === size ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
+                            }`}
                         >
                           {size}
                         </button>
@@ -245,9 +247,8 @@ const Detail = () => {
                         <button
                           key={item._id}
                           onClick={() => handleChangeColor(item)}
-                          className={`w-[calc(50%-0.25rem)] p-3 rounded-md text-sm font-medium text-left transition-colors ${
-                            activeVariant?.id_color === item?._id ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
-                          }`}
+                          className={`w-[calc(50%-0.25rem)] p-3 rounded-md text-sm font-medium text-left transition-colors ${activeVariant?.id_color === item?._id ? "bg-teal-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-teal-50"
+                            }`}
                         >
                           {item.Color}
                         </button>
@@ -260,11 +261,10 @@ const Detail = () => {
                     <button
                       disabled={activeVariant.id_color === "" || activeVariant.Size === ""}
                       onClick={handleAddToCart}
-                      className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${
-                        idUser && activeVariant.id_color && activeVariant.Size
-                          ? "bg-teal-600 text-white hover:bg-teal-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-colors ${idUser && activeVariant.id_color && activeVariant.Size
+                        ? "bg-teal-600 text-white hover:bg-teal-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
                     >
                       Thêm giỏ hàng
                     </button>
@@ -290,9 +290,8 @@ const Detail = () => {
                       key={index}
                       onClick={() => handleCallStatus(item, index)}
                       ref={(el) => (btnRefs.current[index] = el)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        index === activeTab ? "bg-teal-600 text-white" : "text-gray-600 hover:bg-teal-50 hover:text-teal-600"
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${index === activeTab ? "bg-teal-600 text-white" : "text-gray-600 hover:bg-teal-50 hover:text-teal-600"
+                        }`}
                     >
                       {item}
                     </button>
