@@ -1,1 +1,1 @@
-export const API_URL = "https://soundora-store.onrender.com/api";
+export const API_URL = "https://backend-headphone.onrender.com/api";

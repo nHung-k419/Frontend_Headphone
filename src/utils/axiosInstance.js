@@ -1,7 +1,7 @@
 // ./utils/axiosInstance.js
 import axios from "axios";
 
-axios.defaults.baseURL = "https://soundora-store.onrender.com/api";
+axios.defaults.baseURL = "https://backend-headphone.onrender.com/api";
 axios.defaults.withCredentials = true;
 
 let isRefreshing = false;
