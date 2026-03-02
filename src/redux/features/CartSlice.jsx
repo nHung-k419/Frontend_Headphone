@@ -1,5 +1,4 @@
 // import { createSlice } from "@reduxjs/toolkit";
-
 // const loadCartFromStorage = () => {
 //   const cart = localStorage.getItem("cart");
 //   return cart ? JSON.parse(cart) : [];
@@ -55,7 +54,7 @@ const initialState = {
 export const fetchCart = createAsyncThunk("cart/fetchCart", async (idUser) => {
   // console.log("idUser", idUser);
 
-  const res = await axios.post(`http://localhost:3000/api/GetCart/${idUser}`, {
+  const res = await axios.post(`${API_URL}/api/GetCart/${idUser}`, {
     withCredentials: true,
   });
   // console.log(res.data.resultCartItems);
