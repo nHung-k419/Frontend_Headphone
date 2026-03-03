@@ -29,16 +29,23 @@ import AvatarContext from "../context/AvatarContext";
 import Loading from "../components/Loading";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
+import { GetCartItemsByUser } from "../services/Client/Cart";
 const Navbar = () => {
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
   const user = localStorage.getItem("User");
+  const { id: idUser } = user ? JSON?.parse(user) : "";
   const { Name, id } = user ? JSON?.parse(user) : "";
   const cart = localStorage.getItem("cart");
   const cartLocalstorage = cart ? JSON.parse(cart) : [];
   const cartItems = useSelector((state) => state.cart.CartItem);
   // console.log(cartItems);
-
+  const { data: dataCart, isLoading: isLoadingCart } = useQuery({
+    queryKey: ["CartItemsNew", idUser],
+    queryFn: () => GetCartItemsByUser(idUser),
+    enabled: !!idUser,
+  });
+  // console.log('dataCart', dataCart);
   // const user = Cookies?.get("User");
   // const { Name, id } = user ? JSON?.parse(user) : "";
   const navigate = useNavigate();
@@ -481,7 +488,7 @@ const Navbar = () => {
           {user && (
             <Link to="/Cart" className="text-xl cursor-pointer relative">
               <IoCartOutline />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{cartItems?.length}</span>
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{cartItems?.length > 0 ? cartItems?.length : dataCart?.resultCartItems?.length}</span>
             </Link>
           )}
           {/* <li onClick={() => setIsSidebarOpen(true)} className="text-xl cursor-pointer">

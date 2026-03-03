@@ -82,7 +82,9 @@ const Product = () => {
       setTimeout(() => {
         setAdded((prev) => ({ ...prev, productId: [...prev.productId, product._id] }));
         toast.success("Đã thêm vào giỏ hàng!");
-        dispatch(AddCart(product));
+        const products = { ...product, Id_ProductVariants: product.maxVariant._id }
+        // console.log('product', products);
+        dispatch(AddCart(products));
         const data = {
           Id_ProductVariants: product.maxVariant._id,
           quantity: 1,
@@ -255,9 +257,8 @@ const Product = () => {
     <div>
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 h-full w-70 bg-white transform duration-300 ease-in-out z-20 ${
-          isOpenFilter ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed left-0 top-0 h-full w-70 bg-white transform duration-300 ease-in-out z-20 ${isOpenFilter ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* <div className=" w-[300px] h-fit mt-4 rounded-sm lg:block md:block hidden"> */}
         <div className="h-screen overflow-auto">
@@ -273,17 +274,15 @@ const Product = () => {
               </span>
             </div>
             <div
-              className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                checkVisible.Categories ? "visible h-80" : ""
-              }`}
+              className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${checkVisible.Categories ? "visible h-80" : ""
+                }`}
             >
               {result[0]?.data?.getAllCategory?.map((item, index) => (
                 <div>
                   <span
                     onClick={() => handleActiveCategory(item._id)}
-                    className={`text-sm cursor-pointer ${
-                      checkActive.isActiveCategory && checkActive.idCategory === item._id ? "text-black" : "text-gray-400"
-                    } `}
+                    className={`text-sm cursor-pointer ${checkActive.isActiveCategory && checkActive.idCategory === item._id ? "text-black" : "text-gray-400"
+                      } `}
                   >
                     {item.Name}
                   </span>
@@ -299,17 +298,15 @@ const Product = () => {
               </span>
             </div>
             <div
-              className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                checkVisible.Brand ? "visible h-80" : ""
-              }`}
+              className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${checkVisible.Brand ? "visible h-80" : ""
+                }`}
             >
               {result[1]?.data?.data?.map((item, index) => (
                 <div>
                   <span
                     onClick={() => handleActiveBrand(item._id)}
-                    className={`text-sm cursor-pointer ${
-                      checkActive.isActiveBrand && checkActive.idBrand === item._id ? "text-black" : "text-gray-400"
-                    } `}
+                    className={`text-sm cursor-pointer ${checkActive.isActiveBrand && checkActive.idBrand === item._id ? "text-black" : "text-gray-400"
+                      } `}
                   >
                     {item.Brand}
                   </span>
@@ -343,17 +340,15 @@ const Product = () => {
                 </span>
               </div>
               <div
-                className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                  checkVisible.Categories ? "visible h-80" : ""
-                }`}
+                className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${checkVisible.Categories ? "visible h-80" : ""
+                  }`}
               >
                 {result[0]?.data?.getAllCategory?.map((item, index) => (
                   <div>
                     <span
                       onClick={() => handleActiveCategory(item._id)}
-                      className={`text-sm cursor-pointer ${
-                        checkActive.isActiveCategory && checkActive.idCategory === item._id ? "text-black" : "text-gray-400"
-                      } `}
+                      className={`text-sm cursor-pointer ${checkActive.isActiveCategory && checkActive.idCategory === item._id ? "text-black" : "text-gray-400"
+                        } `}
                     >
                       {item.Name}
                     </span>
@@ -369,17 +364,15 @@ const Product = () => {
                 </span>
               </div>
               <div
-                className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${
-                  checkVisible.Brand ? "visible h-80" : ""
-                }`}
+                className={`flex flex-col ml-6 space-y-2 select-none max-h-fit h-0 overflow-hidden transition-all duration-500 ease-in-out ${checkVisible.Brand ? "visible h-80" : ""
+                  }`}
               >
                 {result[1]?.data?.data?.map((item, index) => (
                   <div>
                     <span
                       onClick={() => handleActiveBrand(item._id)}
-                      className={`text-sm cursor-pointer ${
-                        checkActive.isActiveBrand && checkActive.idBrand === item._id ? "text-black" : "text-gray-400"
-                      } `}
+                      className={`text-sm cursor-pointer ${checkActive.isActiveBrand && checkActive.idBrand === item._id ? "text-black" : "text-gray-400"
+                        } `}
                     >
                       {item.Brand}
                     </span>
