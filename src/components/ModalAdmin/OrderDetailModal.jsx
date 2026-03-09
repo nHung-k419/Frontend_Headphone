@@ -56,11 +56,11 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-semibold text-sm">{orderData?.Fullname?.charAt(0)?.toUpperCase()}</span>
+                  <span className="text-white font-semibold text-sm">{orderData?.orderInfo?.Fullname?.charAt(0)?.toUpperCase()}</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-white">Chi tiết đơn hàng</h2>
-                  <p className="text-orange-100 text-sm">#{orderData?.items[0]?.Id_Order}</p>
+                  <p className="text-orange-100 text-sm">#{orderData?.orderInfo?._id}</p>
                 </div>
               </div>
               <button
@@ -80,13 +80,13 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                 {/* Order Status */}
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${getStatusColor(orderData.Status)}`}>
-                      {getStatusIcon(orderData.Status)}
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${getStatusColor(orderData?.orderInfo?.Status)}`}>
+                      {getStatusIcon(orderData?.orderInfo?.Status)}
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Trạng thái</p>
-                      <p className={`font-semibold px-3 py-1 rounded-full text-sm inline-block border ${getStatusColor(orderData.Status)}`}>
-                        {orderData.Status}
+                      <p className={`font-semibold px-3 py-1 rounded-full text-sm inline-block border ${getStatusColor(orderData?.orderInfo?.Status)}`}>
+                        {orderData?.orderInfo?.Status}
                       </p>
                     </div>
                   </div>
@@ -100,7 +100,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Tổng tiền</p>
-                      <p className="text-2xl font-bold text-green-600">{orderData.TotalAmount?.toLocaleString("vi-VN")}đ</p>
+                      <p className="text-2xl font-bold text-green-600">{orderData?.orderInfo?.TotalAmount?.toLocaleString("vi-VN")}đ</p>
                     </div>
                   </div>
                 </div>
@@ -114,7 +114,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                     <div>
                       <p className="text-sm text-gray-600">Ngày đặt</p>
                       <p className="font-semibold text-blue-600">
-                        {new Date(orderData.createdAt || Date.now()).toLocaleDateString("vi-VN")}
+                        {new Date(orderData?.orderInfo?.createdAt || Date.now()).toLocaleDateString("vi-VN")}
                       </p>
                     </div>
                   </div>
@@ -136,14 +136,14 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                       <BsPerson className="w-5 h-5 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-600">Họ và tên</p>
-                        <p className="font-semibold text-gray-800">{orderData.Fullname}</p>
+                        <p className="font-semibold text-gray-800">{orderData?.orderInfo?.Fullname}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <BsPhone className="w-5 h-5 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-600">Số điện thoại</p>
-                        <p className="font-semibold text-gray-800">{orderData.Phone || "Chưa cung cấp"}</p>
+                        <p className="font-semibold text-gray-800">{orderData?.orderInfo?.Phone || "Chưa cung cấp"}</p>
                       </div>
                     </div>
                   </div>
@@ -152,14 +152,14 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                       <BsEnvelope className="w-5 h-5 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-600">Email</p>
-                        <p className="font-semibold text-gray-800">{orderData.Email || "Chưa cung cấp"}</p>
+                        <p className="font-semibold text-gray-800">{orderData?.orderInfo?.Email || "Chưa cung cấp"}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <BsGeoAlt className="w-5 h-5 text-gray-400" />
                       <div>
                         <p className="text-sm text-gray-600">Địa chỉ giao hàng</p>
-                        <p className="font-semibold text-gray-800">{orderData.Address || "Chưa cung cấp"}</p>
+                        <p className="font-semibold text-gray-800">{orderData?.orderInfo?.Address || "Chưa cung cấp"}</p>
                       </div>
                     </div>
                     {/* <div className="flex items-start space-x-3">
@@ -239,7 +239,7 @@ const OrderDetailModal = ({ isOpen, onClose, orderData }) => {
                 <div className="mt-6 pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold text-gray-800">Tổng cộng:</span>
-                    <span className="text-2xl font-bold text-green-600">{orderData.TotalAmount?.toLocaleString("vi-VN")}đ</span>
+                    <span className="text-2xl font-bold text-green-600">{orderData?.orderInfo?.TotalAmount?.toLocaleString("vi-VN")}đ</span>
                   </div>
                 </div>
               </div>

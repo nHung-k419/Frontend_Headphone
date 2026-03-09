@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
@@ -11,7 +11,11 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../layouts/Header";
 import ProductSeller from "../../components/ProductSeller";
+import socket from "../../Socket";
+import { toast } from "react-toastify";
 const Home = () => {
+  const user = localStorage.getItem("User");
+  const { id: idUser } = user ? JSON?.parse(user) : "";
   const [selected, setSelected] = useState("15-Hour Battery Life");
   const features = [
     "Tự do tinh chỉnh âm thanh theo phong cách riêng của bạn",
@@ -22,6 +26,8 @@ const Home = () => {
     "Gọn gàng và tiện lợi khi không sử dụng",
     "Lý tưởng cho luyện tập và di chuyển hằng ngày",
   ];
+  // console.log('idUser', idUser);
+
   return (
     <div>
       {/* <hr className="my-8 border-t-2 border-gray-300 max-w-7xl mx-auto w-full" /> */}

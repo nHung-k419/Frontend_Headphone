@@ -1,1 +1,1 @@
-export const API_URL = "http://localhost:3000/api";
+export const API_URL = "https://backend-headphone.onrender.com/api";

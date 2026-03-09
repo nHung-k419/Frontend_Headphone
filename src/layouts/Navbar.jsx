@@ -30,6 +30,12 @@ import Loading from "../components/Loading";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { GetCartItemsByUser } from "../services/Client/Cart";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/vi";
+
+dayjs.extend(relativeTime);
+dayjs.locale("vi");
 const Navbar = () => {
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
@@ -466,12 +472,15 @@ const Navbar = () => {
                           <AiOutlineBell className="text-emerald-700" size={16} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <span className="block text-xs font-bold text-[#2D2D2D] truncate group-hover:text-emerald-700 transition-colors">
+                          <span className="block text-sm font-bold text-[#2D2D2D] truncate group-hover:text-emerald-700 transition-colors">
                             {item.title}
                           </span>
                           <p className="text-[11px] text-[#8C8C8C] leading-snug mt-0.5 line-clamp-2">
                             {item.message}
                           </p>
+                          <span className="text-[10px] text-red-600 mt-1 block">
+                            {dayjs(item.createdAt).fromNow()}
+                          </span>
                         </div>
                         <div className="w-1.5 h-1.5 mt-1.5 rounded-full bg-emerald-600 self-start opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
@@ -488,7 +497,9 @@ const Navbar = () => {
           {user && (
             <Link to="/Cart" className="text-xl cursor-pointer relative">
               <IoCartOutline />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{cartItems?.length > 0 ? cartItems?.length : dataCart?.resultCartItems?.length}</span>
+              {dataCart?.resultCartItems?.length > 0 || cartItems?.length > 0 ? (
+                <span className={`absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center animate-pulse`}></span>
+              ) : null}
             </Link>
           )}
           {/* <li onClick={() => setIsSidebarOpen(true)} className="text-xl cursor-pointer">

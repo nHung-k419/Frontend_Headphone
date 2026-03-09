@@ -246,7 +246,7 @@ const Proflle = () => {
                               animate={{ opacity: 1 }}
                               className="flex items-center justify-between"
                             >
-                              <p className={`text-sm tracking-tight ${data?.isCheckUser?.[field.key] ? "font-medium text-[#2D2D2D]" : "italic text-[#8C8C8C] font-light"}`}>
+                              <p className={`text-sm tracking-tight ${data?.isCheckUser?.[field.key] ? "font-medium text-[#2D2D2D]" : " text-[#8C8C8C] "}`}>
                                 {data?.isCheckUser?.[field.key] || "Chưa cập nhật nội dung"}
                               </p>
                               {!field.readOnly && (

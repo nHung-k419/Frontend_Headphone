@@ -9,13 +9,32 @@ import AdminRoute from "./routes/AdminRoute";
 import { useDispatch } from "react-redux";
 import { fetchCart } from "./redux/features/CartSlice";
 import { useEffect } from "react";
+import socket from "./Socket";
+import { Toaster, toast } from "sonner";
 const App = () => {
   const user = localStorage.getItem("User");
   const { Name, id } = user ? JSON?.parse(user) : "";
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCart(id));
   }, []);
+  useEffect(() => {
+    if (!id) return;
+
+    console.log("JOIN ROOM:", id);
+    socket.emit("join", id);
+
+    socket.on("order-status-updated", (data) => {
+      // console.log("REALTIME RECEIVED:", data);
+      // alert(`Đơn hàng ${data.orderId} đã chuyển sang ${data.status}`);
+      toast.success(`Đơn hàng của bạn với mã là ${data.orderId} đã được chuyển sang trạng thái ${data.status}`);
+    });
+
+    return () => {
+      socket.off("order-status-updated");
+    };
+  }, [id]);
   return (
     <Router>
       <AvatarProvider>

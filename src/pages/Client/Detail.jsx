@@ -7,6 +7,7 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import { FaArrowLeft } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import SidebarReview from "../../components/Sidebar/Sidebar";
+import CompareSidebar from "../../components/Sidebar/CompareSidebar";
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GetAllProducts } from "../../services/Client/Product";
 import { GetProductVariants, getDetailProduct } from "../../services/Client/Detail";
@@ -28,6 +29,7 @@ const Detail = () => {
   const { id: idUser } = user ? JSON?.parse(user) : "";
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCompareSidebarOpen, setIsCompareSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [lineStyle, setLineStyle] = useState({ left: 0, width: 118 });
   const [activeVariant, setActiveVariant] = useState({
@@ -70,8 +72,16 @@ const Detail = () => {
   const mutationAddCart = useMutation({
     mutationKey: ["AddCart"],
     mutationFn: AddProductCart,
-    onError: () => {
-      toast.error("Lỗi khi thêm giỏ hàng!");
+    onSuccess: () => {
+      toast.success("Đã thêm vào giỏ hàng!");
+    },
+    onError: (error) => {
+      if (error.response.status === 400) {
+        toast.error('Sản phẩm đã vượt quá số lượng tồn kho!')
+      }
+      else {
+        toast.error("Lỗi khi thêm giỏ hàng!");
+      }
     },
   });
 
@@ -97,7 +107,6 @@ const Detail = () => {
     } else if (activeVariant.id_color === "" || activeVariant.Size === "") {
       toast.warning("Vui lòng chọn màu và size!");
     } else {
-      toast.success("Đã thêm vào giỏ hàng!");
       dispatch(AddCart(dataProduct));
       mutationAddCart.mutate({ idUser: idUser, data: dataProduct });
     }
@@ -187,7 +196,15 @@ const Detail = () => {
                 <div className="p-6">
                   {/* Header - Smaller */}
                   <div className="mb-4">
-                    <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">{data?.result?.Name}</h1>
+                    <div className="flex items-center justify-between">
+                      <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">{data?.result?.Name}</h1>
+                      <button
+                        onClick={() => setIsCompareSidebarOpen(true)}
+                        className="ml-4 flex items-center gap-1 rounded-md bg-teal-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-700"
+                      >
+                        So sánh
+                      </button>
+                    </div>
 
                     <div className="flex justify-between ">
                       <div>
@@ -318,13 +335,69 @@ const Detail = () => {
                       </div>
                     )}
 
-                    {activeTab === 1 && (
-                      <div className="text-center py-8">
-                        <div className="text-4xl mb-3">📋</div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Thông số kỹ thuật</h3>
-                        <p className="text-gray-500 text-sm">Hiện chưa có thông số kỹ thuật</p>
-                      </div>
-                    )}
+                    {activeTab === 1 && (() => {
+                      const specs = data?.result?.Specifications;
+                      const specRows = [
+                        { icon: "🔋", label: "Thời lượng pin", value: specs?.batteryLife ? `${specs.batteryLife} giờ` : null },
+                        { icon: "⚡", label: "Thời gian sạc", value: specs?.chargingTime ? `${specs.chargingTime} giờ` : null },
+                        { icon: "📡", label: "Bluetooth", value: specs?.bluetoothVersion || null },
+                        { icon: "📶", label: "Phạm vi kết nối", value: specs?.connectionRange ? `${specs.connectionRange} m` : null },
+                        { icon: "🔌", label: "Cổng sạc", value: specs?.chargingPort || null },
+                        { icon: "🎵", label: "Kích thước driver", value: specs?.driverSize ? `${specs.driverSize} mm` : null },
+                        { icon: "💧", label: "Chống nước", value: specs?.waterResistance || null },
+                      ];
+                      const boolFeatures = [
+                        { label: "Sạc nhanh", enabled: specs?.fastCharging },
+                        { label: "Chống ồn (ANC)", enabled: specs?.anc },
+                        { label: "Microphone", enabled: specs?.microphone },
+                      ];
+                      return (
+                        <div className="space-y-5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-sm font-black text-gray-800 uppercase tracking-widest">Thông số kỹ thuật</span>
+                            <div className="flex-1 h-px bg-gray-100"></div>
+                          </div>
+
+                          {!specs ? (
+                            <p className="text-gray-400 text-sm text-center py-8">Chưa có thông số kỹ thuật</p>
+                          ) : (
+                            <>
+                              {/* Spec Rows */}
+                              <div className="divide-y divide-gray-50 border border-gray-100 rounded-xl overflow-hidden">
+                                {specRows.filter(r => r.value).map((row, i) => (
+                                  <div key={i} className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors">
+                                    <div className="flex items-center gap-2.5">
+                                      <span className="text-base leading-none">-</span>
+                                      <span className="text-xs font-semibold text-gray-500">{row.label}</span>
+                                    </div>
+                                    <span className="text-xs font-bold text-gray-900">{row.value}</span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Boolean feature badges */}
+                              <div>
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Tính năng nổi bật</p>
+                                <div className="flex flex-wrap gap-2">
+                                  {boolFeatures.map((feat, i) => (
+                                    <span
+                                      key={i}
+                                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border ${feat.enabled
+                                        ? "bg-teal-50 text-teal-700 border-teal-200"
+                                        : "bg-gray-50 text-gray-300 border-gray-100"
+                                        }`}
+                                    >
+                                      <span className={`w-1.5 h-1.5 rounded-full ${feat.enabled ? "bg-teal-500" : "bg-gray-300"}`}></span>
+                                      {feat.label}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     {activeTab === 2 && (
                       <div>
@@ -422,6 +495,7 @@ const Detail = () => {
             </div>
 
             <SidebarReview keyOpen="detail" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <CompareSidebar isOpen={isCompareSidebarOpen} onClose={() => setIsCompareSidebarOpen(false)} currentProduct={data?.result} />
           </>
         )}
       </div>

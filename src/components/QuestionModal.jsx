@@ -10,10 +10,10 @@ import { useQueryClient } from "@tanstack/react-query";
 const QuestionModal = ({ isModalOpen, setIsModalOpen }) => {
   const queryClient = useQueryClient();
   const { id: idUser } = localStorage.getItem("User") ? JSON?.parse(localStorage.getItem("User")) : "";
-  const {id : productId} = useParams();
+  const { id: productId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   // console.log(id,idUser);
-const [value, setValue] = useState("");
+  const [value, setValue] = useState("");
   const mutationAddQuestion = useMutation({
     mutationKey: ["addQuestion"],
     mutationFn: createQuestion,
@@ -21,21 +21,21 @@ const [value, setValue] = useState("");
       setIsModalOpen(false);
       setIsLoading(false);
       toast.success(data.message);
-      queryClient.invalidateQueries(["questions"]); 
+      queryClient.invalidateQueries(["questions"]);
     },
   })
   const submitQuestion = () => {
-   if(value.length > 0){
-     setIsLoading(true);
-    const data = {
-      userId: idUser,
-      productId: productId,
-      title: value,
-    };
-    mutationAddQuestion.mutate(data);
-   }else{
-    toast.warning("Vui lòng nhập nội dung câu hỏi!!")
-   }
+    if (value.length > 0) {
+      setIsLoading(true);
+      const data = {
+        userId: idUser,
+        productId: productId,
+        title: value,
+      };
+      mutationAddQuestion.mutate(data);
+    } else {
+      toast.warning("Vui lòng nhập nội dung câu hỏi!!")
+    }
     // setIsModalOpen(false);
   };
   return (
@@ -55,105 +55,126 @@ const [value, setValue] = useState("");
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 overflow-y-auto "
+          className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-6"
         >
-          {/* Modal Content */}
+          {/* Modal Content - Compact max-w-lg */}
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-200 "
+            initial={{ scale: 0.95, y: 10, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.95, y: 10, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] w-full max-w-lg overflow-hidden border border-slate-100"
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-5 mt-10 flex items-center justify-between border-b border-gray-200">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                  <FiMessageCircle className="w-6 h-6 text-white" />
+            {/* Header - Minimalist */}
+            <div className="px-8 pt-8 pb-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-teal-50 rounded-2xl flex items-center justify-center">
+                  <FiMessageCircle className="w-5 h-5 text-teal-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Đặt câu hỏi</h2>
-                  <p className="text-gray-600 text-sm">Chúng tôi sẽ trả lời trong vòng 24 giờ</p>
+                  <h2 className="text-xl font-black text-gray-900 tracking-tight">Đặt câu hỏi</h2>
+                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Phản hồi trong 24h</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-gray-900 rounded-xl transition-all"
               >
-                <FiX className="w-6 h-6" />
+                <FiX className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-8 space-y-6">
+            {/* Content Area */}
+            <div className="px-8 py-6 space-y-6">
               {/* Question Input */}
-              <div className="space-y-2">
-                <label className="block text-gray-800 font-semibold text-lg">
-                  Câu hỏi của bạn <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                onChange={(e) => setValue(e.target.value)}
-                  placeholder="Ví dụ: Tai nghe Sony WH-1000XM4 có tương thích với iPhone không? Chất lượng âm thanh như thế nào?"
-                  className="w-full h-32 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200"
-                />
-                <div className="text-right text-sm text-gray-500">0/500 ký tự</div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest">
+                    Nội dung thắc mắc <span className="text-teal-500">*</span>
+                  </label>
+                  <span className="text-[10px] font-bold text-slate-300">{value.length}/500</span>
+                </div>
+                <div className="relative group">
+                  <textarea
+                    onChange={(e) => setValue(e.target.value)}
+                    value={value}
+                    maxLength={500}
+                    placeholder="Nhập nội dung bạn đang quan tâm..."
+                    className="w-full h-32 bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm text-gray-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white resize-none transition-all duration-300"
+                  />
+                  <div className="absolute bottom-3 right-3 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                    <FiSend className="w-4 h-4 text-teal-200" />
+                  </div>
+                </div>
               </div>
-              {/* Personal Info */}
-              {idUser ? (
-                <></>
-              ) : (
-                <div className="grid md:grid-cols-2 gap-6">
+
+              {/* Guest Info - Compact Grid */}
+              {!idUser && (
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-gray-800 font-semibold">
-                      Tên của bạn <span className="text-red-500">*</span>
-                    </label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tên của bạn</label>
                     <input
                       type="text"
-                      placeholder="Nhập họ tên"
-                      className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="Họ và tên"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-gray-800 font-semibold">
-                      Email <span className="text-red-500">*</span>
-                    </label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Email</label>
                     <input
                       type="email"
-                      placeholder="your@email.com"
-                      className="w-full bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="email@vidu.com"
+                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Tips */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
-                <h4 className="text-blue-700 font-semibold mb-2 flex items-center space-x-2">
-                  <span>💡</span>
-                  <span>Mẹo để được trả lời nhanh chóng:</span>
-                </h4>
-                <ul className="text-gray-700 text-sm space-y-1 ml-6">
-                  <li>• Mô tả rõ ràng và chi tiết vấn đề bạn gặp phải</li>
-                  <li>• Cung cấp tên sản phẩm cụ thể nếu có</li>
-                  <li>• Tránh đặt quá nhiều câu hỏi trong một lần</li>
+              {/* Tips Section - Subtle Card */}
+              <div className="bg-slate-50/50 rounded-2xl p-5 border border-slate-100/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs">💡</span>
+                  <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Mẹo hỏi nhanh</h4>
+                </div>
+                <ul className="grid grid-cols-1 gap-2">
+                  {[
+                    "Mô tả rõ vấn đề bạn gặp phải",
+                    "Cung cấp tên sản phẩm cụ thể",
+                    "Tập trung vào 1 câu hỏi chính"
+                  ].map((tip, i) => (
+                    <li key={i} className="flex items-start gap-2 text-[11px] text-slate-500 leading-tight">
+                      <span className="w-1 h-1 bg-teal-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                      {tip}
+                    </li>
+                  ))}
                 </ul>
               </div>
 
-              {/* Submit Button */}
-              <button onClick={() => submitQuestion()} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg transform hover:scale-[1.02]">
-                <FiSend className="w-5 h-5" />
-                <span>{isLoading ? <Loading/> : "Gửi câu hỏi"}</span>
-              </button>
+              {/* Footer Actions */}
+              <div className="flex flex-col gap-4 pt-2">
+                <button
+                  onClick={submitQuestion}
+                  disabled={isLoading}
+                  className="w-full h-12 bg-gray-900 hover:bg-teal-600 text-white font-bold uppercase tracking-widest text-xs rounded-2xl transition-all shadow-xl shadow-gray-900/10 hover:shadow-teal-500/20 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                >
+                  {isLoading ? (
+                    <Loading />
+                  ) : (
+                    <>
+                      <span>Gửi câu hỏi ngay</span>
+                      <FiSend className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </>
+                  )}
+                </button>
 
-              {/* Contact Info */}
-              <div className="text-center pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-2">Cần hỗ trợ khẩn cấp?</p>
-                <div className="flex items-center justify-center space-x-4 text-sm">
-                  <a href="tel:19001234" className="text-blue-600 hover:text-blue-700 transition-colors font-medium">
-                    📞 Gọi 1900-1234
+                <div className="flex items-center justify-center gap-6">
+                  <a href="tel:19001234" className="text-[10px] font-bold text-slate-400 hover:text-teal-600 transition-colors flex items-center gap-1.5">
+                    <span className="text-sm">📞</span> 1900-1234
                   </a>
-                  <span className="text-gray-400">|</span>
-                  <span className="text-green-600">⏱️ Phản hồi: 2-4 giờ</span>
+                  <div className="w-1 h-1 bg-slate-200 rounded-full"></div>
+                  <div className="text-[10px] font-bold text-teal-600/70 py-1 px-3 bg-teal-50 rounded-full">
+                    Phản hồi trong 2-4 giờ làm việc
+                  </div>
                 </div>
               </div>
             </div>
