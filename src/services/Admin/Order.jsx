@@ -1,8 +1,8 @@
 import axios from "axios";
 import { API_URL } from "../../utils/apiUrl";
-const GetAllOrder = async () => {
+const GetAllOrder = async (page) => {
   try {
-    const response = await axios.get(`${API_URL}/GetAllOrder`, { withCredentials: true });
+    const response = await axios.get(`${API_URL}/GetAllOrder?page=${page}&limit=10`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);

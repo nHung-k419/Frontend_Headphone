@@ -6,14 +6,16 @@ const ChatBubble = ({ from, text }) => {
   };
   const isBot = from === "bot";
   return (
-     <div className={`flex ${from === "user" ? "justify-end" : "justify-start"}`}>
+    <div className={`flex ${from === "user" ? "justify-end" : "justify-start"}`}>
       {isBot && <div className="w-7 h-full rounded-full bg-teal-500 text-white flex flex-col justify-end mr-2 text-sm text-center leading-6.5">AI</div>}
       <div
-        className={`max-w-[85%] p-3 rounded-xl text-sm leading-snug shadow whitespace-pre-wrap
-        ${from === "user" ? "bg-teal-500 text-white rounded-br-none" : "bg-gray-100 text-gray-900 rounded-bl-none"}`}
-      >   
+        className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] leading-relaxed shadow-sm transition-all duration-300
+        ${from === "user"
+            ? "bg-gradient-to-br from-teal-500 to-emerald-600 text-white rounded-br-none shadow-teal-200/50"
+            : "bg-white text-gray-800 rounded-bl-none border border-gray-100 shadow-sm shadow-gray-200/50"}`}
+      >
         <ReactMarkdown
-          components={{ 
+          components={{
             a: ({ href, children }) => {
               const isImage = href.match(/\.(png|jpg|jpeg|webp|gif)$/i);
               if (isImage) {

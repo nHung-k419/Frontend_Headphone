@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiHeadphones, 
-  FiAward, 
-  FiUsers, 
+import {
+  FiHeadphones,
+  FiAward,
+  FiUsers,
   FiTrendingUp,
   FiHeart,
   FiStar,
@@ -16,46 +16,31 @@ import {
   FiArrowRight,
   FiPlay,
   FiTarget,
-  FiEye
+  FiEye,
+  FiCheckCircle
 } from 'react-icons/fi';
-import { 
-  FaLinkedin, 
-  FaTwitter, 
-  FaInstagram, 
-  FaFacebook 
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaInstagram,
+  FaFacebook,
+  FaQuoteLeft
 } from 'react-icons/fa';
 
 const About = () => {
   const [activeTab, setActiveTab] = useState('mission');
 
   const fadeInUp = {
-    initial: { opacity: 0, y: 60 },
-    animate: { opacity: 1, y: 0 },
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
     transition: { duration: 0.8, ease: "easeOut" }
-  };
-
-  const fadeInLeft = {
-    initial: { opacity: 0, x: -60 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.8, ease: "easeOut" }
-  };
-
-  const fadeInRight = {
-    initial: { opacity: 0, x: 60 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.8, ease: "easeOut" }
-  };
-
-  const scaleIn = {
-    initial: { opacity: 0, scale: 0.8 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.6, ease: "easeOut" }
   };
 
   const staggerContainer = {
     animate: {
       transition: {
-        staggerChildren: 0.2
+        staggerChildren: 0.15
       }
     }
   };
@@ -65,25 +50,21 @@ const About = () => {
       icon: FiUsers,
       number: "50,000+",
       label: "Khách hàng tin tưởng",
-      color: "text-teal-600"
     },
     {
       icon: FiAward,
       number: "200+",
       label: "Sản phẩm chất lượng",
-      color: "text-blue-600"
     },
     {
       icon: FiTrendingUp,
       number: "98%",
-      label: "Hài lòng khách hàng",
-      color: "text-green-600"
+      label: "Hài lòng tuyệt đối",
     },
     {
       icon: FiGlobe,
       number: "5",
       label: "Năm kinh nghiệm",
-      color: "text-purple-600"
     }
   ];
 
@@ -91,22 +72,22 @@ const About = () => {
     {
       icon: FiHeart,
       title: "Đam mê âm nhạc",
-      description: "Chúng tôi hiểu rằng âm nhạc là ngôn ngữ của trái tim và cam kết mang đến trải nghiệm âm thanh tuyệt vời nhất."
+      description: "Âm nhạc là ngôn ngữ của tâm hồn. Chúng tôi tận tâm mang đến những cung bậc cảm xúc chân thực nhất."
     },
     {
       icon: FiStar,
       title: "Chất lượng hàng đầu",
-      description: "Mọi sản phẩm đều được tuyển chọn kỹ lưỡng từ những thương hiệu uy tín để đảm bảo chất lượng tối ưu."
+      description: "Từng sản phẩm được tuyển chọn khắt khe từ những nghệ nhân âm thanh danh tiếng trên toàn cầu."
     },
     {
       icon: FiShield,
       title: "Uy tín & Tin cậy",
-      description: "Xây dựng niềm tin qua từng sản phẩm, từng dịch vụ và luôn đặt lợi ích khách hàng lên hàng đầu."
+      description: "Chúng tôi xây dựng thương hiệu dựa trên sự minh bạch và cam kết chất lượng trọn đời cho khách hàng."
     },
     {
       icon: FiUsers,
-      title: "Tập trung khách hàng",
-      description: "Lắng nghe, thấu hiểu và đáp ứng mọi nhu cầu của khách hàng một cách tận tâm và chuyên nghiệp."
+      title: "Tận tâm phục vụ",
+      description: "Khách hàng là trung tâm của mọi quyết định. Chúng tôi luôn lắng nghe để hoàn thiện từng dịch vụ."
     }
   ];
 
@@ -114,639 +95,269 @@ const About = () => {
     {
       name: "Nguyễn Minh Anh",
       role: "CEO & Founder",
-      bio: "15 năm kinh nghiệm trong ngành công nghệ âm thanh",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      bio: "Tầm nhìn định hướng sự phát triển bền vững của thương hiệu.",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
     },
     {
       name: "Trần Thái Hoàng",
       role: "CTO",
-      bio: "Chuyên gia công nghệ với đam mê về innovation",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+      bio: "Đưa giải pháp âm thanh hiện đại vào trải nghiệm người dùng.",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face"
     },
     {
       name: "Lê Thu Hà",
-      role: "Head of Marketing",
-      bio: "10 năm kinh nghiệm marketing trong lĩnh vực tech",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+      role: "Head of Design",
+      bio: "Kiến tạo vẻ đẹp tinh tế cho từng điểm chạm thương hiệu.",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face"
     },
     {
       name: "Phạm Quốc Duy",
-      role: "Head of Sales",
-      bio: "Chuyên gia bán hàng với network rộng khắp",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+      role: "Sales Director",
+      bio: "Xây dựng mối quan hệ tin cậy với đối tác toàn cầu.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
     }
   ];
 
   const milestones = [
     {
       year: "2019",
-      title: "Thành lập SoundOra",
-      description: "Ra mắt với sứ mệnh mang âm thanh chất lượng đến mọi người"
-    },
-    {
-      year: "2020",
-      title: "Mở rộng sản phẩm",
-      description: "Bổ sung thêm 50+ mẫu tai nghe từ các thương hiệu nổi tiếng"
+      title: "Khởi nguồn SoundOra",
+      description: "Sứ mệnh mang âm nhạc đỉnh cao đến gần hơn với cộng đồng."
     },
     {
       year: "2021",
-      title: "Đạt 10,000 khách hàng",
-      description: "Cột mốc quan trọng đánh dấu sự tin tưởng của khách hàng"
+      title: "Cột mốc 10k thành viên",
+      description: "Sự ghi nhận quý giá từ những tâm hồn đồng điệu."
     },
     {
       year: "2022",
-      title: "Ra mắt showroom",
-      description: "Khai trương showroom đầu tiên tại TP.HCM"
-    },
-    {
-      year: "2023",
-      title: "Mở rộng toàn quốc",
-      description: "Phát triển hệ thống phân phối trên toàn quốc"
+      title: "Showroom Signature",
+      description: "Không gian trải nghiệm âm thanh chuẩn boutique tại TP.HCM."
     },
     {
       year: "2024",
-      title: "Đạt 50,000+ khách hàng",
-      description: "Trở thành một trong những nhà bán lẻ tai nghe hàng đầu"
+      title: "Tầm nhìn tương lai",
+      description: "Trở thành biểu tượng của sự tinh tế trong ngành âm thanh."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-teal-500 via-teal-600 to-cyan-600 text-white overflow-hidden">
-        <motion.div 
-          className="absolute inset-0 bg-black/10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        ></motion.div>
-        
-        <div className="relative container mx-auto px-4 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              className="space-y-8"
-              initial={{ opacity: 0, x: -100 }}
+    <div className="min-h-screen bg-[#FAF9F6] pt-20 font-sans">
+
+      {/* Hero Section: Refined Boutique Style */}
+      <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-white py-12 lg:py-0">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-24 items-center">
+            <motion.div
+              className="lg:col-span-6 space-y-10"
+              initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: 1 }}
             >
-              <div className="space-y-4">
-                <motion.h2 
-                  className="text-5xl font-bold leading-tight"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
+              <div className="space-y-6">
+                <motion.div
+                  className="flex items-center gap-3 text-emerald-700"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
                 >
-                  Chúng tôi là <motion.span 
-                    className="text-yellow-300"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    SoundOra
-                  </motion.span>
-                </motion.h2>
-                <motion.p 
-                  className="text-lg text-teal-100 leading-relaxed"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                  Đem đến cho bạn trải nghiệm âm thanh hoàn hảo với bộ sưu tập tai nghe cao cấp từ những thương hiệu hàng đầu thế giới.
-                </motion.p>
-              </div>
-              
-              <motion.div 
-                className="flex flex-col sm:flex-row gap-4"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
-              >
-                <motion.button 
-                  className="bg-white text-teal-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <FiPlay className="w-5 h-5" />
-                  <span>Xem video</span>
-                </motion.button>
-                <motion.button 
-                  className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-teal-600 transition-colors flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <FiArrowRight className="w-5 h-5" />
-                  <span>Khám phá ngay</span>
-                </motion.button>
-              </motion.div>
-
-              {/* Stats */}
-              <motion.div 
-                className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8"
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-              >
-                {stats.map((stat, index) => (
-                  <motion.div 
-                    key={index} 
-                    className="text-center"
-                    variants={{
-                      initial: { opacity: 0, y: 30 },
-                      animate: { opacity: 1, y: 0 }
-                    }}
-                    transition={{ delay: 0.9 + index * 0.1 }}
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <motion.div 
-                      className="text-3xl font-bold text-yellow-300"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 1.2 + index * 0.1, type: "spring", stiffness: 200 }}
-                    >
-                      {stat.number}
-                    </motion.div>
-                    <div className="text-sm text-teal-100">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </motion.div>
-
-            <motion.div 
-              className="relative"
-              initial={{ opacity: 0, x: 100, rotate: -5 }}
-              animate={{ opacity: 1, x: 0, rotate: 0 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <motion.img 
-                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=500&fit=crop" 
-                alt="SoundOra Headphones" 
-                className="rounded-2xl shadow-2xl"
-                whileHover={{ scale: 1.05, rotate: 2 }}
-                transition={{ duration: 0.3 }}
-              />
-              <motion.div 
-                className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl"
-                initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="flex items-center space-x-3">
-                  <motion.div 
-                    className="flex -space-x-2"
-                    variants={staggerContainer}
-                    initial="initial"
-                    animate="animate"
-                  >
-                    {[1, 2, 3].map((i) => (
-                      <motion.img 
-                        key={i}
-                        src={`https://images.unsplash.com/photo-${i === 1 ? '1535713875002-d1d0cf377fde' : i === 2 ? '1494790108755-2616b612b786' : '1507003211169-0a1dd7228f2d'}?w=40&h=40&fit=crop&crop=face`}
-                        className="w-8 h-8 rounded-full border-2 border-white" 
-                        alt="User"
-                        variants={{
-                          initial: { opacity: 0, scale: 0 },
-                          animate: { opacity: 1, scale: 1 }
-                        }}
-                        transition={{ delay: 1.8 + i * 0.1 }}
-                        whileHover={{ scale: 1.2, zIndex: 10 }}
-                      />
-                    ))}
-                  </motion.div>
-                  <div>
-                    <motion.div 
-                      className="flex text-yellow-400"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 2.2 }}
-                    >
-                      {[...Array(5)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, rotate: -180 }}
-                          animate={{ opacity: 1, rotate: 0 }}
-                          transition={{ delay: 2.3 + i * 0.1 }}
-                        >
-                          <FiStar className="w-4 h-4 fill-current" />
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                    <motion.p 
-                      className="text-sm text-gray-600 font-semibold"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 2.8 }}
-                    >
-                      2,500+ đánh giá 5 sao
-                    </motion.p>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission, Vision, Values */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Tab Navigation */}
-            <motion.div 
-              className="flex justify-center mb-12"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="flex bg-gray-100 p-1 rounded-xl">
-                {[
-                  { key: 'mission', label: 'Sứ mệnh' },
-                  { key: 'vision', label: 'Tầm nhìn' },
-                  { key: 'values', label: 'Giá trị' }
-                ].map((tab) => (
-                  <motion.button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
-                      activeTab === tab.key 
-                        ? 'bg-teal-600 text-white' 
-                        : 'text-gray-600 hover:text-teal-600'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {tab.label}
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Tab Content */}
-            <div className="text-center">
-              <AnimatePresence mode="wait">
-                {activeTab === 'mission' && (
-                  <motion.div 
-                    key="mission"
-                    className="space-y-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <motion.div 
-                      className="w-20 h-20 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto"
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                    >
-                      <FiTarget className="w-10 h-10 text-white" />
-                    </motion.div>
-                    <motion.h3 
-                      className="text-3xl font-bold text-gray-800"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      Sứ mệnh của chúng tôi
-                    </motion.h3>
-                    <motion.p 
-                      className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      SoundOra cam kết mang đến cho mọi người trải nghiệm âm thanh tuyệt vời nhất thông qua việc cung cấp những sản phẩm tai nghe chất lượng cao, dịch vụ tận tâm và giá cả hợp lý. Chúng tôi tin rằng âm nhạc có sức mạnh kết nối con người và tạo nên những khoảnh khắc đáng nhớ trong cuộc sống.
-                    </motion.p>
-                  </motion.div>
-                )}
-
-                {activeTab === 'vision' && (
-                  <motion.div 
-                    key="vision"
-                    className="space-y-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <motion.div 
-                      className="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto"
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-                    >
-                      <FiEye className="w-10 h-10 text-white" />
-                    </motion.div>
-                    <motion.h3 
-                      className="text-3xl font-bold text-gray-800"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      Tầm nhìn của chúng tôi
-                    </motion.h3>
-                    <motion.p 
-                      className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      Trở thành nhà cung cấp giải pháp âm thanh hàng đầu Việt Nam, được khách hàng tin tưởng và lựa chọn đầu tiên khi nghĩ đến tai nghe chất lượng. Chúng tôi hướng tới việc xây dựng một cộng đồng yêu âm nhạc, nơi mọi người có thể tìm thấy những sản phẩm phù hợp với đam mê và phong cách riêng.
-                    </motion.p>
-                  </motion.div>
-                )}
-
-                {activeTab === 'values' && (
-                  <motion.div 
-                    key="values"
-                    className="space-y-8"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <motion.h3 
-                      className="text-3xl font-bold text-gray-800"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      Giá trị cốt lõi
-                    </motion.h3>
-                    <motion.div 
-                      className="grid md:grid-cols-2 gap-8"
-                      variants={staggerContainer}
-                      initial="initial"
-                      animate="animate"
-                    >
-                      {values.map((value, index) => (
-                        <motion.div 
-                          key={index} 
-                          className="bg-gray-50 p-6 rounded-xl text-left"
-                          variants={{
-                            initial: { opacity: 0, y: 30, scale: 0.9 },
-                            animate: { opacity: 1, y: 0, scale: 1 }
-                          }}
-                          transition={{ delay: 0.3 + index * 0.1 }}
-                          whileHover={{ scale: 1.05, y: -5 }}
-                        >
-                          <motion.div 
-                            className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center mb-4"
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.6 }}
-                          >
-                            <value.icon className="w-6 h-6 text-white" />
-                          </motion.div>
-                          <h4 className="text-xl font-semibold text-gray-800 mb-2">{value.title}</h4>
-                          <p className="text-gray-600">{value.description}</p>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">Hành trình phát triển</h2>
-              <p className="text-lg text-gray-600">Những cột mốc quan trọng trong quá trình xây dựng và phát triển SoundOra</p>
-            </motion.div>
-
-            <div className="relative">
-              <motion.div 
-                className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-teal-200"
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
-                style={{ originY: 0 }}
-              ></motion.div>
-              <div className="space-y-12">
-                {milestones.map((milestone, index) => (
-                  <motion.div 
-                    key={index} 
-                    className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.2, duration: 0.8 }}
-                  >
-                    <motion.div 
-                      className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <motion.div 
-                        className="bg-white p-6 rounded-xl shadow-lg border border-gray-200"
-                        whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-                      >
-                        <motion.div 
-                          className="text-teal-600 font-bold text-lg mb-2"
-                          initial={{ scale: 0 }}
-                          whileInView={{ scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: index * 0.2 + 0.3, type: "spring", stiffness: 200 }}
-                        >
-                          {milestone.year}
-                        </motion.div>
-                        <h4 className="text-xl font-semibold text-gray-800 mb-2">{milestone.title}</h4>
-                        <p className="text-gray-600">{milestone.description}</p>
-                      </motion.div>
-                    </motion.div>
-                    <motion.div 
-                      className="w-4 h-4 bg-teal-600 rounded-full border-4 border-white shadow-lg z-10"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.2 + 0.5, type: "spring", stiffness: 300 }}
-                      whileHover={{ scale: 1.5 }}
-                    ></motion.div>
-                    <div className="w-1/2"></div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Đội ngũ lãnh đạo</h2>
-            <p className="text-lg text-gray-600">Những con người tài năng đằng sau thành công của SoundOra</p>
-          </motion.div>
-
-          <motion.div 
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-          >
-            {team.map((member, index) => (
-              <motion.div 
-                key={index} 
-                className="text-center group"
-                variants={{
-                  initial: { opacity: 0, y: 50 },
-                  animate: { opacity: 1, y: 0 }
-                }}
-                transition={{ delay: index * 0.2 }}
-                whileHover={{ y: -10 }}
-              >
-                <motion.div 
-                  className="relative mb-6"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <motion.img 
-                    src={member.avatar} 
-                    alt={member.name}
-                    className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg"
-                    initial={{ scale: 0, rotate: -180 }}
-                    whileInView={{ scale: 1, rotate: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.2 + 0.3, type: "spring", stiffness: 200 }}
-                  />
-                  <motion.div 
-                    className="absolute inset-0 bg-teal-600/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    initial={{ scale: 0 }}
-                    whileHover={{ scale: 1 }}
-                  ></motion.div>
+                  <span className="w-10 h-[1px] bg-emerald-700" />
+                  <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Thương hiệu di sản</span>
                 </motion.div>
-                <motion.h4 
-                  className="text-xl font-semibold text-gray-800 mb-1"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 + 0.5 }}
+                <h1 className="text-4xl lg:text-5xl  tracking-tight leading-[1.2]">
+                  Khai mở kỷ nguyên <br />
+                  <span className="italic text-emerald-800">Âm thanh Thuần khiết</span>
+                </h1>
+                <p className="text-xs lg:text-sm text-[#8C8C8C] max-w-md font-light leading-relaxed tracking-wide">
+                  SoundOra không chỉ bán tai nghe, chúng tôi kiến tạo không gian tâm hồn thông qua những tuyệt tác âm thanh tinh tế nhất.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-6 pt-4">
+                <button className="bg-emerald-900 text-white px-10 py-4 rounded-sm text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-emerald-800 transition-all shadow-lg">
+                  Khám phá BST
+                </button>
+                <button className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] font-bold border-b border-[#2D2D2D] pb-1 hover:text-emerald-700 hover:border-emerald-700 transition-all">
+                  Câu chuyện của chúng tôi <FiArrowRight />
+                </button>
+              </div>
+
+              {/* Minimal Stats */}
+              <div className="grid grid-cols-2 gap-8 pt-10 border-t border-[#F0EEE6]">
+                {stats.slice(0, 2).map((stat, i) => (
+                  <div key={i} className="space-y-1">
+                    <p className="text-3xl  text-emerald-900 leading-none">{stat.number}</p>
+                    <p className="text-[9px] uppercase tracking-widest text-[#8C8C8C] font-bold">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="lg:col-span-6 relative h-full flex items-center justify-center p-4 lg:p-0"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.2 }}
+            >
+              <div className="relative z-10 w-full max-w-md aspect-[4/5] rounded-sm overflow-hidden shadow-2xl transition-transform duration-700 hover:rotate-1">
+                <div className="absolute inset-0 bg-[#F0EEE6]/30 z-0" />
+                <img
+                  src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&h=1000&fit=crop"
+                  alt="SoundOra Heritage"
+                  className="relative z-10 w-full h-full object-cover transform hover:scale-110 transition-transform duration-1000"
+                />
+              </div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[90%] bg-[#F0EEE6]/40 -z-10 rounded-sm" />
+              <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-emerald-900/5 rounded-full blur-3xl" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Brand Ethos: Minimal & Spacious */}
+      <section className="py-32 bg-[#FAF9F6]">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center space-y-16">
+            <motion.div {...fadeInUp} className="space-y-6">
+              <FaQuoteLeft className="text-emerald-100 text-5xl mx-auto" />
+              <p className="text-2xl lg:text-3xl  italic leading-relaxed text-[#2D2D2D]">
+                "Chúng tôi tin rằng cái đẹp thực sự nằm ở sự giản đơn và sự chính xác tuyệt đối trong từng nốt nhạc."
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="w-12 h-[1px] bg-[#E5E2D9]" />
+                <span className="text-[10px] uppercase tracking-widest font-bold text-[#8C8C8C]">Triết lý SoundOra</span>
+                <span className="w-12 h-[1px] bg-[#E5E2D9]" />
+              </div>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-12 text-left pt-10">
+              {values.map((v, i) => (
+                <motion.div
+                  key={i}
+                  {...fadeInUp}
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  className="space-y-4 group p-8 bg-white border border-[#F0EEE6] rounded-sm hover:border-emerald-700 transition-all duration-500"
                 >
-                  {member.name}
-                </motion.h4>
-                <motion.p 
-                  className="text-teal-600 font-medium mb-3"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 + 0.6 }}
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-700 group-hover:bg-emerald-700 group-hover:text-white transition-all duration-500">
+                    <v.icon size={18} />
+                  </div>
+                  <h3 className="text-lg ">{v.title}</h3>
+                  <p className="text-xs text-[#8C8C8C] leading-relaxed font-light">{v.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Journey: Boutique Timeline */}
+      <section className="py-32 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-3 gap-16">
+            <div className="lg:sticky lg:top-32 h-fit space-y-6">
+              <div className="flex items-center gap-2 text-emerald-700">
+                <span className="w-8 h-[1px] bg-emerald-700" />
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Hành trình</span>
+              </div>
+              <h2 className="text-4xl  leading-tight">Dấu ấn <br />Phát triển</h2>
+              <p className="text-xs text-[#8C8C8C] leading-relaxed max-w-xs font-light tracking-wide">
+                Từ một ý tưởng nhỏ bé đến thương hiệu định hình phong cách sống hiện đại.
+              </p>
+            </div>
+
+            <div className="lg:col-span-2 space-y-0 relative">
+              <div className="absolute left-6 top-0 bottom-0 w-[1px] bg-[#F0EEE6]" />
+              {milestones.map((m, i) => (
+                <motion.div
+                  key={i}
+                  {...fadeInUp}
+                  className="relative pl-16 pb-20 group last:pb-0"
                 >
-                  {member.role}
-                </motion.p>
-                <motion.p 
-                  className="text-gray-600 text-sm"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2 + 0.7 }}
-                >
+                  <div className="absolute left-[21px] top-1 w-2 h-2 rounded-full bg-[#E5E2D9] group-hover:bg-emerald-700 group-hover:scale-150 transition-all" />
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">{m.year}</span>
+                    <h4 className="text-xl  text-[#2D2D2D]">{m.title}</h4>
+                    <p className="text-xs text-[#8C8C8C] leading-relaxed font-light tracking-wide max-w-lg">{m.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Visionaries: Refined Team */}
+      <section className="py-32 bg-[#FAF9F6]">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-24 space-y-4">
+            <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-[#8C8C8C]">Đội ngũ kiến tạo</span>
+            <h2 className="text-4xl "> Những Tâm hồn Đam mê</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+            {team.map((member, i) => (
+              <motion.div
+                key={i}
+                {...fadeInUp}
+                transition={{ delay: i * 0.1 }}
+                className="text-center group"
+              >
+                <div className="relative w-40 h-52 mx-auto mb-6 bg-white rounded-sm overflow-hidden p-1 border border-[#E5E2D9] group-hover:border-emerald-700 transition-all duration-500">
+                  <img
+                    src={member.avatar}
+                    alt={member.name}
+                    className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <h4 className="text-sm font-bold tracking-tight uppercase">{member.name}</h4>
+                <p className="text-[10px] text-emerald-700 font-bold tracking-widest uppercase mb-3 mt-1">{member.role}</p>
+                <p className="text-[10px] text-[#8C8C8C] font-light leading-relaxed max-w-[200px] mx-auto opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   {member.bio}
-                </motion.p>
+                </p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Contact CTA */}
-      {/* <section className="py-20 bg-gradient-to-r from-teal-500 to-cyan-600 text-white overflow-hidden">
-        <motion.div 
-          className="container mx-auto px-4 text-center"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="max-w-3xl mx-auto">
-            <motion.h2 
-              className="text-4xl font-bold mb-6"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              Kết nối với SoundOra
-            </motion.h2>
-            <motion.p 
-              className="text-xl text-teal-100 mb-8"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            >
-              Có câu hỏi về sản phẩm hoặc muốn hợp tác? Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn.
-            </motion.p>
-            
-            <motion.div 
-              className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-            >
-              {[
-                { icon: FiPhone, text: "1900-1234" },
-                { icon: FiMail, text: "hello@soundora.vn" },
-                { icon: FiMapPin, text: "123 Nguyễn Văn Cừ, Q1, TP.HCM" }
-              ].map((contact, index) => (
-                <motion.div 
-                  key={index}
-                  className="flex items-center space-x-3"
-                  variants={{
-                    initial: { opacity: 0, x: -30 },
-                    animate: { opacity: 1, x: 0 }
-                  }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  whileHover={{ scale: 1.1, x: 10 }}
-                >
-                  <contact.icon className="w-6 h-6" />
-                  <span className="text-lg">{contact.text}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <motion.div 
-              className="flex justify-center space-x-6"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              {[FaFacebook, FaInstagram, FaTwitter, FaLinkedin].map((Icon, index) => (
-                <motion.a 
-                  key={index}
-                  href="#" 
-                  className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
-                  whileHover={{ scale: 1.2, rotate: 360 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Icon className="w-6 h-6" />
-                </motion.a>
-              ))}
-            </motion.div>
+      {/* Boutique Call to Action */}
+      <section className="py-32 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-6 text-center space-y-10 relative z-10">
+          <div className="space-y-4">
+            <h2 className="text-4xl  italic tracking-tight">Cùng kiến tạo những khoảnh khắc âm nhạc ý nghĩa.</h2>
+            <p className="text-xs text-[#8C8C8C] font-light tracking-widest uppercase">Tham gia cộng đồng SoundOra ngay hôm nay.</p>
           </div>
-        </motion.div>
-      </section> */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-8">
+            <div className="flex items-center gap-3 group cursor-pointer">
+              <div className="w-8 h-8 rounded-full border border-[#E5E2D9] flex items-center justify-center text-[#8C8C8C] group-hover:bg-emerald-900 group-hover:text-white group-hover:border-emerald-900 transition-all">
+                <FiMail size={14} />
+              </div>
+              <span className="text-[10px] uppercase tracking-widest font-bold">hello@soundora.vn</span>
+            </div>
+            <div className="flex items-center gap-3 group cursor-pointer">
+              <div className="w-8 h-8 rounded-full border border-[#E5E2D9] flex items-center justify-center text-[#8C8C8C] group-hover:bg-emerald-900 group-hover:text-white group-hover:border-emerald-900 transition-all">
+                <FiPhone size={14} />
+              </div>
+              <span className="text-[10px] uppercase tracking-widest font-bold">1900 1234</span>
+            </div>
+          </div>
+
+          <div className="pt-10 flex justify-center gap-6">
+            {[FaFacebook, FaInstagram, FaTwitter, FaLinkedin].map((Icon, i) => (
+              <a key={i} href="#" className="text-[#E5E2D9] hover:text-emerald-900 transition-colors">
+                <Icon size={18} />
+              </a>
+            ))}
+          </div>
+        </div>
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15rem]  text-emerald-900/[0.02] select-none pointer-events-none italic"
+        >
+          SoundOra
+        </div>
+      </section>
+
     </div>
   );
 };

@@ -43,6 +43,7 @@ const Order_Confirmation = () => {
     Address: "",
     PaymentMethod: "",
   });
+  console.log('valueInputAddress', valueInputAddress);
 
   const [isActive, setIsActive] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -113,8 +114,8 @@ const Order_Confirmation = () => {
     queryKey: ["infoAddress", idUser],
     queryFn: () => getInfoAddressOrder(idUser),
   });
- console.log(AddressInfo);
- 
+  console.log(AddressInfo);
+
   useEffect(() => {
     setValue((prev) => ({
       ...prev,
@@ -201,7 +202,7 @@ const Order_Confirmation = () => {
       setIsLoading(true);
       const dataOrder = {
         ...value,
-        Address: valueInputAddress.Provinces + " - " + valueInputAddress.Districts + " - " + valueInputAddress.Commune,
+        Address: value.Address ? value.Address : valueInputAddress.Provinces + " - " + valueInputAddress.Districts + " - " + valueInputAddress.Commune,
         Id_Cart: data?.resultOrder[0]?.Id_Cart,
         voucherCode: newVoucherTotal?.code,
         TotalAmount: newVoucherTotal ? newVoucherTotal?.discountedTotal : total,

@@ -21,6 +21,7 @@ const Cart = () => {
     queryKey: ["CartItemsNew", idUser],
     queryFn: () => GetCartItemsByUser(idUser),
     enabled: !!idUser,
+    staleTime: 1000,
   });
 
   useEffect(() => {
@@ -76,10 +77,10 @@ const Cart = () => {
             )
           );
         },
-      }
+      } 
     );
   };
-
+  
   const HandleNextQuantity = (Id_Cart, Id_ProductVariants, Color) => {
     setOptimisticCart((prev) =>
       prev.map((item) =>

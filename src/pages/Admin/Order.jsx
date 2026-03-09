@@ -14,16 +14,19 @@ const Order = () => {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [orderDetail, setOrderDetail] = useState({});
-  const [valueSearch,setValueSearch] = useState("");
-  const [currentItem,setCurrentItem] = useState("Tất cả");
-  const { data } = useQuery({
-    queryKey: ["order"],
-    queryFn: GetAllOrder,
+  const [valueSearch, setValueSearch] = useState("");
+  const [currentItem, setCurrentItem] = useState("Tất cả");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const { data, isLoading } = useQuery({
+    queryKey: ["order", currentPage],
+    queryFn: () => GetAllOrder(currentPage),
+    keepPreviousData: true,
   });
-  // console.log(data);
+  const totalPages = data?.totalPages || 1;
 
-  const handleShowDetail = (item,itemsDetail) => {
-    setOrderDetail(prev => ({...prev,...item,...itemsDetail}));
+  const handleShowDetail = (item, itemsDetail) => {
+    setOrderDetail(prev => ({ ...prev, orderInfo: item, items: itemsDetail }));
     setIsOpen(true);
   };
   const { data: dataCancleRequest } = useQuery({
@@ -70,12 +73,24 @@ const Order = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const filtersOrder = data?.getAllOrder?.filter((item) => {
-    const filterSearch = item?.Fullname?.toLowerCase().includes(valueSearch.toLowerCase()) || item?.Address?.toLowerCase().includes(valueSearch.toLowerCase());
-    const filterStatus = currentItem === "Tất cả" ? true : currentItem === "Đang chờ" ? item.Status.includes("Chờ") : item?.Status === currentItem ;
+  const filtersOrder = data?.data?.filter((item) => {
+    const order = item?.orderInfo;
+
+    const filterSearch =
+      order?.Fullname?.toLowerCase().includes(valueSearch.toLowerCase()) ||
+      order?.Address?.toLowerCase().includes(valueSearch.toLowerCase());
+
+    const filterStatus =
+      currentItem === "Tất cả"
+        ? true
+        : currentItem === "Đang chờ"
+          ? order?.Status?.includes("Chờ")
+          : order?.Status === currentItem;
+
     return filterSearch && filterStatus;
   });
-  
+  console.log('filtersOrder', filtersOrder);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-100 p-6">
       <div className="max-w-7xl mx-auto">
@@ -248,10 +263,10 @@ const Order = () => {
                   </svg>
                 </div>
                 <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
-                  {["Tất cả","Đang chờ", "Đã giao"].map((item, index) => (
+                  {["Tất cả", "Đang chờ", "Đã giao"].map((item, index) => (
                     <button onClick={() => setCurrentItem(item)} className={`px-3 py-1 cursor-pointer ${currentItem === item ? "bg-orange-500 text-white" : ""} rounded-md text-sm font-medium text-gray-700`}>{item}</button>
-                  // <button className="px-3 py-1 text-sm font-medium text-gray-500">Đang chờ</button>
-                  // <button className="px-3 py-1 text-sm font-medium text-gray-500">Đã giao</button>
+                    // <button className="px-3 py-1 text-sm font-medium text-gray-500">Đang chờ</button>
+                    // <button className="px-3 py-1 text-sm font-medium text-gray-500">Đã giao</button>
                   ))}
                 </div>
               </div>
@@ -308,15 +323,14 @@ const Order = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div
-                          className={`w-2 h-2 rounded-full mr-3 ${
-                            item.Status === "Đã giao"
-                              ? "bg-green-400"
-                              : item.Status === "Chờ giao hàng"
+                          className={`w-2 h-2 rounded-full mr-3 ${item?.orderInfo?.Status === "Đã giao"
+                            ? "bg-green-400"
+                            : item?.orderInfo?.Status === "Chờ giao hàng"
                               ? "bg-blue-400"
-                              : item.Status === "Đã hủy"
-                              ? "bg-red-400"
-                              : "bg-yellow-400"
-                          }`}
+                              : item?.orderInfo?.Status === "Đã hủy"
+                                ? "bg-red-400"
+                                : "bg-yellow-400"
+                            }`}
                         ></div>
                         <span className="text-sm font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded-md">#{index + 1}</span>
                       </div>
@@ -324,62 +338,61 @@ const Order = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-white font-semibold text-sm">{item.Fullname?.charAt(0)?.toUpperCase()}</span>
+                          <span className="text-white font-semibold text-sm">{item?.orderInfo?.Fullname?.charAt(0)?.toUpperCase()}</span>
                         </div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-900">{item.Fullname}</div>
-                          <div className="text-xs text-gray-500">Customer #{item._id?.slice(-6)}</div>
+                          <div className="text-sm font-semibold text-gray-900">{item?.orderInfo?.Fullname}</div>
+                          <div className="text-xs text-gray-500">Customer #{item?._id?.slice(-6)}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-700 max-w-xs">
                         <div className="flex items-center space-x-1 ">
-                          <CiLocationOn className="w-4 h-4"/>
-                          <p className="w-2/3.5 truncate">{item.Address}</p>
+                          <CiLocationOn className="w-4 h-4" />
+                          <p className="w-2/3.5 truncate">{item?.orderInfo?.Address}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <span
-                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                            item.Status === "Đã giao"
-                              ? "bg-green-100 text-green-800"
-                              : item.Status === "Chờ giao hàng"
+                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${item?.orderInfo?.Status === "Đã giao"
+                            ? "bg-green-100 text-green-800"
+                            : item?.orderInfo?.Status === "Chờ giao hàng"
                               ? "bg-blue-100 text-blue-800"
-                              : item.Status === "Đã hủy"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
+                              : item?.orderInfo?.Status === "Đã hủy"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
                         >
-                          {item.Status}
+                          {item?.orderInfo?.Status}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <span className="text-lg font-bold text-green-600">{item.TotalAmount?.toLocaleString("vi-VN")}đ</span>
+                        <span className="text-lg font-bold text-green-600">{item?.orderInfo?.TotalAmount?.toLocaleString("vi-VN")}đ</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <select
-                          onChange={(e) => handleUpdateStatus(item._id, e)}
+                          onChange={(e) => handleUpdateStatus(item?.orderInfo?._id, e)}
                           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white shadow-sm"
                         >
                           <option hidden className="text-center" value="">
                             Lựa chọn
                           </option>
                           <option
-                            disabled={item.Status === "Chờ giao hàng" || item.Status === "Đã giao" || item.Status === "Đã hủy"}
+                            disabled={item?.orderInfo?.Status === "Chờ giao hàng" || item?.orderInfo?.Status === "Đã giao" || item?.orderInfo?.Status === "Đã hủy"}
                             className="text-center"
                             value="Xác nhận"
                           >
                             Xác nhận
                           </option>
                           <option
-                            disabled={item.Status === "Đã giao" || item.Status !== "Chờ giao hàng"}
+                            disabled={item?.orderInfo?.Status === "Đã giao" || item?.orderInfo?.Status !== "Chờ giao hàng"}
                             className="text-center"
                             value="Đã giao"
                           >
@@ -387,7 +400,7 @@ const Order = () => {
                           </option>
                         </select>
                         <button
-                          onClick={() => handleShowDetail(item,data?.detailOrderItems[index])}
+                          onClick={() => handleShowDetail(item?.orderInfo, item?.items)}
                           type="button"
                           className="inline-flex items-center p-2 border border-transparent rounded-lg text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-all duration-200"
                         >
@@ -414,9 +427,17 @@ const Order = () => {
                 <span>results</span>
               </div>
               <div className="flex items-center space-x-2">
-                <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Previous</button>
-                <button className="px-3 py-1 text-sm bg-orange-600 text-white rounded-lg">1</button>
-                <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Next</button>
+                <button onClick={() => setCurrentPage(prev => prev + 1)} className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Previous</button>
+
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={currentPage === i + 1 ? "font-bold" : ""}
+                  >
+                    {i + 1}
+                  </button>
+                ))}                <button onClick={() => setCurrentPage(prev => prev + 1)} className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Next</button>
               </div>
             </div>
           </div>
