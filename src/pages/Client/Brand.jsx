@@ -5,6 +5,7 @@ import { MdOutlineNotes } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { getRoute } from "../../helper/route";
 const Header = () => {
   const [actionImage, setActionImage] = useState("");
   const listActionImages = [
@@ -116,7 +117,7 @@ const Header = () => {
                 <MdArrowOutward />
               </span>
             </button>
-            <Link to="/Product">
+            <Link to={getRoute("/Product")}>
               <button className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer">
                 <span className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</span>
                 <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
@@ -217,7 +218,7 @@ const Header = () => {
           }}
           className="w-full  lg:max-w-32 bg-gray-300 rounded-md h-10 text-black font-medium relative pr-4 group overflow-hidden group-hover:text-white z-5 cursor-pointer"
         >
-          <Link to={"/Product"} className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</Link>
+          <Link to={getRoute("/Product")} className="relative z-5 text-black group-hover:text-white transition duration-300">Xem thêm</Link>
           <span className="absolute z-10 right-3 inline-flex pt-1 group-hover:text-white transition duration-300">
             <MdOutlineNotes />
           </span>

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GetAllProducts, CompareProducts } from "../../services/Client/Product";
+import { GetAllProducts, CompareProducts, getProductCompare } from "../../services/Client/Product";
 import { IoMdClose, IoMdArrowBack } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
 const CompareSidebar = ({ isOpen, onClose, currentProduct }) => {
     const [selectedProductIds, setSelectedProductIds] = useState([]);
     const [isComparing, setIsComparing] = useState(false);
@@ -14,7 +13,7 @@ const CompareSidebar = ({ isOpen, onClose, currentProduct }) => {
     // Query for all products to choose from
     const { data: allProducts, isLoading: isLoadingAll } = useQuery({
         queryKey: ["GetAllProducts"],
-        queryFn: GetAllProducts,
+        queryFn: getProductCompare,
         enabled: isOpen && !isComparing,
     });
 

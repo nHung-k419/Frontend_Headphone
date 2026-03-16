@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import SidebarReview from "./Sidebar";
 import { toast } from "react-toastify";
+import { getRoute } from "../../helper/route";
 const CartSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -66,7 +67,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
     <section className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-[3fr_1.5fr] grid-cols-1 h-full w-full select-none overflow-y-auto hide-scrollbar ">
       <div>
         <div className="flex justify-between items-center ">
-          <Link to={"/"} className="text-gray-400 flex items-center gap-x-2 font-light text-sm p-5" onClick={onClose}>
+          <Link to={getRoute("/")} className="text-gray-400 flex items-center gap-x-2 font-light text-sm p-5" onClick={onClose}>
             <span className="text-black">
               <FaArrowLeft />
             </span>
@@ -162,7 +163,7 @@ const CartSidebar = ({ isOpen, onClose }) => {
               <span>{total?.toLocaleString("vi-VN")}đ</span>
             </div>
           </div>
-          <Link to={data?.resultCartItems.length > 0 && "/OrderConfirmation"} className="flex justify-center mr-5 ml-5">
+          <Link to={data?.resultCartItems.length > 0 && getRoute("/OrderConfirmation")} className="flex justify-center mr-5 ml-5">
             <button
               onClick={() => (data?.resultCartItems.length > 0 ? onClose() : toast.error("Giỏ hàng trống"))}
               className="bg-black text-white w-73 h-12 flex items-center justify-center relative overflow-hidden group cursor-pointer mb-20"

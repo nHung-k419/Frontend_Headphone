@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import AvatarContext from "../../context/AvatarContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster, toast } from "sonner";
+import { getRoute } from "../../helper/route";
 
 const Proflle = () => {
   const { setAvatarUrl } = useContext(AvatarContext);
@@ -134,7 +135,7 @@ const Proflle = () => {
             <nav className="space-y-1">
               {menuItems.map((item, i) => (
                 <Link
-                  to={item.link || "#"}
+                  to={getRoute(item.link || "#")}
                   key={i}
                   className={`flex items-center justify-between group px-4 py-3 rounded-sm transition-all duration-300 ${item.active
                     ? "bg-[#F0EEE6] text-[#2D2D2D]"

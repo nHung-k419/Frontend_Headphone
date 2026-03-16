@@ -6,6 +6,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import Notfound404 from "../../assets/404 error not found.json";
+import { getRoute } from "../../helper/route";
 const Notfound = () => {
   return (
     <div className="w-full h-full">
@@ -30,7 +31,7 @@ const Notfound = () => {
             Oops! Có vẻ như bạn đã lạc đường. Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
           </p>
         </div>
-        <Link to={"/"} className="flex justify-center w-full">
+        <Link to={getRoute("/")} className="flex justify-center w-full">
           <button className="bg-gradient-to-r from-[#ff6b6b]
            to-[#ff4969] w-40 h-12 rounded-full mt-5 cursor-pointer text-white font-semibold flex items-center justify-center hover:scale-105 transform duration-300 ease-in-out ">
             <span className="mr-2">

@@ -23,6 +23,7 @@ import { FaRegHeart } from "react-icons/fa6";
 import { AddProductCart } from "../../services/Client/Cart";
 import { Toaster, toast } from "sonner";
 import NotFound from "../../components/NotFound";
+import { getRoute } from "../../helper/route";
 // import "./embla.css";
 const Product = () => {
   const queryclient = useQueryClient();
@@ -458,7 +459,7 @@ const Product = () => {
                       key={product._id}
                       className="relative bg-white rounded-2xl my-2 shadow-md hover:shadow-lg lg:w-[300px] w-[330px] h-full cursor-pointer overflow-hidden group transfrom transition-all duration-300 ease-in-out"
                     >
-                      <Link to={`/Products/Detail/${product._id}`}>
+                      <Link to={getRoute(`/Products/Detail/${product._id}`)}>
                         <img
                           className="w-full h-[170px] object-contain group-hover:scale-105 transition-all duration-300 ease-in-out"
                           src={product?.maxVariant?.Image?.path}
@@ -481,7 +482,7 @@ const Product = () => {
                             )}
                           </span>
                         </motion.div>
-                        <Link to={`/Products/Detail/${product._id}`}>
+                        <Link to={getRoute(`/Products/Detail/${product._id}`)}>
                           <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.85 }}

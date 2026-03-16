@@ -19,6 +19,7 @@ import { requestCancleOrder } from "../../services/Client/Order";
 import Loading from "../../components/Loading";
 import { Toaster, toast } from "sonner";
 import Cart404empty from "../../components/Cart404";
+import { getRoute } from "../../helper/route";
 
 const Order_Items = () => {
   const scrollRef = useRef(null);
@@ -303,7 +304,7 @@ const Order_Items = () => {
                         <MdOutlineStarPurple500 size={14} />
                         <span className="font-medium">Vui lòng đánh giá trải nghiệm sản phẩm để giúp chúng tôi hoàn thiện hơn!</span>
                       </div>
-                      <Link to={`/Products/Detail/${orderBlock?.items[0]?.Id_ProductVariants?.Id_Products?._id}`} className="font-bold uppercase tracking-widest hover:underline">
+                      <Link to={getRoute(`/Products/Detail/${orderBlock?.items[0]?.Id_ProductVariants?.Id_Products?._id}`)} className="font-bold uppercase tracking-widest hover:underline">
                         Đánh giá ngay
                       </Link>
                     </div>
