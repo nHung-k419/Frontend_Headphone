@@ -6,6 +6,7 @@ import { HiSpeakerWave, HiShieldCheck } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 // import Logitech_G_Pro from "../assets/Logitech_G_Pro.png";
 import logitechImg from "../assets/Logitech_G_Pro_X.png";
+import { getRoute } from "../helper/route";
 const Header = () => {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -79,7 +80,7 @@ const Header = () => {
 
             {/* Rest of the content with minor animation tweaks */}
             <motion.div variants={itemVariants} className="flex flex-wrap gap-5">
-              <Link to="/Product">
+              <Link to={getRoute("/Product")}>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

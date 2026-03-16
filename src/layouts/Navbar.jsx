@@ -10,7 +10,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoCloseSharp } from "react-icons/io5";
 import { IoCartOutline } from "react-icons/io5";
 import { SearchProducts } from "../services/Client/Product";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { highlightText } from "../components/HighLightText/HightLight";
 import { GetAllProducts } from "../services/Client/Product";
 import { useNavigate } from "react-router-dom";
@@ -33,10 +33,13 @@ import { GetCartItemsByUser } from "../services/Client/Cart";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
+import socket from "../Socket/index.js";
+import { getRoute } from "../helper/route.js";
 
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 const Navbar = () => {
+  const queryClient = useQueryClient();
   const { avatarUrl } = useContext(AvatarContext);
   // console.log(avatarUrl);
   const user = localStorage.getItem("User");
@@ -58,6 +61,9 @@ const Navbar = () => {
   const searchRef = useRef(null);
   const notificationRef = useRef(null);
   const UserRef = useRef(null);
+  const searchBtnRef = useRef(null);
+  const notificationBtnRef = useRef(null);
+  const userBtnRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [checkColor, setCheckColor] = useState(null);
@@ -93,6 +99,34 @@ const Navbar = () => {
       setIsRead(data);
     },
   });
+
+  useEffect(() => {
+    if (idUser) {
+      socket.emit("join", idUser);
+      console.log("useEffect run");
+
+      socket.on("new-notification", (notification) => {
+        console.log("New notification received:", notification);
+        queryClient.setQueryData(["notification", id], (oldData) => {
+          if (!oldData) return { result: [notification] };
+          return {
+            ...oldData,
+            result: [notification, ...oldData.result]
+          };
+        });
+      });
+
+      // socket.on("order-status-updated", () => {
+      //   queryClient.invalidateQueries(["notification", id]);
+      // });
+
+      return () => {
+        socket.off("new-notification");
+        // socket.off("order-status-updated");
+      };
+    }
+  }, [idUser, id, queryClient]);
+
   useEffect(() => {
     if (openModal.Notification) {
       mutationmarkAsRead.mutate(id);
@@ -161,20 +195,22 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target) &&
-        notificationRef.current &&
-        !notificationRef.current.contains(event.target) &&
-        UserRef.current &&
-        !UserRef.current.contains(event.target)
-      ) {
-        setOpenModal((prev) => ({
-          ...prev,
+      const isOutsideSearch =
+        (!searchRef.current || !searchRef.current.contains(event.target)) &&
+        (!searchBtnRef.current || !searchBtnRef.current.contains(event.target));
+      const isOutsideNotification =
+        (!notificationRef.current || !notificationRef.current.contains(event.target)) &&
+        (!notificationBtnRef.current || !notificationBtnRef.current.contains(event.target));
+      const isOutsideUser =
+        (!UserRef.current || !UserRef.current.contains(event.target)) &&
+        (!userBtnRef.current || !userBtnRef.current.contains(event.target));
+
+      if (isOutsideSearch && isOutsideNotification && isOutsideUser) {
+        setOpenModal({
           Search: false,
           Notification: false,
           User: false,
-        }));
+        });
       }
     };
 
@@ -185,10 +221,10 @@ const Navbar = () => {
   }, []);
   const navItems = [
     { label: "Trang chủ", path: "/" },
-    { label: "Giới thiệu", path: "/about" },
+    { label: "Giới thiệu", path: "/About" },
     { label: "Cửa hàng", path: "/Product" },
     { label: "Thương hiệu", path: "/Brand" },
-    { label: "FAQS", path: "/faqs" },
+    { label: "FAQS", path: "/FAQS" },
   ];
   return (
     <div className="fixed z-50 top-0 w-full ">
@@ -207,7 +243,7 @@ const Navbar = () => {
         </div>
         <ul className="flex flex-col ml-3 gap-8 font-medium flex-wrap mt-10">
           {navItems.map((item, idx) => (
-            <Link onClick={() => setIsOpen(false)} to={item.path} key={idx} className="relative overflow-hidden group cursor-pointer">
+            <Link onClick={() => setIsOpen(false)} to={getRoute(item.path)} key={idx} className="relative overflow-hidden group cursor-pointer">
               {item.label}
               <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
             </Link>
@@ -222,7 +258,7 @@ const Navbar = () => {
         <div className="lg:block hidden">
           <ul className=" flex items-center gap-8 font-medium  ">
             {navItems.map((item, idx) => (
-              <Link to={item.path} key={idx} className="relative overflow-hidden group cursor-pointer">
+              <Link to={getRoute(item.path)} key={idx} className="relative overflow-hidden group cursor-pointer">
                 {item.label}
                 <p className="absolute w-full bottom-0 left-0 h-[1px] bg-black transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></p>
               </Link>
@@ -231,7 +267,7 @@ const Navbar = () => {
         </div>
         <div className="flex items-center lg:space-x-7 space-x-5 mr-10 none list-none">
           <AiOutlineMenu className="lg:hidden block lg:ml-0 ml-2" onClick={() => setIsOpen(!isOpen)} />
-          <div className="relative">
+          <div ref={searchBtnRef} className="relative">
             <input
               type="text"
               className="rounded-3xl border-2 lg:w-50 md:w-50 w-45 h-10 pl-3 border-teal-400 focus:outline-none "
@@ -279,7 +315,7 @@ const Navbar = () => {
                     data?.resultSearch.map((Product) => (
                       <Link
                         onClick={() => setOpenModal({ ...openModal, Search: false })}
-                        to={`/Products/Detail/${Product._id}`}
+                        to={getRoute(`/Products/Detail/${Product._id}`)}
                         key={Product._id}
                         className="block p-3 hover:bg-white transition-colors group"
                       >
@@ -306,7 +342,7 @@ const Navbar = () => {
                       <Link
                         key={Product._id}
                         onClick={() => setOpenModal({ ...openModal, Search: false })}
-                        to={`/Products/Detail/${Product._id}`}
+                        to={getRoute(`/Products/Detail/${Product._id}`)}
                         className="flex items-center space-x-4 p-3 hover:bg-white transition-colors group"
                       >
                         <div className="w-12 h-12 flex-shrink-0 bg-white border border-[#E5E2D9] rounded-sm p-1">
@@ -335,11 +371,11 @@ const Navbar = () => {
           </AnimatePresence>
           {/* boxModal */}
           {!user ? (
-            <Link className="flex justify-center text-white rounded-md items-center h-10 w-27 bg-teal-500 hover:bg-teal-600 transform transition-all duration-200 ease-in-out hover:rotate-1 hover:translate-y-[-3px]" to={"/Auth/Login"}>
+            <Link className="flex justify-center text-white rounded-md items-center h-10 w-27 bg-teal-500 hover:bg-teal-600 transform transition-all duration-200 ease-in-out hover:rotate-1 hover:translate-y-[-3px]" to={getRoute("/Auth/Login")}>
               Đăng nhập
             </Link>
           ) : (
-            <div onClick={() => handleOpenModal("User")} className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
+            <div ref={userBtnRef} onClick={() => handleOpenModal("User")} className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">
               {" "}
               <img className={`w-8 h-8 rounded-full object-cover ${avatarUrl || dataUser?.isCheckUser?.Image?.path ? "" : "border-1 border-gray-500"}`} src={avatarUrl || dataUser?.isCheckUser?.Image?.path || "https://i.pinimg.com/736x/43/14/0a/43140a3803e5f1b39c1ffac1a35a3ec7.jpg"} alt="404" />
             </div>
@@ -361,7 +397,7 @@ const Navbar = () => {
                   {Name && (
                     <Link
                       onClick={() => setOpenModal({ ...openModal, User: false })}
-                      to={`/Auth/Profile`}
+                      to={getRoute(`/Auth/Profile`)}
                       className="flex items-center hover:bg-white p-2 cursor-pointer rounded-sm group transition-colors"
                     >
                       <div className="h-8 w-8 bg-[#F0EEE6] group-hover:bg-emerald-50 rounded-full flex items-center justify-center transition-colors">
@@ -377,7 +413,7 @@ const Navbar = () => {
                   {id && (
                     <Link
                       onClick={() => setOpenModal({ ...openModal, User: false })}
-                      to="/OrderItems"
+                      to={getRoute(`/OrderItems`)}
                       className="flex items-center hover:bg-white p-2 cursor-pointer rounded-sm group transition-colors"
                     >
                       <div className="h-8 w-8 bg-[#F0EEE6] group-hover:bg-emerald-50 rounded-full flex items-center justify-center transition-colors">
@@ -415,7 +451,7 @@ const Navbar = () => {
                       </div>
                     </div>
                   ) : (
-                    <Link to={"/Auth/Login"} className="flex items-center hover:bg-emerald-50 p-2 cursor-pointer rounded-sm group transition-colors">
+                    <Link to={getRoute("/Auth/Login")} className="flex items-center hover:bg-emerald-50 p-2 cursor-pointer rounded-sm group transition-colors">
                       <div className="h-8 w-8 bg-[#F0EEE6] group-hover:bg-emerald-100 rounded-full flex items-center justify-center transition-colors">
                         <span className="text-[#8C8C8C] group-hover:text-emerald-600">
                           <IoLogOut size={14} />
@@ -431,7 +467,7 @@ const Navbar = () => {
             )}
           </AnimatePresence>
           {user && (
-            <li className="relative text-xl cursor-pointer" onClick={() => handleOpenModal("Notification")}>
+            <li ref={notificationBtnRef} className="relative text-xl cursor-pointer" onClick={() => handleOpenModal("Notification")}>
               <AiOutlineBell className={` text-gray-700 bell-shake`} />
               {dataNotification?.result?.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
@@ -495,7 +531,7 @@ const Navbar = () => {
             )}
           </AnimatePresence>
           {user && (
-            <Link to="/Cart" className="text-xl cursor-pointer relative">
+            <Link to={getRoute("/Cart")} className="text-xl cursor-pointer relative">
               <IoCartOutline />
               {dataCart?.resultCartItems?.length > 0 || cartItems?.length > 0 ? (
                 <span className={`absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full w-3 h-3 flex items-center justify-center animate-pulse`}></span>

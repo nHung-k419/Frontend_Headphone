@@ -9,4 +9,14 @@ const checkVoucher = async (data) => {
         throw error;
     }
 };
-export { checkVoucher };
+
+const getVouchersActive = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/getVouchersActive`, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        // console.log(error);
+        throw error;
+    }
+};
+export { checkVoucher, getVouchersActive };

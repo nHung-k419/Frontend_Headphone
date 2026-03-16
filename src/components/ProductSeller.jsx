@@ -3,24 +3,116 @@ import { productBestSeller } from "../services/Client/Product";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, memo } from "react";
 import { GrNext } from "react-icons/gr";
-import { GrPrevious } from "react-icons/gr";
-import { IoArrowBack } from "react-icons/io5";
-import { IoArrowForward } from "react-icons/io5";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import ReactStars from "react-rating-stars-component";
 import { motion } from "framer-motion";
+import { getRoute } from "../helper/route";
+
+// Memoize Product Card to prevent unnecessary re-renders when carousel shifts
+const ProductCard = memo(({ item }) => {
+  const stock = item?.item?.Stock || 1;
+  const sold = item?.item?.Sold || 0;
+  const progress = Math.min((sold / stock) * 100, 100);
+
+  return (
+    <div className="embla__slide shrink-0 min-w-[200px] w-[200px] lg:min-w-[240px] lg:w-[240px]">
+      <Link
+        to={getRoute(`/Products/Detail/${item?.item?.Id_Products?._id}`)}
+        className="group flex flex-col h-full bg-transparent transition-all duration-300 relative"
+      >
+        {/* Image Container - Organic shape */}
+        <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-[#fafafa] mb-4 group-hover:bg-[#f3f4f6] transition-colors duration-300">
+          {/* Soft Sale Badge */}
+          <div className="absolute top-3 left-3 z-10">
+            <span className="bg-red-500/90 backdrop-blur-sm text-white text-[10px] tracking-wider font-semibold px-2 py-1 rounded-full">
+              SALE
+            </span>
+          </div>
+
+          <img
+            // Remove heavy scale transform on hover for better performance
+            className="w-full h-full object-contain p-6 mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-500 ease-out will-change-transform"
+            src={item?.item?.Image?.path}
+            alt={item?.item?.Id_Products?.Name}
+            loading="lazy"
+          />
+
+          {/* Subtle action button on hover */}
+          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+            <div className="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-gray-800 shadow-sm flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-colors">
+              <GrNext size={14} />
+            </div>
+          </div>
+        </div>
+
+        {/* Content - Compact Layout */}
+        <div className="flex flex-col flex-grow px-1">
+          <h3 className="text-sm font-medium text-gray-800 line-clamp-2 leading-relaxed group-hover:text-emerald-700 transition-colors duration-300 mb-1.5 min-h-[22px]">
+            {item?.item?.Id_Products?.Name}
+          </h3>
+
+          {/* Stars & Reviews */}
+          <div className="flex items-center space-x-1.5 mb-2">
+            <ReactStars
+              count={5}
+              size={14}
+              value={item?.item?.Id_Products?.Rating || 0}
+              isHalf={true}
+              edit={false}
+              activeColor="#fbbf24"
+            />
+            <span className="text-[11px] text-gray-400 mt-0.5">
+              ({item?.reviews?.length || 0})
+            </span>
+          </div>
+
+          {/* Price */}
+          <div className="mt-auto grid grid-cols-1 gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className="text-base font-semibold text-gray-900">
+                {item?.item?.Price?.toLocaleString("vi-VN")}đ
+              </span>
+              <span className="text-[11px] text-gray-400 line-through">
+                {(item?.item?.Price * 1.1)?.toLocaleString("vi-VN")}đ
+              </span>
+            </div>
+          </div>
+
+          {/* Minimalist Stock Progress */}
+          <div className="mt-3">
+            <div className="flex justify-between text-[11px] text-gray-400 mb-1.5">
+              <span>Đã bán {sold}</span>
+            </div>
+            {/* Removed internal framer-motion here to save computation during carousel scroll */}
+            <div className="w-full bg-gray-100 rounded-full h-1 overflow-hidden relative">
+              <div
+                className="bg-emerald-400/80 h-1 rounded-full absolute top-0 left-0 transition-all duration-1000 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+});
+
 const ProductSeller = () => {
-  // const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, slidesToScroll: 1 });
   const [prevEnabled, setPrevEnabled] = useState(false);
   const [nextEnabled, setNextEnabled] = useState(false);
   const autoplay = useRef(
     Autoplay(
-      { delay: 3000, stopOnInteraction: false },
-      (emblaRoot) => emblaRoot.parentElement // bắt đầu auto từ viewport
+      { delay: 4000, stopOnInteraction: false },
+      (emblaRoot) => emblaRoot.parentElement
     )
   );
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, slidesToScroll: 1,align:"start" }, [autoplay.current]);
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, slidesToScroll: 1, align: "start", dragFree: true },
+    [autoplay.current]
+  );
+
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setPrevEnabled(emblaApi.canScrollPrev());
@@ -31,88 +123,79 @@ const ProductSeller = () => {
     if (!emblaApi) return;
     onSelect();
     emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
   }, [emblaApi, onSelect]);
 
   const { data } = useQuery({
     queryKey: ["productBestSeller"],
     queryFn: productBestSeller,
   });
-  return (
-    <section className="relative w-full">
-      <div className="max-w-7xl mx-auto p-10">
-        <h1 className="font-bold text-3xl text-center">Sản phẩm bán chạy</h1>
 
-        <div className="embla  mt-10">
-          {/* Viewport phải đặt ref */}
-          <div className="embla__viewport overflow-hidden" ref={emblaRef}>
-            {/* Container flex để có thể scroll */}
-            <motion.div  initial={{ y: 100, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    y: {
-                      delay: 0.5,
-                      type: "spring",
-                      stiffness: 60,
-                    },
-                    opacity: {
-                      delay: 0.5,
-                      duration: 1,
-                    },
-                  }}  className="embla__container flex gap-6 select-none">
-              {data?.AllProductSellerReviews?.map((item) => (   
-                <Link
-                  to={`/Products/Detail/${item?.item?.Id_Products?._id}`}
-                  key={item?.item?.Id_Products?._id}
-                  className="embla__slide shrink-0 min-w-[280px] max-w-[280px] h-[350px] lg:p-10 rounded-md relative overflow-hidden group cursor-pointer flex justify-center"
-                >
-                  <img className="lg:w-full w-[140px] h-full object-contain" src={item?.item?.Image?.path} alt="" />
-                  <div className="absolute inset-0 bg-black/60 text-white transform translate-y-full group-hover:translate-y-0 transition duration-400 px-4 py-5 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-semibold truncate">{item?.item?.Id_Products?.Name}</h2>
-                        <span className="bg-red-500 text-xs font-bold px-2 py-1 rounded">SALE</span>
-                      </div>
-                      {/* <div className="text-yellow-400 text-sm mt-2">★★★★★ (123)</div> */}
-                      <div className="flex space-x-1 items-center">
-                        <ReactStars count = {5} size={17} value={item?.item?.Id_Products?.Rating} isHalf={true}  edit={false} />
-                        <span>( {item?.reviews?.length} đánh giá )</span>
-                      </div>
-                      <p>Đã bán : {item?.item?.Sold} / {item?.item?.Stock}</p>
-                      <p className="text-md text-white font-normal mt-2 line-clamp-4">{item?.item?.Id_Products?.Description}</p>
-                    </div>
-                    <Link to={`/Products/Detail/${item?.item?.Id_Products?._id}`} className="flex justify-between items-center mt-4">
-                      <div>
-                        <span className="text-lg font-semibold">{item?.item?.Price?.toLocaleString("vi-VN")}đ</span>
-                       
-                        <p><del className="text-sm text-red-400">{(item?.item?.Price * 1.1)?.toLocaleString("vi-VN")}đ</del></p>
-                      </div>
-                      <button className="bg-white text-black text-sm px-5 py-2 cursor-pointer rounded-md hover:bg-gray-200 transition">
-                        Xem thêm
-                      </button>
-                    </Link>
-                  </div>
-                </Link>
+  return (
+    <section className="relative w-full bg-white py-12">
+      <div className="max-w-7xl mx-auto px-5 lg:px-8">
+
+        {/* Header Section - Minimal & Natural */}
+        <div className="flex flex-row justify-between items-end mb-8 border-b border-gray-100 pb-4">
+          <div>
+            <h2 className="font-normal text-2xl md:text-3xl text-gray-900 mb-1 transition-colors">
+              Được yêu thích nhất
+            </h2>
+            <p className="text-sm text-gray-400 font-light">
+              Những lựa chọn hàng đầu từ khách hàng của chúng tôi
+            </p>
+          </div>
+
+          {/* Subtle Navigation */}
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => emblaApi && emblaApi.scrollPrev()}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors will-change-transform"
+            >
+              <IoArrowBack size={18} />
+            </button>
+            <button
+              onClick={() => emblaApi && emblaApi.scrollNext()}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors will-change-transform"
+            >
+              <IoArrowForward size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Carousel Section */}
+        <div className="relative">
+          <div className="embla overflow-hidden" ref={emblaRef}>
+            {/* Reduced framer-motion complexity on container */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: "100px" }}
+              transition={{ duration: 0.5 }}
+              className="embla__container flex gap-5 py-2"
+            >
+              {data?.AllProductSellerReviews?.map((item) => (
+                <ProductCard key={item?.item?.Id_Products?._id} item={item} />
               ))}
             </motion.div>
           </div>
+
+          {/* Mobile Navigation */}
+          <div className="flex justify-center items-center gap-6 mt-6 md:hidden">
+            <button
+              onClick={() => emblaApi && emblaApi.scrollPrev()}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 active:bg-gray-100 transition-colors"
+            >
+              <IoArrowBack size={18} />
+            </button>
+            <button
+              onClick={() => emblaApi && emblaApi.scrollNext()}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-50 text-gray-500 active:bg-gray-100 transition-colors"
+            >
+              <IoArrowForward size={18} />
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="absolute flex justify-between items-center pointer-events-none w-full top-1/2">
-        <button
-          onClick={() => emblaApi && emblaApi?.scrollPrev()}
-          // disabled={!prevEnabled}
-          className="pointer-events-auto w-10 h-10 bg-gray-100 text-black rounded-full hover:text-white hover:bg-black transition shadow-md flex items-center justify-center cursor-pointer lg:ml-25 ml-7"
-        >
-          <IoArrowBack />
-        </button>
-        <button
-          onClick={() => emblaApi && emblaApi?.scrollNext()}
-          // disabled={!nextEnabled}
-          className="pointer-events-auto w-10 h-10 bg-gray-100 text-black rounded-full hover:text-white hover:bg-black transition shadow-md flex items-center justify-center cursor-pointer lg:mr-25 mr-7"
-        >
-          <IoArrowForward />
-        </button>
       </div>
     </section>
   );

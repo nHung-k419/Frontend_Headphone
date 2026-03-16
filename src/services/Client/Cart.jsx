@@ -24,6 +24,7 @@ const handlePrevious = async (data) => {
     return response.data;
   } catch (error) {
     console.log(error);
+    throw error
   }
 };
 const handleNext = async (data) => {
@@ -32,6 +33,8 @@ const handleNext = async (data) => {
     return response.data;
   } catch (error) {
     console.log(error);
+    throw error
+
   }
 };
 const handleDLcartItem = async (data) => {

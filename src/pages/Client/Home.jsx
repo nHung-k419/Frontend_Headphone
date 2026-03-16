@@ -13,6 +13,7 @@ import Header from "../../layouts/Header";
 import ProductSeller from "../../components/ProductSeller";
 import socket from "../../Socket";
 import { toast } from "react-toastify";
+import { getRoute } from "../../helper/route";
 const Home = () => {
   const user = localStorage.getItem("User");
   const { id: idUser } = user ? JSON?.parse(user) : "";
@@ -234,7 +235,7 @@ const Home = () => {
               },
             }}
           >
-            <Link to={"/Product"}>
+            <Link to={getRoute("/Product")}>
               <button
                 className="w-32 h-10  border-1 border-gray-600 rounded-3xl relative group overflow-hidden cursor-pointer"
               >

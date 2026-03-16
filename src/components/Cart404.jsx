@@ -2,6 +2,7 @@ import React from "react";
 import Cart404 from "../assets/Cart404.json";
 import Lottie from "lottie-react";
 import { Link } from "react-router-dom";
+import { getRoute } from "../helper/route";
 const Cart404empty = (props) => {
   console.log(props);
 
@@ -23,7 +24,7 @@ const Cart404empty = (props) => {
           <>
             <p className="text-center font-medium text-gray-400">Giỏ hàng của bạn hiện đang trống!</p>
             <Link
-              to={"/Product"}
+              to={getRoute("/Product")}
               className="w-35 h-10 bg-teal-500 rounded-full mt-5 text-white cursor-pointer flex items-center justify-center"
             >
               Mua ngay

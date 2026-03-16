@@ -9,7 +9,7 @@ import {
   getAddressCommune,
   getInfoAddressOrder,
 } from "../../services/Client/Order";
-import { checkVoucher } from "../../services/Client/Voucher";
+import { checkVoucher, getVouchersActive } from "../../services/Client/Voucher";
 import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 import WaveLoader from "../../components/AnimateDotLoading";
@@ -23,6 +23,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { clearCart } from "../../redux/features/CartSlice";
 import { useDispatch } from "react-redux";
 import { IoChevronForward, IoTicketOutline, IoWalletOutline, IoLocationOutline } from "react-icons/io5";
+import { getRoute } from "../../helper/route";
 
 const Order_Confirmation = () => {
   const dispatch = useDispatch();
@@ -43,7 +44,6 @@ const Order_Confirmation = () => {
     Address: "",
     PaymentMethod: "",
   });
-  console.log('valueInputAddress', valueInputAddress);
 
   const [isActive, setIsActive] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +57,11 @@ const Order_Confirmation = () => {
   const [open, setOpen] = useState(false);
   const [errorVoucher, setErrorVoucher] = useState(null);
 
+  const { data: dataVouchersActive } = useQuery({
+    queryKey: ["vouchersActive"],
+    queryFn: () => getVouchersActive(),
+  });
+  console.log('dataVouchersActive', dataVouchersActive);
   const handleCheckIsActive = (Name) => {
     setIsActive((prev) => ({ ...prev, Name }));
     setValue((prev) => ({ ...prev, PaymentMethod: Name }));
@@ -253,7 +258,7 @@ const Order_Confirmation = () => {
         <div className="border-b border-[#E5E2D9] pb-6">
           <h1 className="text-3xl font-light tracking-tight">Thanh toán</h1>
           <nav className="flex items-center gap-2 mt-2 text-[10px] uppercase tracking-widest text-[#8C8C8C]">
-            <Link to="/cart" className="hover:text-emerald-700 transition-colors">Giỏ hàng</Link>
+            <Link to={getRoute("/cart")} className="hover:text-emerald-700 transition-colors">Giỏ hàng</Link>
             <IoChevronForward size={10} />
             <span className="text-[#2D2D2D]">Xác nhận</span>
           </nav>
@@ -525,12 +530,74 @@ const Order_Confirmation = () => {
               </div>
               {errorVoucher && <p className="text-red-500 text-[10px] mt-1">{errorVoucher}</p>}
 
-              <div className="flex justify-center py-10 opacity-30 italic text-xs">
-                Tính năng chọn từ danh sách đang được cập nhật...
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                {dataVouchersActive && dataVouchersActive.length > 0 ? (
+                  dataVouchersActive.map((item) => (
+                    <div
+                      key={item._id}
+                      className={`group relative p-5 border rounded-sm transition-all duration-300 flex items-center justify-between gap-4 ${codeVoucher === item.code
+                          ? "border-emerald-600 bg-emerald-50/30"
+                          : "border-[#F0EEE6] hover:border-emerald-200 hover:bg-[#FAF9F6]"
+                        }`}
+                    >
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-100/50 px-2 py-0.5 rounded-sm">
+                            {item.code}
+                          </span>
+                          <h3 className="text-[11px] font-bold uppercase tracking-tight text-[#2D2D2D]">
+                            {item.title}
+                          </h3>
+                        </div>
+                        <p className="text-[10px] text-[#8C8C8C] leading-relaxed">
+                          {item.description || "Áp dụng cho mọi đơn hàng từ Soundora"}
+                        </p>
+                        <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest text-[#8C8C8C]">
+                          <span className="flex items-center gap-1">
+                            <IoTicketOutline size={10} className="text-emerald-600" />
+                            Giảm {item.discountType === "percentage" ? `${item.discountValue}%` : `${item.discountValue?.toLocaleString("vi-VN")}₫`}
+                          </span>
+                          <span>HSD: {new Date(item.expiresAt).toLocaleDateString("vi-VN")}</span>
+                        </div>
+                        {item.minOrderValue > 0 && (
+                          <p className="text-[9px] text-emerald-600 italic">
+                            * Tối thiểu {(item.minOrderValue).toLocaleString("vi-VN")}₫
+                          </p>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setCodeVoucher(item.code);
+                          mutationCheckVoucher.mutate({ code: item.code, orderTotal: total, idUser: idUser });
+                        }}
+                        disabled={total < (item.minOrderValue || 0)}
+                        className={`px-6 py-2 text-[10px] uppercase tracking-widest font-bold transition-all duration-300 ${codeVoucher === item.code
+                            ? "bg-emerald-600 text-white"
+                            : total < (item.minOrderValue || 0)
+                              ? "bg-[#F0EEE6] text-[#8C8C8C] cursor-not-allowed"
+                              : "bg-[#2D2D2D] text-white hover:bg-emerald-600"
+                          }`}
+                      >
+                        {codeVoucher === item.code ? "Đã chọn" : total < (item.minOrderValue || 0) ? "Không đủ ĐK" : "Chọn"}
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 space-y-3">
+                    <IoTicketOutline size={32} className="mx-auto text-[#E5E2D9]" />
+                    <p className="text-xs text-[#8C8C8C] font-light">Hiện tại không có mã giảm giá nào khả dụng.</p>
+                  </div>
+                )}
               </div>
 
-              <div className="flex justify-end">
-                <button onClick={() => setTypeModal({ modal: false })} className="text-[10px] uppercase tracking-widest font-bold">Đóng</button>
+              <div className="flex justify-end pt-4 border-t border-[#F0EEE6]">
+                <button
+                  onClick={() => setTypeModal({ modal: false })}
+                  className="text-[10px] uppercase tracking-widest text-[#8C8C8C] hover:text-[#2D2D2D] transition-colors"
+                >
+                  Đóng
+                </button>
               </div>
             </div>
           </ModalOrder>

@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import Loading from "../../components/Loading";
 import { useDispatch } from "react-redux";
 import { fetchCart } from "../../redux/features/CartSlice";
+import { getRoute } from "../../helper/route";
 const Auth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -240,11 +241,11 @@ const Auth = () => {
             <div className="absolute bottom-4 w-100 text-xs ">
               <p className="text-gray-400 font-medium">
                 Bằng việc đăng nhập, bạn đồng ý với{" "}
-                <Link to={"/Auth/Policy"} className="text-teal-500 font-medium">
+                <Link to={getRoute("/Auth/Policy")} className="text-teal-500 font-medium">
                   Điều khoản dịch vụ{" "}
                 </Link>
                 và{" "}
-                <Link to={"/Auth/Policy"} className="text-teal-500 font-medium">
+                <Link to={getRoute("/Auth/Policy")} className="text-teal-500 font-medium">
                   Chính sách bảo mật
                 </Link>
               </p>

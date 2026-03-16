@@ -9,6 +9,8 @@ import Cart404empty from "../../components/Cart404";
 import { IoTrash, IoAdd, IoRemove } from 'react-icons/io5';
 import { removeFromCart } from "../../redux/features/CartSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import { getRoute } from "../../helper/route";
 
 const Cart = () => {
   const queryClient = useQueryClient();
@@ -77,11 +79,22 @@ const Cart = () => {
             )
           );
         },
-      } 
+      }
     );
   };
-  
+
   const HandleNextQuantity = (Id_Cart, Id_ProductVariants, Color) => {
+    // Tìm item hiện tại để check tồn kho trước khi update UI
+    const currentItem = optimisticCart.find(
+      (item) => item.Id_Cart === Id_Cart && item.Id_ProductVariants._id === Id_ProductVariants && item.Color === Color
+    );
+
+    if (currentItem && currentItem.Quantity >= currentItem.Id_ProductVariants.Stock) {
+      toast.error("Số lượng vượt quá tồn kho");
+      return;
+    }
+
+    // Optimistic Update
     setOptimisticCart((prev) =>
       prev.map((item) =>
         item.Id_Cart === Id_Cart && item.Id_ProductVariants._id === Id_ProductVariants && item.Color === Color
@@ -93,7 +106,8 @@ const Cart = () => {
     mutationNext.mutate(
       { Id_Cart, Id_ProductVariants, Color },
       {
-        onError: () => {
+        onError: (error) => {
+          // Rollback on error
           setOptimisticCart((prev) =>
             prev.map((item) =>
               item.Id_Cart === Id_Cart && item.Id_ProductVariants._id === Id_ProductVariants && item.Color === Color
@@ -101,6 +115,12 @@ const Cart = () => {
                 : item
             )
           );
+
+          if (error.response?.status === 400) {
+            toast.error(error.response.data.message || "Không thể tăng số lượng");
+          } else {
+            toast.error("Lỗi khi cập nhật giỏ hàng");
+          }
         },
       }
     );
@@ -131,7 +151,7 @@ const Cart = () => {
                 </p>
               </div>
               <Link
-                to="/"
+                to={getRoute("Product")}
                 className="text-[10px] font-medium uppercase tracking-[0.2em] text-[#2D2D2D] hover:text-emerald-700 transition-colors duration-500 no-underline underline-offset-4 decoration-1 decoration-[#E5E2D9] hover:decoration-emerald-600 underline"
               >
                 Tiếp tục mua hàng
@@ -257,7 +277,7 @@ const Cart = () => {
 
                       <div className="pt-6">
                         <Link
-                          to={optimisticCart?.length > 0 && "/OrderConfirmation"}
+                          to={optimisticCart?.length > 0 && getRoute("/OrderConfirmation")}
                           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 flex items-center justify-center transition-all duration-500 shadow-sm relative group overflow-hidden no-underline"
                         >
                           <span className="text-[10px] font-bold uppercase tracking-[0.3em] relative z-10 transition-transform duration-400 group-hover:scale-105">

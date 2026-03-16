@@ -9,8 +9,8 @@ import { Link, useParams } from "react-router-dom";
 import SidebarReview from "../../components/Sidebar/Sidebar";
 import CompareSidebar from "../../components/Sidebar/CompareSidebar";
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
-import { GetAllProducts } from "../../services/Client/Product";
 import { GetProductVariants, getDetailProduct } from "../../services/Client/Detail";
+import { getReviewsById } from "../../services/Client/Reviews";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { AddProductCart } from "../../services/Client/Cart";
@@ -21,6 +21,8 @@ import ProductSeller from "../../components/ProductSeller";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 import ListQuestions from "../../components/ListQuestions";
 import { AddCart } from "../../redux/features/CartSlice";
+import { GetAllProducts } from "../../services/Client/Product";
+import { getRoute } from "../../helper/route";
 
 const Detail = () => {
   const btnRefs = useRef([]);
@@ -99,6 +101,18 @@ const Detail = () => {
     queryFn: () => getDetailProduct(id),
   });
 
+  const { data: reviewsData } = useQuery({
+    queryKey: ["getReviewsById", id],
+    queryFn: () => getReviewsById(id),
+    enabled: !!id,
+  });
+
+  const reviews = reviewsData?.result || [];
+
+  const totalReviews = reviews.length;
+  const sampleReview = reviews.find((r) => r.Rating === 5 && r.Content !== "") || (reviews.length > 0 ? reviews[0] : null);
+  console.log('sampleReview', sampleReview);
+
   const handleAddToCart = () => {
     if (!idUser) {
       toast.warning("Vui lòng đăng nhập!");
@@ -163,7 +177,7 @@ const Detail = () => {
           <>
             {/* Breadcrumb - Compact */}
             <div className="mb-4">
-              <Link to={"/"} className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 text-sm font-medium">
+              <Link to={getRoute("/")} className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 text-sm font-medium">
                 <FaArrowLeft className="w-3 h-3" />
                 Trang chủ
               </Link>
@@ -367,7 +381,7 @@ const Detail = () => {
                                 {specRows.filter(r => r.value).map((row, i) => (
                                   <div key={i} className="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors">
                                     <div className="flex items-center gap-2.5">
-                                      <span className="text-base leading-none">-</span>
+                                      <span className="text-base leading-none w-1 h-1 rounded-full bg-emerald-500"></span>
                                       <span className="text-xs font-semibold text-gray-500">{row.label}</span>
                                     </div>
                                     <span className="text-xs font-bold text-gray-900">{row.value}</span>
@@ -450,37 +464,45 @@ const Detail = () => {
                           </span>
                         ))}
                       </div>
-                      <p className="text-teal-100 text-xs">50 đánh giá</p>
+                      <p className="text-teal-100 text-xs">{totalReviews} đánh giá</p>
                     </div>
                   </div>
 
                   {/* Sample Review - Smaller */}
                   <div className="lg:col-span-2">
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-start gap-3 mb-3">
-                        <img
-                          className="w-10 h-10 rounded-full object-cover"
-                          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fA%3D%3D&w=1000&q=80"
-                          alt="User avatar"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <h4 className="font-semibold text-gray-900 text-sm">Nguyễn Ngọc Hùng</h4>
-                            <span className="text-xs text-gray-500">13 Oct 2025</span>
-                          </div>
-                          <div className="flex gap-1 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i} className="text-yellow-400 text-sm">
-                                ★
+                    <div className="bg-gray-50 rounded-lg p-4 min-h-[140px] flex flex-col justify-center">
+                      {sampleReview ? (
+                        <div className="flex items-start gap-3">
+                          <img
+                            className="w-10 h-10 rounded-full object-cover border border-slate-200"
+                            src={sampleReview.Images[0]?.url || "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&q=80"}
+                            alt="User avatar"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-semibold text-gray-900 text-sm">{sampleReview.Id_User?.Name || "Người dùng ẩn danh"}</h4>
+                              <span className="text-xs text-gray-500">
+                                {new Date(sampleReview.createdAt).toLocaleDateString("vi-VN")}
                               </span>
-                            ))}
+                            </div>
+                            <div className="flex gap-1 mb-2">
+                              {[...Array(5)].map((_, i) => (
+                                <span key={i} className={`text-sm ${i < sampleReview.Rating ? "text-yellow-400" : "text-gray-200"}`}>
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                            <p className="text-gray-700 text-sm leading-relaxed italic">
+                              "{sampleReview.Content || "Sản phẩm tuyệt vời, tôi rất hài lòng!"}"
+                            </p>
                           </div>
-                          <p className="text-gray-700 text-sm leading-relaxed">
-                            "Loose-fit sweatshirt hoodie in medium weight cotton-blend fabric with a generous, but not oversized
-                            silhouette..."
-                          </p>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <div className="text-3xl mb-2 opacity-20">💬</div>
+                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Chưa có đánh giá nào cho sản phẩm này</p>
+                        </div>
+                      )}
                     </div>
 
                     <button

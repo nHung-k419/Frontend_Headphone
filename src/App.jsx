@@ -11,6 +11,7 @@ import { fetchCart } from "./redux/features/CartSlice";
 import { useEffect } from "react";
 import socket from "./Socket";
 import { Toaster, toast } from "sonner";
+import { routeTranslate } from "./routes/routeTranslate";
 const App = () => {
   const user = localStorage.getItem("User");
   const { Name, id } = user ? JSON?.parse(user) : "";
@@ -60,8 +61,14 @@ const App = () => {
               </Layout>
             );
 
-            return <Route key={route.path} path={route.path} element={element} />;
-            // return (
+            const translatedPath = routeTranslate[route.path] || route.path;
+            return (
+              <Route
+                key={route.path}
+                path={translatedPath}
+                element={element}
+              />
+            );            // return (
             //   <Route
             //     key={index}
             //     path={route?.path}

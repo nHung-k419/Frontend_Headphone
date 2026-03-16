@@ -2,12 +2,22 @@ import axios from "axios";
 import { API_URL } from "../../utils/apiUrl";
 const GetAllProducts = async (page) => {
   try {
+    const response = await axios.get(`${API_URL}/products`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getProductCompare = async (page) => {
+  try {
     const response = await axios.get(`${API_URL}/GetAllProduct`, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.log(error);
   }
 };
+
 const GetProductFilter = async ({ data, page, limit, keyWord, type }) => {
 
   try {
@@ -66,4 +76,4 @@ const CompareProducts = async (ids) => {
   }
 };
 
-export { GetAllProducts, GetProductFilter, SearchProducts, productBestSeller, FavouriteProduct, getFavouriteByUser, CompareProducts };
+export { GetAllProducts,getProductCompare, GetProductFilter, SearchProducts, productBestSeller, FavouriteProduct, getFavouriteByUser, CompareProducts };
