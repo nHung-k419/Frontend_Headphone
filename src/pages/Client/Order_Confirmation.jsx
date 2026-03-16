@@ -184,7 +184,7 @@ const Order_Confirmation = () => {
       if (data?.resultCreate?.PaymentMethod === "COD") {
         setIsLoading(false);
         toast.success("Đặt hàng thành công!!");
-        navigate("/OrderItems");
+        navigate("/don-hang");
       } else {
         mutationPayment.mutate(data?.resultCreate);
       }
