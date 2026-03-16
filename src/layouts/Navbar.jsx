@@ -164,7 +164,7 @@ const Navbar = () => {
     mutationKey: ["logout"],
     mutationFn: () => LogoutAuth(),
     onSuccess: () => {
-      navigate("/Auth/Login");
+      navigate("/dang-nhap");
       localStorage.removeItem("User");
       toast.success("Đăng xuất thành công");
       Cookies.remove("User");
